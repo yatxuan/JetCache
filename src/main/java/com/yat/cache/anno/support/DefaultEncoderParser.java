@@ -2,6 +2,8 @@ package com.yat.cache.anno.support;
 
 import com.yat.cache.anno.api.SerialPolicy;
 import com.yat.cache.core.exception.CacheConfigException;
+import com.yat.cache.core.support.encoders.GsonValueDecoder;
+import com.yat.cache.core.support.encoders.GsonValueEncoder;
 import com.yat.cache.core.support.encoders.JavaValueDecoder;
 import com.yat.cache.core.support.encoders.JavaValueEncoder;
 import com.yat.cache.core.support.encoders.Kryo5ValueDecoder;
@@ -33,9 +35,9 @@ public class DefaultEncoderParser implements EncoderParser {
             return new JavaValueEncoder(useIdentityNumber);
         } else if (SerialPolicy.KRYO5.equalsIgnoreCase(valueEncoder)) {
             return new Kryo5ValueEncoder(useIdentityNumber);
-        }/* else if (SerialPolicy.FASTJSON2.equalsIgnoreCase(valueEncoder)) {
-            return new Fastjson2ValueEncoder(useIdentityNumber);
-        }*/ else {
+        } else if (SerialPolicy.GSON.equalsIgnoreCase(valueEncoder)) {
+            return new GsonValueEncoder(useIdentityNumber);
+        } else {
             throw new CacheConfigException("not supported:" + valueEncoder);
         }
     }
@@ -80,6 +82,8 @@ public class DefaultEncoderParser implements EncoderParser {
             return javaValueDecoder(useIdentityNumber);
         } else if (SerialPolicy.KRYO5.equalsIgnoreCase(valueDecoder)) {
             return new Kryo5ValueDecoder(useIdentityNumber);
+        }  else if (SerialPolicy.GSON.equalsIgnoreCase(valueDecoder)) {
+            return new GsonValueDecoder(useIdentityNumber);
         }  else {
             throw new CacheConfigException("not supported:" + valueDecoder);
         }

@@ -18,21 +18,7 @@ public interface SerialPolicy extends Identity {
 
     String KRYO = "KRYO";
 
-    /**
-     * @since 2.7
-     */
     String KRYO5 = "KRYO5";
-
-    /**
-     * fastjson2 encoder/decoder is implemented but not register by default.
-     * This is because json is not good serializable util for java and has many compatible problems.
-     *
-     * @see com.yat.cache.anno.support.DefaultEncoderParser
-     * @see com.yat.cache.core.support.DecoderMap
-     * @since 2.7
-     */
-    @Deprecated
-    String FASTJSON2 = "FASTJSON2";
 
     /**
      * 获取编码器，用于将对象转换为字节数组。

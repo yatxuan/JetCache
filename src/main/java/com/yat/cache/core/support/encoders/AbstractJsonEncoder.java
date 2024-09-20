@@ -23,7 +23,7 @@ public abstract class AbstractJsonEncoder extends AbstractValueEncoder {
             byte[] buffer = useIdentityNumber ? new byte[len + 4] : new byte[len];
             int index = 0;
             if (useIdentityNumber) {
-                index = writeInt(buffer, index, SerialPolicy.IDENTITY_NUMBER_FASTJSON2);
+                index = writeInt(buffer, index, SerialPolicy.IDENTITY_NUMBER_GSON);
             }
             if (data == null) {
                 writeShort(buffer, index, -1);
@@ -42,9 +42,11 @@ public abstract class AbstractJsonEncoder extends AbstractValueEncoder {
             }
             return buffer;
         } catch (Throwable e) {
-            StringBuilder sb = new StringBuilder("Fastjson2 Encode error. ");
-            sb.append("msg=").append(e.getMessage());
-            throw new CacheEncodeException(sb.toString(), e);
+            String message = new StringBuilder("Json Encode error. ")
+                    .append("msg=")
+                    .append(e.getMessage())
+                    .toString();
+            throw new CacheEncodeException(message, e);
         }
     }
 

@@ -27,11 +27,10 @@ public interface Identity {
     int IDENTITY_NUMBER_KRYO5 = 0xF6E0A5C0;
 
     /**
-     * Fastjson 2.x 版本的标识号，自版本 2.7 开始支持。
+     * Gson 2.x 版本的标识号，自版本 2.7 开始支持。
      *
      * @since 2.7
      */
-    @Deprecated
-    int IDENTITY_NUMBER_FASTJSON2 = 0xF6E0A5C1;
+    int IDENTITY_NUMBER_GSON = 0xF6E0A5C1;
 
 }

@@ -2,6 +2,7 @@ package com.yat.cache.core.support;
 
 import com.yat.cache.anno.api.SerialPolicy;
 import com.yat.cache.core.support.encoders.AbstractValueDecoder;
+import com.yat.cache.core.support.encoders.GsonValueDecoder;
 import com.yat.cache.core.support.encoders.JavaValueDecoder;
 import com.yat.cache.core.support.encoders.Kryo5ValueDecoder;
 import com.yat.cache.core.support.encoders.KryoValueDecoder;
@@ -50,7 +51,7 @@ public class DecoderMap {
             register(SerialPolicy.IDENTITY_NUMBER_JAVA, defaultJavaValueDecoder());
             register(SerialPolicy.IDENTITY_NUMBER_KRYO4, KryoValueDecoder.INSTANCE);
             register(SerialPolicy.IDENTITY_NUMBER_KRYO5, Kryo5ValueDecoder.INSTANCE);
-            // register(SerialPolicy.IDENTITY_NUMBER_FASTJSON2, Fastjson2ValueDecoder.INSTANCE);
+            register(SerialPolicy.IDENTITY_NUMBER_GSON, GsonValueDecoder.INSTANCE);
             inited = true;
         } finally {
             reentrantLock.unlock();

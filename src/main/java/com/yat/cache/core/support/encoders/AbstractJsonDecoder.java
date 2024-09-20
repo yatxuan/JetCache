@@ -1,6 +1,3 @@
-/**
- * Created on 2022/07/27.
- */
 package com.yat.cache.core.support.encoders;
 
 import com.yat.cache.core.CacheValueHolder;
@@ -83,5 +80,5 @@ public abstract class AbstractJsonDecoder extends AbstractValueDecoder {
         return x;
     }
 
-    protected abstract Object parseObject(byte[] buffer, int index, int len, Class clazz);
+    protected abstract Object parseObject(byte[] buffer, int index, int len, Class<?> clazz);
 }
