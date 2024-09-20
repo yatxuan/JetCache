@@ -13,7 +13,7 @@ import java.util.function.Function;
  */
 public class JacksonKeyConvertor implements Function<Object, Object> {
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
     public static final JacksonKeyConvertor INSTANCE = new JacksonKeyConvertor();
 
     @Override

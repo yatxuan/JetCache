@@ -19,6 +19,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.NonNull;
 
 import java.lang.reflect.Method;
 
@@ -37,12 +38,12 @@ public class JetCacheInterceptor implements MethodInterceptor, ApplicationContex
     CacheManager cacheManager;
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public Object invoke(final MethodInvocation invocation) throws Throwable {
+    public Object invoke(@NonNull final MethodInvocation invocation) throws Throwable {
         if (configProvider == null) {
             configProvider = applicationContext.getBean(ConfigProvider.class);
         }

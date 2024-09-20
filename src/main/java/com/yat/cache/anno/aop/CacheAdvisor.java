@@ -18,7 +18,7 @@ public class CacheAdvisor extends AbstractBeanFactoryPointcutAdvisor {
     /**
      * 缓存通知Bean的名称，用于在Spring上下文中注册
      */
-    public static final String CACHE_ADVISOR_BEAN_NAME = "jetcache2.internalCacheAdvisor";
+    public static final String CACHE_ADVISOR_BEAN_NAME = "jetCache2.internalCacheAdvisor";
     /**
      * 注入缓存配置Map，用于缓存的动态配置
      */

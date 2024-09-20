@@ -3,7 +3,7 @@ package com.yat.cache.anno.support;
 import com.yat.cache.anno.api.KeyConvertor;
 import com.yat.cache.core.CacheConfigException;
 import com.yat.cache.core.support.Fastjson2KeyConvertor;
-import com.yat.cache.core.support.FastjsonKeyConvertor;
+import com.yat.cache.core.support.GsonKeyConvertor;
 import com.yat.cache.core.support.JacksonKeyConvertor;
 
 import java.util.function.Function;
@@ -17,8 +17,8 @@ public class DefaultKeyConvertorParser implements KeyConvertorParser {
         if (convertor == null) {
             return null;
         }
-        if (KeyConvertor.FASTJSON.equalsIgnoreCase(convertor)) {
-            return FastjsonKeyConvertor.INSTANCE;
+        if (KeyConvertor.GSON.equalsIgnoreCase(convertor)) {
+            return GsonKeyConvertor.INSTANCE;
         } else if (KeyConvertor.FASTJSON2.equalsIgnoreCase(convertor)) {
             return Fastjson2KeyConvertor.INSTANCE;
         } else if (KeyConvertor.JACKSON.equalsIgnoreCase(convertor)) {

@@ -8,7 +8,7 @@ import java.util.function.Function;
  * <p>如果键转换器实现了这个接口，它可以处理 byte[] 和 String 类型的数据，具体见 AbstractExternalCache 类。</p>
  *
  * <p>
- *     todo 删除 fastJson
+ *     todo 删除 fastJson2
  * </p>
  *
  * @author Yat
@@ -19,8 +19,6 @@ public interface KeyConvertor extends Function<Object, Object> {
 
     String NONE = "NONE";
     String GSON = "GSON";
-    @Deprecated
-    String FASTJSON = "FASTJSON";
 
     /**
      * @since 2.6.5

@@ -110,8 +110,8 @@ public @interface Cached {
 
     /**
      * 指定键转换器。用于转换复杂的键对象。
-     * JetCache 内置的键转换器包括 KeyConvertor.FASTJSON 和 KeyConvertor.NONE。 NONE 表示不进行转换，
-     * FASTJSON 将使用 fastjson 将键对象转换为字符串。
+     * JetCache 内置的键转换器包括 KeyConvertor.GSON 和 KeyConvertor.NONE。 NONE 表示不进行转换，
+     * GSON 将使用 GSON 将键对象转换为字符串。
      * 如果未指定此属性值，则使用全局配置
      *
      * @return 缓存键的转换器名称

@@ -6,6 +6,7 @@ import com.yat.cache.core.support.SpringJavaValueDecoder;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.NonNull;
 
 import java.util.function.Function;
 
@@ -61,7 +62,7 @@ public class DefaultSpringEncoderParser extends DefaultEncoderParser implements 
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 }

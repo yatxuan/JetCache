@@ -40,7 +40,7 @@ public abstract class AbstractJsonEncoder extends AbstractValueEncoder {
             }
             return buffer;
         } catch (Throwable e) {
-            StringBuilder sb = new StringBuilder("Fastjson Encode error. ");
+            StringBuilder sb = new StringBuilder("Fastjson2 Encode error. ");
             sb.append("msg=").append(e.getMessage());
             throw new CacheEncodeException(sb.toString(), e);
         }
