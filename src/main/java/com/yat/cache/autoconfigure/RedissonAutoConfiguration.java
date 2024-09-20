@@ -1,9 +1,8 @@
 // package com.yat.cache.autoconfigure;
 //
-// import com.alicp.jetcache.CacheBuilder;
-// import com.alicp.jetcache.CacheConfigException;
-// import com.alicp.jetcache.external.ExternalCacheBuilder;
-// import com.alicp.jetcache.redisson.RedissonCacheBuilder;
+// import com.yat.cache.core.CacheBuilder;
+// import com.yat.cache.core.CacheConfigException;
+// import com.yat.cache.core.external.ExternalCacheBuilder;
 // import org.redisson.api.RedissonClient;
 // import org.springframework.beans.BeansException;
 // import org.springframework.context.ApplicationContext;

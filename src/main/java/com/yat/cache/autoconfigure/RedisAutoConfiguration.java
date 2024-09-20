@@ -1,8 +1,8 @@
 // package com.yat.cache.autoconfigure;
 //
-// import com.alicp.jetcache.CacheBuilder;
-// import com.alicp.jetcache.CacheConfigException;
-// import com.alicp.jetcache.redis.RedisCacheBuilder;
+//
+// import com.yat.cache.core.CacheBuilder;
+// import com.yat.cache.core.CacheConfigException;
 // import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 // import org.springframework.beans.PropertyValues;
 // import org.springframework.beans.factory.annotation.Autowired;
