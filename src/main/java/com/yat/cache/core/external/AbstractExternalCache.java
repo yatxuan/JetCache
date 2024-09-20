@@ -2,16 +2,20 @@ package com.yat.cache.core.external;
 
 import com.yat.cache.anno.api.KeyConvertor;
 import com.yat.cache.core.AbstractCache;
+import com.yat.cache.core.RefreshCache;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.exception.CacheException;
-import com.yat.cache.core.RefreshCache;
+import com.yat.cache.core.lang.Assert;
 
 import java.io.IOException;
 
 /**
- * Created on 2016/10/8.
+ * ClassName AbstractExternalCache
+ * <p>Description 抽象远程缓存:提供外部缓存的基本功能，包括配置验证和键构建逻辑</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 13:31
+ * version 1.0
  */
 public abstract class AbstractExternalCache<K, V> extends AbstractCache<K, V> {
 
@@ -23,15 +27,9 @@ public abstract class AbstractExternalCache<K, V> extends AbstractCache<K, V> {
     }
 
     protected void checkConfig() {
-        if (config.getValueEncoder() == null) {
-            throw new CacheConfigException("no value encoder");
-        }
-        if (config.getValueDecoder() == null) {
-            throw new CacheConfigException("no value decoder");
-        }
-        if (config.getKeyPrefix() == null) {
-            throw new CacheConfigException("keyPrefix is required");
-        }
+        Assert.notNull(config.getValueEncoder(), () -> new CacheConfigException("no value encoder"));
+        Assert.notNull(config.getValueDecoder(), () -> new CacheConfigException("no value decoder"));
+        Assert.notNull(config.getKeyPrefix(), () -> new CacheConfigException("keyPrefix is required"));
     }
 
     public byte[] buildKey(K key) {
@@ -64,8 +62,7 @@ public abstract class AbstractExternalCache<K, V> extends AbstractCache<K, V> {
     private boolean isPreservedKey(Object key) {
         if (key instanceof byte[]) {
             byte[] keyBytes = (byte[]) key;
-            return endWith(keyBytes, RefreshCache.LOCK_KEY_SUFFIX)
-                    || endWith(keyBytes, RefreshCache.TIMESTAMP_KEY_SUFFIX);
+            return endWith(keyBytes, RefreshCache.LOCK_KEY_SUFFIX) || endWith(keyBytes, RefreshCache.TIMESTAMP_KEY_SUFFIX);
         }
         return false;
     }

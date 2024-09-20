@@ -13,24 +13,10 @@ import java.util.concurrent.CompletionStage;
  * version 1.0
  */
 public class CacheGetResult<V> extends CacheResult {
-    /**
-     * 表示缓存项不存在但没有附带消息的常量  to notExistsWithoutMsg()
-     */
-    @Deprecated
-    public static final CacheGetResult NOT_EXISTS_WITHOUT_MSG =
-            new CacheGetResult<>(CacheResultCode.NOT_EXISTS, null, null);
-    /**
-     * 表示缓存项已过期但没有附带消息的常量 to expiredWithoutMsg()
-     */
-    @Deprecated
-    public static final CacheGetResult EXPIRED_WITHOUT_MSG = new CacheGetResult<>(CacheResultCode.EXPIRED, null, null);
-    /**
-     * volatile 修饰确保在多线程环境下对 value 的可见性
-     */
+
+
     private volatile V value;
-    /**
-     * volatile 修饰确保在多线程环境下对 holder 的可见性
-     */
+
     private volatile CacheValueHolder<V> holder;
 
     /**

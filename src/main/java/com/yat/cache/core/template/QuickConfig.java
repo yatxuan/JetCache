@@ -4,94 +4,107 @@ import com.yat.cache.anno.api.CacheConsts;
 import com.yat.cache.anno.api.CacheType;
 import com.yat.cache.core.CacheLoader;
 import com.yat.cache.core.RefreshPolicy;
+import lombok.Getter;
 
 import java.time.Duration;
 import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * @author huangli
+ * ClassName QuickConfig
+ * <p>Description 快速配置类，用于缓存操作的简化配置</p>
+ *
+ * @author Yat
+ * Date 2024/8/22 20:14
+ * version 1.0
  */
 public class QuickConfig {
-
+    /**
+     * 如果在配置中配置了多个缓存区域，在这里指定使用哪个区域
+     */
+    @Getter
     private String area = CacheConsts.DEFAULT_AREA;
+    /**
+     * 指定缓存的唯一名称，不是必须的，
+     * 如果没有指定，会使用类名+方法名。
+     * name会被用于远程缓存的key前缀。
+     * 另外在统计中，一个简短有意义的名字会提高可读性。
+     */
+    @Getter
     private String name;
+    /**
+     * 远程缓存过期时间设置
+     */
+    @Getter
     private Duration expire;
+    /**
+     * 本地缓存过期时间设置
+     */
+    @Getter
     private Duration localExpire;
+    /**
+     * 如果cacheType为LOCAL或BOTH，这个参数指定本地缓存的最大元素数量，以控制内存占用。
+     * 如果注解上没有定义，会使用全局配置，如果此时全局配置也没有定义，则为100
+     */
+    @Getter
     private Integer localLimit;
+    /**
+     * 缓存的类型，包括CacheType.REMOTE、CacheType.LOCAL、CacheType.BOTH。
+     * 如果定义为BOTH，会使用LOCAL和REMOTE组合成两级缓存
+     */
+    @Getter
     private CacheType cacheType;
+    /**
+     * 当缓存类型为BOTH时，远程缓存更新时是否同步更新本地缓存
+     */
+    @Getter
     private Boolean syncLocal;
+    /**
+     * 键转换函数，用于缓存键的转换
+     */
+    @Getter
     private Function<Object, Object> keyConvertor;
+    /**
+     * 值编码函数，将缓存值编码为字节数组
+     */
+    @Getter
     private Function<Object, byte[]> valueEncoder;
+    /**
+     * 值解码函数，将字节数组解码为缓存值
+     */
+    @Getter
     private Function<byte[], Object> valueDecoder;
+    /**
+     * 是否缓存空值
+     */
+    @Getter
     private Boolean cacheNullValue;
+    /**
+     * 此属性控制是否将区域 {@link QuickConfig#area} 添加为远程缓存键前缀 拼接到 {@link QuickConfig#name} 前面
+     */
+    @Getter
     private Boolean useAreaInPrefix;
+    /**
+     * 是否启用防穿透保护
+     */
+    @Getter
     private Boolean penetrationProtect;
+    /**
+     * 防穿透保护的缓存时间
+     */
+    @Getter
     private Duration penetrationProtectTimeout;
+    /**
+     * 刷新策略，用于远程缓存更新时的配置
+     */
+    @Getter
     private RefreshPolicy refreshPolicy;
+    /**
+     * 缓存加载器，用于缓存数据的加载
+     */
     private CacheLoader<? extends Object, ? extends Object> loader;
 
     private QuickConfig() {
-    }
-
-    public String getArea() {
-        return area;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Duration getExpire() {
-        return expire;
-    }
-
-    public Duration getLocalExpire() {
-        return localExpire;
-    }
-
-    public CacheType getCacheType() {
-        return cacheType;
-    }
-
-    public Integer getLocalLimit() {
-        return localLimit;
-    }
-
-    public Boolean getSyncLocal() {
-        return syncLocal;
-    }
-
-    public Function<Object, Object> getKeyConvertor() {
-        return keyConvertor;
-    }
-
-    public Function<Object, byte[]> getValueEncoder() {
-        return valueEncoder;
-    }
-
-    public Function<byte[], Object> getValueDecoder() {
-        return valueDecoder;
-    }
-
-    public Boolean getCacheNullValue() {
-        return cacheNullValue;
-    }
-
-    public Boolean getUseAreaInPrefix() {
-        return useAreaInPrefix;
-    }
-
-    public Boolean getPenetrationProtect() {
-        return penetrationProtect;
-    }
-
-    public Duration getPenetrationProtectTimeout() {
-        return penetrationProtectTimeout;
-    }
-
-    public RefreshPolicy getRefreshPolicy() {
-        return refreshPolicy;
     }
 
     public <K, V> CacheLoader<K, V> getLoader() {

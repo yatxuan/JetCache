@@ -2,7 +2,6 @@ package com.yat.cache.core;
 
 import com.yat.cache.core.exception.CacheConfigException;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,24 +13,18 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created on 16/9/13.
  *
- * @author huangli
+ * @author yat
  */
 public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
 
-    private Cache[] caches;
+    private Cache<K,CacheValueHolder<V>>[] caches;
 
     private MultiLevelCacheConfig<K, V> config;
 
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public MultiLevelCache(Cache... caches) throws CacheConfigException {
-        this.caches = caches;
+    public MultiLevelCache(MultiLevelCacheConfig<K, V> cacheConfig) throws CacheConfigException {
+        this.config = cacheConfig;
+        this.caches = cacheConfig.getCaches().toArray(new Cache[]{});
         checkCaches();
-        CacheConfig lastConfig = caches[caches.length - 1].config();
-        config = new MultiLevelCacheConfig<>();
-        config.setCaches(Arrays.asList(caches));
-        config.setExpireAfterWriteInMillis(lastConfig.getExpireAfterWriteInMillis());
-        config.setCacheNullValue(lastConfig.isCacheNullValue());
     }
 
     private void checkCaches() {
@@ -44,13 +37,6 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
                         "MultiLevelCache.");
             }
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    public MultiLevelCache(MultiLevelCacheConfig<K, V> cacheConfig) throws CacheConfigException {
-        this.config = cacheConfig;
-        this.caches = cacheConfig.getCaches().toArray(new Cache[]{});
-        checkCaches();
     }
 
     public Cache[] caches() {
@@ -71,6 +57,7 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
         return CacheGetResult.notExistsWithoutMsg();
     }
 
+    @SuppressWarnings("unchecked")
     private CacheValueHolder<V> unwrapHolder(CacheValueHolder<V> h) {
         // if @Cached or @CacheCache change type from REMOTE to BOTH (or from BOTH to REMOTE),
         // during the dev/publish process, the value type which different application server put into cache server
@@ -133,7 +120,7 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
         HashMap<K, CacheGetResult<V>> resultMap = new HashMap<>();
         Set<K> restKeys = new HashSet<>(keys);
         for (int i = 0; i < caches.length; i++) {
-            if (restKeys.size() == 0) {
+            if (restKeys.isEmpty()) {
                 break;
             }
             Cache<K, CacheValueHolder<V>> c = caches[i];

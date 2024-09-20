@@ -1,13 +1,13 @@
 package com.yat.cache.redis.lettuce;
 
 import com.yat.cache.core.CacheConfig;
-import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.CacheGetResult;
 import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.CacheResultCode;
 import com.yat.cache.core.CacheValueHolder;
 import com.yat.cache.core.MultiGetResult;
 import com.yat.cache.core.ResultData;
+import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.external.AbstractExternalCache;
 import com.yat.cache.core.support.JetCacheExecutor;
 import io.lettuce.core.AbstractRedisClient;
@@ -34,10 +34,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
- * Created on 2017/4/28.
+ * ClassName RedisLettuceCache
+ * <p>Description Redis Lettuce 数据缓存实现</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/9/20 23:09
+ * version 1.0
  */
+@SuppressWarnings("unchecked")
 public class RedisLettuceCache<K, V> extends AbstractExternalCache<K, V> {
 
     private final RedisLettuceCacheConfig<K, V> config;
@@ -126,7 +130,7 @@ public class RedisLettuceCache<K, V> extends AbstractExternalCache<K, V> {
             return result;
         } catch (Exception ex) {
             logError("GET", key, ex);
-            return new CacheGetResult(ex);
+            return new CacheGetResult<>(ex);
         }
     }
 
@@ -134,7 +138,7 @@ public class RedisLettuceCache<K, V> extends AbstractExternalCache<K, V> {
     protected MultiGetResult<K, V> do_GET_ALL(Set<? extends K> keys) {
         try {
             ArrayList<K> keyList = new ArrayList<K>(keys);
-            byte[][] newKeys = keyList.stream().map((k) -> buildKey(k)).toArray(byte[][]::new);
+            byte[][] newKeys = keyList.stream().map(this::buildKey).toArray(byte[][]::new);
 
             Map<K, CacheGetResult<V>> resultMap = new HashMap<>();
             if (newKeys.length == 0) {
@@ -153,13 +157,13 @@ public class RedisLettuceCache<K, V> extends AbstractExternalCache<K, V> {
                             if (kv != null && kv.hasValue()) {
                                 CacheValueHolder<V> holder = (CacheValueHolder<V>) valueDecoder.apply((byte[]) kv.getValue());
                                 if (System.currentTimeMillis() >= holder.getExpireTime()) {
-                                    resultMap.put(key, CacheGetResult.EXPIRED_WITHOUT_MSG);
+                                    resultMap.put(key, CacheGetResult.expiredWithoutMsg());
                                 } else {
                                     CacheGetResult<V> r = new CacheGetResult<V>(CacheResultCode.SUCCESS, null, holder);
                                     resultMap.put(key, r);
                                 }
                             } else {
-                                resultMap.put(key, CacheGetResult.NOT_EXISTS_WITHOUT_MSG);
+                                resultMap.put(key, CacheGetResult.notExistsWithoutMsg());
                             }
                         }
                         return new ResultData(CacheResultCode.SUCCESS, null, resultMap);
@@ -173,14 +177,14 @@ public class RedisLettuceCache<K, V> extends AbstractExternalCache<K, V> {
             return result;
         } catch (Exception ex) {
             logError("GET_ALL", "keys(" + keys.size() + ")", ex);
-            return new MultiGetResult<K, V>(ex);
+            return new MultiGetResult<>(ex);
         }
     }
 
     @Override
     protected CacheResult do_PUT(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
         try {
-            CacheValueHolder<V> holder = new CacheValueHolder(value, timeUnit.toMillis(expireAfterWrite));
+            CacheValueHolder<V> holder = new CacheValueHolder<>(value, timeUnit.toMillis(expireAfterWrite));
             byte[] newKey = buildKey(key);
             RedisFuture<String> future = stringAsyncCommands.psetex(newKey, timeUnit.toMillis(expireAfterWrite), valueEncoder.apply(holder));
             CacheResult result = new CacheResult(future.handle((rt, ex) -> {
@@ -208,7 +212,7 @@ public class RedisLettuceCache<K, V> extends AbstractExternalCache<K, V> {
         try {
             CompletionStage<Integer> future = CompletableFuture.completedFuture(0);
             for (Map.Entry<? extends K, ? extends V> en : map.entrySet()) {
-                CacheValueHolder<V> holder = new CacheValueHolder(en.getValue(), timeUnit.toMillis(expireAfterWrite));
+                CacheValueHolder<V> holder = new CacheValueHolder<>(en.getValue(), timeUnit.toMillis(expireAfterWrite));
                 RedisFuture<String> resp = stringAsyncCommands.psetex(buildKey(en.getKey()), timeUnit.toMillis(expireAfterWrite), valueEncoder.apply(holder));
                 future = future.thenCombine(resp, (failCount, respStr) -> "OK".equals(respStr) ? failCount : failCount + 1);
             }
@@ -265,7 +269,7 @@ public class RedisLettuceCache<K, V> extends AbstractExternalCache<K, V> {
     @Override
     protected CacheResult do_REMOVE_ALL(Set<? extends K> keys) {
         try {
-            byte[][] newKeys = keys.stream().map((k) -> buildKey(k)).toArray((len) -> new byte[keys.size()][]);
+            byte[][] newKeys = keys.stream().map(this::buildKey).toArray((len) -> new byte[keys.size()][]);
             RedisFuture<Long> future = keyAsyncCommands.del(newKeys);
             CacheResult result = new CacheResult(future.handle((v, ex) -> {
                 if (ex != null) {
@@ -286,7 +290,7 @@ public class RedisLettuceCache<K, V> extends AbstractExternalCache<K, V> {
     @Override
     protected CacheResult do_PUT_IF_ABSENT(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
         try {
-            CacheValueHolder<V> holder = new CacheValueHolder(value, timeUnit.toMillis(expireAfterWrite));
+            CacheValueHolder<V> holder = new CacheValueHolder<>(value, timeUnit.toMillis(expireAfterWrite));
             byte[] newKey = buildKey(key);
             RedisFuture<String> future = stringAsyncCommands.set(newKey, valueEncoder.apply(holder), SetArgs.Builder.nx().px(timeUnit.toMillis(expireAfterWrite)));
             CacheResult result = new CacheResult(future.handle((rt, ex) -> {

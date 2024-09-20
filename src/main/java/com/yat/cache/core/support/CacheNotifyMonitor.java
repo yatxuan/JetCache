@@ -1,6 +1,3 @@
-/**
- * Created on 2022-05-04.
- */
 package com.yat.cache.core.support;
 
 import com.yat.cache.anno.api.CacheConsts;
