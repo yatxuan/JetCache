@@ -5,7 +5,7 @@ package com.yat.cache.core.external;
 
 import com.yat.cache.core.Cache;
 import com.yat.cache.core.CacheConfig;
-import com.yat.cache.core.CacheException;
+import com.yat.cache.core.exception.CacheException;
 import com.yat.cache.core.CacheGetResult;
 import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.CacheValueHolder;

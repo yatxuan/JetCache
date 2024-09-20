@@ -1,6 +1,6 @@
 package com.yat.cache.anno.method;
 
-import com.yat.cache.core.CacheConfigException;
+import com.yat.cache.core.exception.CacheConfigException;
 import org.mvel2.MVEL;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;

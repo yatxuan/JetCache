@@ -1,6 +1,6 @@
 package com.yat.cache.redis.springdata;
 
-import com.yat.cache.core.CacheConfigException;
+import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.CacheGetResult;
 import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.CacheResultCode;

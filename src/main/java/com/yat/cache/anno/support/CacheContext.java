@@ -4,7 +4,7 @@ import com.yat.cache.anno.api.CacheConsts;
 import com.yat.cache.anno.api.EnableCache;
 import com.yat.cache.anno.method.CacheInvokeContext;
 import com.yat.cache.core.Cache;
-import com.yat.cache.core.CacheConfigException;
+import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.CacheManager;
 import com.yat.cache.core.template.QuickConfig;
 import org.slf4j.Logger;

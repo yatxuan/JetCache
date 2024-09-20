@@ -1,6 +1,6 @@
 package com.yat.cache.core.support;
 
-import com.yat.cache.core.CacheException;
+import com.yat.cache.core.exception.CacheException;
 
 import java.io.Serializable;
 

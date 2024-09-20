@@ -1,5 +1,8 @@
 package com.yat.cache.core;
 
+import com.yat.cache.core.exception.CacheConfigException;
+import com.yat.cache.core.exception.CacheException;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;

@@ -1,7 +1,7 @@
-package com.yat.cache.core.support;
+package com.yat.cache.core.support.encoders;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.kryo5.Kryo;
+import com.esotericsoftware.kryo.kryo5.io.Input;
 
 import java.io.ByteArrayInputStream;
 
@@ -10,11 +10,11 @@ import java.io.ByteArrayInputStream;
  *
  * @author huangli
  */
-public class KryoValueDecoder extends AbstractValueDecoder {
+public class Kryo5ValueDecoder extends AbstractValueDecoder {
 
-    public static final KryoValueDecoder INSTANCE = new KryoValueDecoder(true);
+    public static final Kryo5ValueDecoder INSTANCE = new Kryo5ValueDecoder(true);
 
-    public KryoValueDecoder(boolean useIdentityNumber) {
+    public Kryo5ValueDecoder(boolean useIdentityNumber) {
         super(useIdentityNumber);
     }
 
@@ -27,11 +27,11 @@ public class KryoValueDecoder extends AbstractValueDecoder {
             in = new ByteArrayInputStream(buffer);
         }
         Input input = new Input(in);
-        KryoValueEncoder.KryoCache kryoCache = null;
+        Kryo5ValueEncoder.Kryo5Cache kryoCache = null;
         try {
-            kryoCache = KryoValueEncoder.kryoCacheObjectPool.borrowObject();
+            kryoCache = Kryo5ValueEncoder.kryoCacheObjectPool.borrowObject();
             Kryo kryo = kryoCache.getKryo();
-            ClassLoader classLoader = KryoValueDecoder.class.getClassLoader();
+            ClassLoader classLoader = Kryo5ValueDecoder.class.getClassLoader();
             Thread t = Thread.currentThread();
             if (t != null) {
                 ClassLoader ctxClassLoader = t.getContextClassLoader();
@@ -43,7 +43,7 @@ public class KryoValueDecoder extends AbstractValueDecoder {
             return kryo.readClassAndObject(input);
         } finally {
             if (kryoCache != null) {
-                KryoValueEncoder.kryoCacheObjectPool.returnObject(kryoCache);
+                Kryo5ValueEncoder.kryoCacheObjectPool.returnObject(kryoCache);
             }
         }
     }

@@ -2,8 +2,8 @@ package com.yat.cache.core.external;
 
 import com.yat.cache.anno.api.KeyConvertor;
 import com.yat.cache.core.AbstractCache;
-import com.yat.cache.core.CacheConfigException;
-import com.yat.cache.core.CacheException;
+import com.yat.cache.core.exception.CacheConfigException;
+import com.yat.cache.core.exception.CacheException;
 import com.yat.cache.core.RefreshCache;
 
 import java.io.IOException;

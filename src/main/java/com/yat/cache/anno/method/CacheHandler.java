@@ -10,7 +10,7 @@ import com.yat.cache.anno.support.CachedAnnoConfig;
 import com.yat.cache.anno.support.ConfigMap;
 import com.yat.cache.core.AbstractCache;
 import com.yat.cache.core.Cache;
-import com.yat.cache.core.CacheInvokeException;
+import com.yat.cache.core.exception.CacheInvokeException;
 import com.yat.cache.core.CacheLoader;
 import com.yat.cache.core.ProxyCache;
 import com.yat.cache.core.event.CacheLoadEvent;

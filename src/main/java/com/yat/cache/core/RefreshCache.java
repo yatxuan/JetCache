@@ -1,6 +1,8 @@
 package com.yat.cache.core;
 
 import com.yat.cache.core.embedded.AbstractEmbeddedCache;
+import com.yat.cache.core.exception.CacheException;
+import com.yat.cache.core.exception.CacheInvokeException;
 import com.yat.cache.core.external.AbstractExternalCache;
 import com.yat.cache.core.support.JetCacheExecutor;
 import org.slf4j.Logger;

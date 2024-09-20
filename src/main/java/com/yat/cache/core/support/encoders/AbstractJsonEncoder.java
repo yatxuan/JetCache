@@ -1,7 +1,9 @@
-package com.yat.cache.core.support;
+package com.yat.cache.core.support.encoders;
 
 import com.yat.cache.anno.api.SerialPolicy;
 import com.yat.cache.core.CacheValueHolder;
+import com.yat.cache.core.exception.CacheEncodeException;
+import com.yat.cache.core.support.CacheMessage;
 
 import java.nio.charset.StandardCharsets;
 

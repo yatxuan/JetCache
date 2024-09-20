@@ -1,26 +1,29 @@
 package com.yat.cache.anno.support;
 
 import com.yat.cache.anno.api.KeyConvertor;
-import com.yat.cache.core.CacheConfigException;
-import com.yat.cache.core.support.Fastjson2KeyConvertor;
-import com.yat.cache.core.support.GsonKeyConvertor;
-import com.yat.cache.core.support.JacksonKeyConvertor;
+import com.yat.cache.core.exception.CacheConfigException;
+import com.yat.cache.core.support.convertor.GsonKeyConvertor;
+import com.yat.cache.core.support.convertor.JacksonKeyConvertor;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * @author huangli
+ * ClassName DefaultKeyConvertorParser
+ * <p>Description 默认的KeyConvertor解析器</p>
+ *
+ * @author Yat
+ * Date 2024/8/22 22:05
+ * version 1.0
  */
 public class DefaultKeyConvertorParser implements KeyConvertorParser {
     @Override
     public Function<Object, Object> parseKeyConvertor(String convertor) {
-        if (convertor == null) {
+        if (Objects.isNull(convertor)) {
             return null;
         }
         if (KeyConvertor.GSON.equalsIgnoreCase(convertor)) {
             return GsonKeyConvertor.INSTANCE;
-        } else if (KeyConvertor.FASTJSON2.equalsIgnoreCase(convertor)) {
-            return Fastjson2KeyConvertor.INSTANCE;
         } else if (KeyConvertor.JACKSON.equalsIgnoreCase(convertor)) {
             return JacksonKeyConvertor.INSTANCE;
         } else if (KeyConvertor.NONE.equalsIgnoreCase(convertor)) {

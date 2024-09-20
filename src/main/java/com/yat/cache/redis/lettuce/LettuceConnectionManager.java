@@ -1,7 +1,7 @@
 package com.yat.cache.redis.lettuce;
 
-import com.yat.cache.core.CacheConfigException;
-import com.yat.cache.core.CacheException;
+import com.yat.cache.core.exception.CacheConfigException;
+import com.yat.cache.core.exception.CacheException;
 import io.lettuce.core.AbstractRedisClient;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulConnection;

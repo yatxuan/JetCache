@@ -3,6 +3,7 @@
  */
 package com.yat.cache.core.support;
 
+import com.yat.cache.core.support.encoders.JavaValueDecoder;
 import org.springframework.core.ConfigurableObjectInputStream;
 
 import java.io.ByteArrayInputStream;

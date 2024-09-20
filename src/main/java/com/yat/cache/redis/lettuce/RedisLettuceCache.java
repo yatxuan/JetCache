@@ -1,7 +1,7 @@
 package com.yat.cache.redis.lettuce;
 
 import com.yat.cache.core.CacheConfig;
-import com.yat.cache.core.CacheConfigException;
+import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.CacheGetResult;
 import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.CacheResultCode;
@@ -203,11 +203,6 @@ public class RedisLettuceCache<K, V> extends AbstractExternalCache<K, V> {
         }
     }
 
-    private void setTimeout(CacheResult cr) {
-        Duration d = Duration.ofMillis(config.getAsyncResultTimeoutInMillis());
-        cr.setTimeout(d);
-    }
-
     @Override
     protected CacheResult do_PUT_ALL(Map<? extends K, ? extends V> map, long expireAfterWrite, TimeUnit timeUnit) {
         try {
@@ -314,5 +309,10 @@ public class RedisLettuceCache<K, V> extends AbstractExternalCache<K, V> {
             logError("PUT_IF_ABSENT", key, ex);
             return new CacheResult(ex);
         }
+    }
+
+    private void setTimeout(CacheResult cr) {
+        Duration d = Duration.ofMillis(config.getAsyncResultTimeoutInMillis());
+        cr.setTimeout(d);
     }
 }

@@ -1,13 +1,13 @@
 package com.yat.cache.anno.support;
 
 import com.yat.cache.anno.api.SerialPolicy;
-import com.yat.cache.core.CacheConfigException;
-import com.yat.cache.core.support.JavaValueDecoder;
-import com.yat.cache.core.support.JavaValueEncoder;
-import com.yat.cache.core.support.Kryo5ValueDecoder;
-import com.yat.cache.core.support.Kryo5ValueEncoder;
-import com.yat.cache.core.support.KryoValueDecoder;
-import com.yat.cache.core.support.KryoValueEncoder;
+import com.yat.cache.core.exception.CacheConfigException;
+import com.yat.cache.core.support.encoders.JavaValueDecoder;
+import com.yat.cache.core.support.encoders.JavaValueEncoder;
+import com.yat.cache.core.support.encoders.Kryo5ValueDecoder;
+import com.yat.cache.core.support.encoders.Kryo5ValueEncoder;
+import com.yat.cache.core.support.encoders.KryoValueDecoder;
+import com.yat.cache.core.support.encoders.KryoValueEncoder;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -80,9 +80,7 @@ public class DefaultEncoderParser implements EncoderParser {
             return javaValueDecoder(useIdentityNumber);
         } else if (SerialPolicy.KRYO5.equalsIgnoreCase(valueDecoder)) {
             return new Kryo5ValueDecoder(useIdentityNumber);
-        }/* else if (SerialPolicy.FASTJSON2.equalsIgnoreCase(valueDecoder)) {
-            return new Kryo5ValueDecoder(useIdentityNumber);
-        }*/ else {
+        }  else {
             throw new CacheConfigException("not supported:" + valueDecoder);
         }
     }

@@ -1,7 +1,7 @@
 package com.yat.cache.core.support;
 
 import com.yat.cache.core.Cache;
-import com.yat.cache.core.CacheConfigException;
+import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.CacheManager;
 import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.CacheUtil;

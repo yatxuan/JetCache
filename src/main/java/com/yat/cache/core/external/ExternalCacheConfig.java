@@ -2,7 +2,7 @@ package com.yat.cache.core.external;
 
 import com.yat.cache.core.CacheConfig;
 import com.yat.cache.core.support.DecoderMap;
-import com.yat.cache.core.support.JavaValueEncoder;
+import com.yat.cache.core.support.encoders.JavaValueEncoder;
 
 import java.util.function.Function;
 import java.util.function.Supplier;

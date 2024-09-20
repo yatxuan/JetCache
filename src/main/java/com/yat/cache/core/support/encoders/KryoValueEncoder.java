@@ -1,9 +1,11 @@
-package com.yat.cache.core.support;
+package com.yat.cache.core.support.encoders;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.CompatibleFieldSerializer;
 import com.yat.cache.anno.api.SerialPolicy;
+import com.yat.cache.core.exception.CacheEncodeException;
+import com.yat.cache.core.support.ObjectPool;
 
 /**
  * Created on 2016/10/4.

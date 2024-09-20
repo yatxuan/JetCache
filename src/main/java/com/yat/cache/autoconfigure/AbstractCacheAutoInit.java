@@ -76,7 +76,7 @@ public abstract class AbstractCacheAutoInit implements InitializingBean {
 
     protected void parseGeneralConfig(CacheBuilder builder, ConfigTree ct) {
         AbstractCacheBuilder acb = (AbstractCacheBuilder) builder;
-        acb.keyConvertor(new ParserFunction(ct.getProperty("keyConvertor", KeyConvertor.FASTJSON2)));
+        acb.keyConvertor(new ParserFunction(ct.getProperty("keyConvertor", KeyConvertor.GSON)));
 
         String expireAfterWriteInMillis = ct.getProperty("expireAfterWriteInMillis");
         if (expireAfterWriteInMillis == null) {

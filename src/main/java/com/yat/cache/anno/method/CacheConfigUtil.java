@@ -15,7 +15,7 @@ import com.yat.cache.anno.support.CacheInvalidateAnnoConfig;
 import com.yat.cache.anno.support.CacheUpdateAnnoConfig;
 import com.yat.cache.anno.support.CachedAnnoConfig;
 import com.yat.cache.anno.support.PenetrationProtectConfig;
-import com.yat.cache.core.CacheConfigException;
+import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.RefreshPolicy;
 
 import java.lang.reflect.Method;

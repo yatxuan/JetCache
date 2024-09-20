@@ -8,6 +8,7 @@ import com.yat.cache.core.event.CachePutAllEvent;
 import com.yat.cache.core.event.CachePutEvent;
 import com.yat.cache.core.event.CacheRemoveAllEvent;
 import com.yat.cache.core.event.CacheRemoveEvent;
+import com.yat.cache.core.exception.CacheException;
 import com.yat.cache.core.external.AbstractExternalCache;
 import com.yat.cache.core.support.SquashedLogger;
 import org.slf4j.Logger;

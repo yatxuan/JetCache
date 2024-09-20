@@ -1,6 +1,6 @@
 package com.yat.cache.redis.lettuce;
 
-import com.yat.cache.core.CacheConfigException;
+import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.CacheManager;
 import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.CacheResultCode;

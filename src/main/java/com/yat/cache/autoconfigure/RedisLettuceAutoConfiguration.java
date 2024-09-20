@@ -2,7 +2,7 @@ package com.yat.cache.autoconfigure;
 
 import com.yat.cache.anno.api.CacheConsts;
 import com.yat.cache.core.CacheBuilder;
-import com.yat.cache.core.CacheConfigException;
+import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.external.ExternalCacheBuilder;
 import com.yat.cache.redis.lettuce.JetCacheCodec;
 import com.yat.cache.redis.lettuce.LettuceConnectionManager;

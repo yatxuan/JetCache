@@ -2,6 +2,7 @@ package com.yat.cache.core;
 
 import com.yat.cache.anno.api.CacheType;
 import com.yat.cache.core.embedded.EmbeddedCacheBuilder;
+import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.external.ExternalCacheBuilder;
 import com.yat.cache.core.support.BroadcastManager;
 import com.yat.cache.core.template.CacheBuilderTemplate;

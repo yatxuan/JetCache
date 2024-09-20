@@ -1,5 +1,7 @@
 package com.yat.cache.core;
 
+import com.yat.cache.core.exception.CacheInvokeException;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;

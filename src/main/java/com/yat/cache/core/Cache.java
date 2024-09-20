@@ -1,5 +1,6 @@
 package com.yat.cache.core;
 
+import com.yat.cache.core.exception.CacheInvokeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

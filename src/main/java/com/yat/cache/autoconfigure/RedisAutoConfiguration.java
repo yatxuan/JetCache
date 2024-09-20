@@ -2,7 +2,7 @@
 //
 //
 // import com.yat.cache.core.CacheBuilder;
-// import com.yat.cache.core.CacheConfigException;
+// import com.yat.cache.core.exception.CacheConfigException;
 // import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 // import org.springframework.beans.PropertyValues;
 // import org.springframework.beans.factory.annotation.Autowired;

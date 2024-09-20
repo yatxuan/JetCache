@@ -1,7 +1,7 @@
 package com.yat.cache.anno.support;
 
 import com.yat.cache.anno.api.SerialPolicy;
-import com.yat.cache.core.support.JavaValueDecoder;
+import com.yat.cache.core.support.encoders.JavaValueDecoder;
 import com.yat.cache.core.support.SpringJavaValueDecoder;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
