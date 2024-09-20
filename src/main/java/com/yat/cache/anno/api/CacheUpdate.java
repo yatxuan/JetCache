@@ -9,9 +9,10 @@ import java.lang.annotation.Target;
 /**
  * ClassName CacheUpdate
  * <p>Description 用于配置缓存更新操作</p>
- *<p>
+ * <p>
  *     todo 重命名 JetCacheUpdate
- *</p>
+ * </p>
+ *
  * @author Yat
  * Date 2024/8/22 09:54
  * version 1.0

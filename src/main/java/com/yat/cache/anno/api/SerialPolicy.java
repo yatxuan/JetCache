@@ -27,8 +27,8 @@ public interface SerialPolicy extends Identity {
      * fastjson2 encoder/decoder is implemented but not register by default.
      * This is because json is not good serializable util for java and has many compatible problems.
      *
-     * @see com.alicp.jetcache.anno.support.DefaultEncoderParser
-     * @see com.alicp.jetcache.support.DecoderMap
+     * @see com.yat.cache.anno.support.DefaultEncoderParser
+     * @see com.yat.cache.core.support.DecoderMap
      * @since 2.7
      */
     @Deprecated
