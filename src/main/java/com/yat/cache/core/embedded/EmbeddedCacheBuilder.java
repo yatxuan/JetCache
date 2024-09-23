@@ -1,16 +1,18 @@
 package com.yat.cache.core.embedded;
 
 import com.yat.cache.core.AbstractCacheBuilder;
+import lombok.NoArgsConstructor;
 
 /**
- * Created on 16/9/7.
+ * ClassName EmbeddedCacheBuilder
+ * <p>Description 缓存构建器:用于构建缓存配置</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 11:39
+ * version 1.0
  */
+@NoArgsConstructor
 public class EmbeddedCacheBuilder<T extends EmbeddedCacheBuilder<T>> extends AbstractCacheBuilder<T> {
-
-    public EmbeddedCacheBuilder() {
-    }
 
     public T limit(int limit) {
         getConfig().setLimit(limit);
@@ -20,7 +22,7 @@ public class EmbeddedCacheBuilder<T extends EmbeddedCacheBuilder<T>> extends Abs
     @Override
     public EmbeddedCacheConfig getConfig() {
         if (config == null) {
-            config = new EmbeddedCacheConfig();
+            config = new EmbeddedCacheConfig<>();
         }
         return (EmbeddedCacheConfig) config;
     }

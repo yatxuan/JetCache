@@ -19,6 +19,7 @@ import java.util.function.Function;
  * version 1.0
  */
 public class QuickConfig {
+
     /**
      * 如果在配置中配置了多个缓存区域，在这里指定使用哪个区域
      */

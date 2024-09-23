@@ -2,6 +2,7 @@ package com.yat.cache.anno.support;
 
 import com.yat.cache.core.CacheBuilder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Map;
@@ -16,7 +17,9 @@ import java.util.Map;
  */
 @Setter
 @Getter
+@NoArgsConstructor
 public class GlobalCacheConfig {
+
     /**
      * {@link com.yat.cache.anno.api.Cached}  自动生成name的时候，
      * 为了不让name太长，hiddenPackages指定的包名前缀被截掉
@@ -31,8 +34,8 @@ public class GlobalCacheConfig {
      * <p>
      * remove in the future.
      */
-    @Deprecated
-    private boolean areaInCacheName = false;
+    // @Deprecated
+    private Boolean areaInCacheName = false;
     /**
      * 是否启用缓存穿透保护，默认为false
      * 缓存穿透保护机制可以防止针对不存在的键的查询对后端系统的冲击
@@ -56,7 +59,5 @@ public class GlobalCacheConfig {
      */
     protected int statIntervalMinutes;
 
-    public GlobalCacheConfig() {
-    }
 
 }

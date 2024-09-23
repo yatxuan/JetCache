@@ -3,6 +3,7 @@
  */
 package com.yat.cache.anno.support;
 
+import com.yat.cache.autoconfigure.constants.BeanNameConstant;
 import com.yat.cache.core.SimpleCacheManager;
 import com.yat.cache.core.support.StatInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class JetCacheBaseBeans {
         return new SpringConfigProvider();
     }
 
-    @Bean(name = "jcCacheManager", destroyMethod = "close")
+    @Bean(name = BeanNameConstant.JC_CACHE_MANAGER_NAME, destroyMethod = "close")
     public SimpleCacheManager cacheManager(@Autowired ConfigProvider configProvider) {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
         cacheManager.setCacheBuilderTemplate(configProvider.getCacheBuilderTemplate());

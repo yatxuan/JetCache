@@ -32,7 +32,7 @@ public class JetCacheProperties {
     /**
      * 是否添加区域名称 作为缓存key的前缀，默认为true
      */
-    private boolean areaInCacheName = true;
+    private Boolean areaInCacheName = true;
     /**
      * 是否启用缓存穿透保护，默认为false
      * 缓存穿透保护机制可以防止针对不存在的键的查询对后端系统的冲击

@@ -41,6 +41,7 @@ public class AbstractLifecycle {
      */
     protected void doInit() {
     }
+
     /**
      * 关闭方法，确保在初始化后且未关闭的情况下只被调用一次。
      */
@@ -56,6 +57,7 @@ public class AbstractLifecycle {
             reentrantLock.unlock();
         }
     }
+
     /**
      * 执行实际的关闭逻辑。
      */

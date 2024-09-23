@@ -2,141 +2,92 @@ package com.yat.cache.anno.support;
 
 import com.yat.cache.anno.api.CacheType;
 import com.yat.cache.core.RefreshPolicy;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
- * @author huangli
+ * ClassName CachedAnnoConfig
+ * <p>Description 注解缓存配置</p>
+ *
+ * @author Yat
+ * Date 2024/8/20 11:25
+ * version 1.0
  */
+@Setter
+@Getter
 public class CachedAnnoConfig extends CacheAnnoConfig {
-
+    /**
+     * 是否启用缓存
+     */
     private boolean enabled;
+    /**
+     * 指定expire的单位
+     */
     private TimeUnit timeUnit;
+    /**
+     * 超时时间。如果注解上没有定义，会使用全局配置，如果此时全局配置也没有定义，则为无穷大
+     */
     private long expire;
+    /**
+     * 仅当 {@link #cacheType} 为 {@link CacheType#BOTH} 时适用，
+     * 为内存中的Cache指定一个不一样的超时时间，通常应该小于expire
+     */
     private long localExpire;
+    /**
+     * 缓存的类型，包括 {@link CacheType#REMOTE}、{@link CacheType#LOCAL}、{@link CacheType#BOTH}。
+     * 如果定义为BOTH，会使用LOCAL和REMOTE组合成两级缓存
+     */
     private CacheType cacheType;
+    /**
+     * 是否同步更新本地缓存，默认异步。
+     */
     private boolean syncLocal;
+    /**
+     * 如果cacheType为LOCAL或BOTH，这个参数指定本地缓存的最大元素数量，以控制内存占用。
+     * 如果注解上没有定义，会使用全局配置，
+     * 如果此时全局配置也没有定义，则为100
+     */
     private int localLimit;
+    /**
+     * 是否缓存空值，如果注解上没有定义，会使用全局配置，
+     */
     private boolean cacheNullValue;
+    /**
+     * 指定远程缓存的序列化方式。
+     * 可选值为 JAVA、KRYO、 KRYO5、GSON
+     * 如果注解上没有定义，会使用全局配置，
+     * 如果此时全局配置也没有定义，则为 JAVA
+     */
     private String serialPolicy;
+    /**
+     * 指定KEY的转换方式，用于将复杂的KEY类型转换为缓存实现可以接受的类型，
+     * 当前支持 GSON、JACKSON、NONE
+     * NONE表示不转换，
+     * GSON可以将复杂对象KEY转换成String。
+     * 如果注解上没有定义，会使用全局配置。
+     */
     private String keyConvertor;
+    /**
+     * 使用SpEL表达式指定条件，表达式返回true时更新缓存。评估在方法执行后进行。
+     * <p></p>
+     * <a href="https://docs.spring.io/spring-framework/docs/4.2.x/spring-framework-reference/html/expressions.html">SpEL</a>
+     */
     private String postCondition;
-
+    /**
+     * Post condition评估器，用于评估postCondition表达式。
+     */
     private Function<Object, Boolean> postConditionEvaluator;
+    /**
+     * 缓存刷新策略。
+     */
     private RefreshPolicy refreshPolicy;
+    /**
+     * 穿透保护配置。
+     */
     private PenetrationProtectConfig penetrationProtectConfig;
 
-    public boolean isEnabled() {
-        return enabled;
-    }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public long getExpire() {
-        return expire;
-    }
-
-    public void setExpire(long expire) {
-        this.expire = expire;
-    }
-
-    public CacheType getCacheType() {
-        return cacheType;
-    }
-
-    public void setCacheType(CacheType cacheType) {
-        this.cacheType = cacheType;
-    }
-
-    public int getLocalLimit() {
-        return localLimit;
-    }
-
-    public void setLocalLimit(int localLimit) {
-        this.localLimit = localLimit;
-    }
-
-    public boolean isCacheNullValue() {
-        return cacheNullValue;
-    }
-
-    public void setCacheNullValue(boolean cacheNullValue) {
-        this.cacheNullValue = cacheNullValue;
-    }
-
-    public String getSerialPolicy() {
-        return serialPolicy;
-    }
-
-    public void setSerialPolicy(String serialPolicy) {
-        this.serialPolicy = serialPolicy;
-    }
-
-    public String getKeyConvertor() {
-        return keyConvertor;
-    }
-
-    public void setKeyConvertor(String keyConvertor) {
-        this.keyConvertor = keyConvertor;
-    }
-
-    public TimeUnit getTimeUnit() {
-        return timeUnit;
-    }
-
-    public void setTimeUnit(TimeUnit timeUnit) {
-        this.timeUnit = timeUnit;
-    }
-
-
-    public String getPostCondition() {
-        return postCondition;
-    }
-
-    public void setPostCondition(String postCondition) {
-        this.postCondition = postCondition;
-    }
-
-    public Function<Object, Boolean> getPostConditionEvaluator() {
-        return postConditionEvaluator;
-    }
-
-    public void setPostConditionEvaluator(Function<Object, Boolean> postConditionEvaluator) {
-        this.postConditionEvaluator = postConditionEvaluator;
-    }
-
-    public RefreshPolicy getRefreshPolicy() {
-        return refreshPolicy;
-    }
-
-    public void setRefreshPolicy(RefreshPolicy refreshPolicy) {
-        this.refreshPolicy = refreshPolicy;
-    }
-
-    public PenetrationProtectConfig getPenetrationProtectConfig() {
-        return penetrationProtectConfig;
-    }
-
-    public void setPenetrationProtectConfig(PenetrationProtectConfig penetrationProtectConfig) {
-        this.penetrationProtectConfig = penetrationProtectConfig;
-    }
-
-    public long getLocalExpire() {
-        return localExpire;
-    }
-
-    public void setLocalExpire(long localExpire) {
-        this.localExpire = localExpire;
-    }
-
-    public boolean isSyncLocal() {
-        return syncLocal;
-    }
-
-    public void setSyncLocal(boolean syncLocal) {
-        this.syncLocal = syncLocal;
-    }
 }

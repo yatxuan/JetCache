@@ -5,6 +5,7 @@ import com.yat.cache.anno.support.GlobalCacheConfig;
 import com.yat.cache.anno.support.JetCacheBaseBeans;
 import com.yat.cache.anno.support.KeyConvertorParser;
 import com.yat.cache.anno.support.SpringConfigProvider;
+import com.yat.cache.autoconfigure.constants.BeanNameConstant;
 import com.yat.cache.core.SimpleCacheManager;
 import com.yat.cache.core.support.StatInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,26 +20,26 @@ import org.springframework.context.annotation.Import;
 import java.util.function.Consumer;
 
 /**
- * Created on 2016/11/17.
+ * ClassName JetCacheAutoConfiguration
+ * <p>Description JetCacheAutoConfiguration</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/9/23 10:38
+ * version 1.0
  */
 @Configuration
 @ConditionalOnClass(GlobalCacheConfig.class)
 @ConditionalOnMissingBean(GlobalCacheConfig.class)
 @EnableConfigurationProperties(JetCacheProperties.class)
 @Import({
-        // RedisAutoConfiguration.class,
         CaffeineAutoConfiguration.class,
         MockRemoteCacheAutoConfiguration.class,
         LinkedHashMapAutoConfiguration.class,
         RedisLettuceAutoConfiguration.class,
         RedisSpringDataAutoConfiguration.class
-        // RedissonAutoConfiguration.class
 })
 public class JetCacheAutoConfiguration {
 
-    public static final String GLOBAL_CACHE_CONFIG_NAME = "globalCacheConfig";
 
     @Bean(destroyMethod = "shutdown")
     @ConditionalOnMissingBean
@@ -52,7 +53,7 @@ public class JetCacheAutoConfiguration {
                 encoderParser, keyConvertorParser, metricsCallback);
     }
 
-    @Bean(name = "jcCacheManager", destroyMethod = "close")
+    @Bean(name = BeanNameConstant.JC_CACHE_MANAGER_NAME, destroyMethod = "close")
     @ConditionalOnMissingBean
     public SimpleCacheManager cacheManager(@Autowired SpringConfigProvider springConfigProvider) {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
@@ -66,12 +67,12 @@ public class JetCacheAutoConfiguration {
         return new AutoConfigureBeans();
     }
 
-    @Bean(name = GLOBAL_CACHE_CONFIG_NAME)
+    @Bean(name = BeanNameConstant.GLOBAL_CACHE_CONFIG_NAME)
     public GlobalCacheConfig globalCacheConfig(AutoConfigureBeans autoConfigureBeans, JetCacheProperties props) {
         GlobalCacheConfig _globalCacheConfig = new GlobalCacheConfig();
         _globalCacheConfig.setHiddenPackages(props.getHiddenPackages());
         _globalCacheConfig.setStatIntervalMinutes(props.getStatIntervalMinutes());
-        _globalCacheConfig.setAreaInCacheName(props.isAreaInCacheName());
+        _globalCacheConfig.setAreaInCacheName(props.getAreaInCacheName());
         _globalCacheConfig.setPenetrationProtect(props.isPenetrationProtect());
         _globalCacheConfig.setEnableMethodCache(props.isEnableMethodCache());
         _globalCacheConfig.setLocalCacheBuilders(autoConfigureBeans.getLocalCacheBuilders());

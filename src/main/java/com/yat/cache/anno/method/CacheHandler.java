@@ -247,8 +247,8 @@ public class CacheHandler implements InvocationHandler {
                 logger.error("JetCache @CacheInvalidate key is not instance of Iterable or array: {}", annoConfig.getDefineMethod());
                 return;
             }
-            Set keys = new HashSet();
-            it.forEach(k -> keys.add(k));
+            Set keys = new HashSet<>();
+            it.forEach(keys::add);
             cache.removeAll(keys);
         } else {
             cache.remove(key);

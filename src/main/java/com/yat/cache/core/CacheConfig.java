@@ -21,6 +21,7 @@ import java.util.function.Function;
 @Setter
 @Getter
 public class CacheConfig<K, V> implements Cloneable {
+
     /**
      * 写入后过期时间（毫秒），默认为 DEFAULT_EXPIRE * 1000 毫秒。
      */
