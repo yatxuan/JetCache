@@ -125,7 +125,7 @@ public class DefaultCacheMonitor implements CacheMonitor {
             case EXISTS:
                 break;
             default:
-                logger.warn("jetcache PUT return unexpected code: " + result.getResultCode());
+                logger.warn("JetCache PUT return unexpected code: {}", result.getResultCode());
         }
     }
 
@@ -144,7 +144,7 @@ public class DefaultCacheMonitor implements CacheMonitor {
                 cacheStat.removeFailCount++;
                 break;
             default:
-                logger.warn("jetcache REMOVE return unexpected code: " + result.getResultCode());
+                logger.warn("JetCache REMOVE return unexpected code: {}", result.getResultCode());
         }
     }
 
@@ -228,7 +228,7 @@ public class DefaultCacheMonitor implements CacheMonitor {
         }
     }
 
-    private void parseSingleGet(CacheGetResult result) {
+    private void parseSingleGet(CacheGetResult<?> result) {
         switch (result.getResultCode()) {
             case SUCCESS:
                 cacheStat.getHitCount++;
@@ -243,7 +243,7 @@ public class DefaultCacheMonitor implements CacheMonitor {
                 cacheStat.getFailCount++;
                 break;
             default:
-                logger.warn("jetcache get return unexpected code: " + result.getResultCode());
+                logger.warn("JetCache get return unexpected code: {}", result.getResultCode());
         }
     }
 

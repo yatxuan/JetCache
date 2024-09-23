@@ -47,7 +47,7 @@ public class DefaultMetricsManager {
 
                 metricsCallback.accept(statInfo);
             } catch (Exception e) {
-                logger.error("jetcache DefaultMetricsManager error", e);
+                logger.error("JetCache DefaultMetricsManager error", e);
             }
         }
     };

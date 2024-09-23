@@ -1,16 +1,23 @@
 package com.yat.cache.autoconfigure;
 
 import com.yat.cache.core.CacheBuilder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created on 2016/12/28.
+ * ClassName AutoConfigureBeans
+ * <p>Description 自动配置缓存 bean</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 22:09
+ * version 1.0
  */
+@Setter
+@Getter
 public class AutoConfigureBeans {
 
     private Map<String, CacheBuilder> localCacheBuilders = new HashMap<>();
@@ -19,27 +26,4 @@ public class AutoConfigureBeans {
 
     private Map<String, Object> customContainer = Collections.synchronizedMap(new HashMap<>());
 
-    public Map<String, CacheBuilder> getLocalCacheBuilders() {
-        return localCacheBuilders;
-    }
-
-    public void setLocalCacheBuilders(Map<String, CacheBuilder> localCacheBuilders) {
-        this.localCacheBuilders = localCacheBuilders;
-    }
-
-    public Map<String, CacheBuilder> getRemoteCacheBuilders() {
-        return remoteCacheBuilders;
-    }
-
-    public void setRemoteCacheBuilders(Map<String, CacheBuilder> remoteCacheBuilders) {
-        this.remoteCacheBuilders = remoteCacheBuilders;
-    }
-
-    public Map<String, Object> getCustomContainer() {
-        return customContainer;
-    }
-
-    public void setCustomContainer(Map<String, Object> customContainer) {
-        this.customContainer = customContainer;
-    }
 }

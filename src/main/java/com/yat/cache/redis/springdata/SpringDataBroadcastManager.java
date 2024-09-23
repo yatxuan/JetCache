@@ -1,8 +1,8 @@
 package com.yat.cache.redis.springdata;
 
-import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.CacheManager;
 import com.yat.cache.core.CacheResult;
+import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.support.BroadcastManager;
 import com.yat.cache.core.support.CacheMessage;
 import com.yat.cache.core.support.SquashedLogger;
@@ -17,6 +17,7 @@ import org.springframework.data.redis.listener.Topic;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
 
 /**
  * @author huangli
@@ -25,13 +26,13 @@ public class SpringDataBroadcastManager extends BroadcastManager {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringDataBroadcastManager.class);
 
-    private final RedisSpringDataCacheConfig config;
+    private final RedisSpringDataCacheConfig<Object, byte[]> config;
     private final MessageListener listener = this::onMessage;
     private final byte[] channel;
     private final ReentrantLock reentrantLock = new ReentrantLock();
     private volatile RedisMessageListenerContainer listenerContainer;
 
-    public SpringDataBroadcastManager(CacheManager cacheManager, RedisSpringDataCacheConfig config) {
+    public SpringDataBroadcastManager(CacheManager cacheManager, RedisSpringDataCacheConfig<Object, byte[]> config) {
         super(cacheManager);
         this.config = config;
         checkConfig(config);
@@ -46,11 +47,12 @@ public class SpringDataBroadcastManager extends BroadcastManager {
         RedisConnection con = null;
         try {
             con = config.getConnectionFactory().getConnection();
-            byte[] body = (byte[]) config.getValueEncoder().apply(cacheMessage);
+            Function<Object, byte[]> valueEncoder = config.getValueEncoder();
+            byte[] body = valueEncoder.apply(cacheMessage);
             con.publish(channel, body);
             return CacheResult.SUCCESS_WITHOUT_MSG;
         } catch (Exception ex) {
-            SquashedLogger.getLogger(logger).error("jetcache publish error", ex);
+            SquashedLogger.getLogger(logger).error("JetCache publish error", ex);
             return new CacheResult(ex);
         } finally {
             if (con != null) {
@@ -82,7 +84,7 @@ public class SpringDataBroadcastManager extends BroadcastManager {
                 this.listenerContainer = config.getListenerContainer();
             }
             this.listenerContainer.addMessageListener(listener, topic);
-            logger.info("subscribe jetcache invalidate notification. channel={}", config.getBroadcastChannel());
+            logger.info("subscribe JetCache invalidate notification. channel={}", config.getBroadcastChannel());
         }finally {
             reentrantLock.unlock();
         }

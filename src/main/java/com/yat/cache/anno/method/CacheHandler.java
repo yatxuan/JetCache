@@ -10,10 +10,10 @@ import com.yat.cache.anno.support.CachedAnnoConfig;
 import com.yat.cache.anno.support.ConfigMap;
 import com.yat.cache.core.AbstractCache;
 import com.yat.cache.core.Cache;
-import com.yat.cache.core.exception.CacheInvokeException;
 import com.yat.cache.core.CacheLoader;
 import com.yat.cache.core.ProxyCache;
 import com.yat.cache.core.event.CacheLoadEvent;
+import com.yat.cache.core.exception.CacheInvokeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,26 +198,26 @@ public class CacheHandler implements InvocationHandler {
             if (value == null) {
                 return;
             }
-            Iterable keyIt = toIterable(key);
-            Iterable valueIt = toIterable(value);
+            Iterable<Object> keyIt = toIterable(key);
+            Iterable<Object> valueIt = toIterable(value);
             if (keyIt == null) {
-                logger.error("jetcache @CacheUpdate key is not instance of Iterable or array: " + updateAnnoConfig.getDefineMethod());
+                logger.error("JetCache @CacheUpdate key is not instance of Iterable or array: {}", updateAnnoConfig.getDefineMethod());
                 return;
             }
             if (valueIt == null) {
-                logger.error("jetcache @CacheUpdate value is not instance of Iterable or array: " + updateAnnoConfig.getDefineMethod());
+                logger.error("JetCache @CacheUpdate value is not instance of Iterable or array: {}", updateAnnoConfig.getDefineMethod());
                 return;
             }
 
-            List keyList = new ArrayList();
-            List valueList = new ArrayList();
-            keyIt.forEach(o -> keyList.add(o));
-            valueIt.forEach(o -> valueList.add(o));
+            List<Object> keyList = new ArrayList<>();
+            List<Object> valueList = new ArrayList<>();
+            keyIt.forEach(keyList::add);
+            valueIt.forEach(valueList::add);
             if (keyList.size() != valueList.size()) {
-                logger.error("jetcache @CacheUpdate key size not equals with value size: " + updateAnnoConfig.getDefineMethod());
+                logger.error("JetCache @CacheUpdate key size not equals with value size: {}", updateAnnoConfig.getDefineMethod());
                 return;
             } else {
-                Map m = new HashMap();
+                Map<Object,Object> m = new HashMap<>();
                 for (int i = 0; i < valueList.size(); i++) {
                     m.put(keyList.get(i), valueList.get(i));
                 }
@@ -244,7 +244,7 @@ public class CacheHandler implements InvocationHandler {
         if (annoConfig.isMulti()) {
             Iterable it = toIterable(key);
             if (it == null) {
-                logger.error("jetcache @CacheInvalidate key is not instance of Iterable or array: " + annoConfig.getDefineMethod());
+                logger.error("JetCache @CacheInvalidate key is not instance of Iterable or array: {}", annoConfig.getDefineMethod());
                 return;
             }
             Set keys = new HashSet();
@@ -255,12 +255,12 @@ public class CacheHandler implements InvocationHandler {
         }
     }
 
-    private static Iterable toIterable(Object obj) {
+    private static Iterable<Object> toIterable(Object obj) {
         if (obj.getClass().isArray()) {
             if (obj instanceof Object[]) {
                 return Arrays.asList((Object[]) obj);
             } else {
-                List list = new ArrayList();
+                List<Object> list = new ArrayList<>();
                 int len = Array.getLength(obj);
                 for (int i = 0; i < len; i++) {
                     list.add(Array.get(obj, i));

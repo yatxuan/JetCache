@@ -24,7 +24,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class AbstractCacheAutoInit implements InitializingBean {
 
-    private static Logger logger = LoggerFactory.getLogger(AbstractCacheAutoInit.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractCacheAutoInit.class);
     private final ReentrantLock reentrantLock = new ReentrantLock();
     private volatile boolean inited = false;
     @Autowired

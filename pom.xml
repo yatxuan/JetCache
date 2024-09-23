@@ -50,6 +50,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -60,6 +61,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -143,7 +145,7 @@
                             <goal>effective-pom</goal>
                         </goals>
                         <configuration>
-                            <output>${project.build.directory}/effective-pom/jetcache-bom.xml</output>
+                            <output>${project.build.directory}/effective-pom/jetCache-bom.xml</output>
                         </configuration>
                     </execution>
                 </executions>
@@ -162,7 +164,7 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>${project.build.directory}/effective-pom/jetcache-bom.xml</file>
+                                    <file>${project.build.directory}/effective-pom/jetCache-bom.xml</file>
                                     <type>effective-pom</type>
                                 </artifact>
                             </artifacts>

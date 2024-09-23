@@ -1,10 +1,10 @@
 package com.yat.cache.redis.lettuce;
 
-import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.CacheManager;
 import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.CacheResultCode;
 import com.yat.cache.core.ResultData;
+import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.support.BroadcastManager;
 import com.yat.cache.core.support.CacheMessage;
 import com.yat.cache.core.support.JetCacheExecutor;
@@ -57,14 +57,14 @@ public class LettuceBroadcastManager extends BroadcastManager {
             return new CacheResult(future.handle((rt, ex) -> {
                 if (ex != null) {
                     JetCacheExecutor.defaultExecutor().execute(() ->
-                            SquashedLogger.getLogger(logger).error("jetcache publish error", ex));
+                            SquashedLogger.getLogger(logger).error("JetCache publish error", ex));
                     return new ResultData(ex);
                 } else {
                     return new ResultData(CacheResultCode.SUCCESS, null, null);
                 }
             }));
         } catch (Exception ex) {
-            SquashedLogger.getLogger(logger).error("jetcache publish error", ex);
+            SquashedLogger.getLogger(logger).error("JetCache publish error", ex);
             return new CacheResult(ex);
         }
     }
