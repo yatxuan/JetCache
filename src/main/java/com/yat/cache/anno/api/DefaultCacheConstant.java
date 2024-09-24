@@ -5,15 +5,12 @@ import java.time.Duration;
 /**
  * 默认缓存常量，定义了通用的缓存配置和标识常量。
  * 这些常量用于在缓存系统中提供统一的默认配置，包括缓存区域、缓存策略、以及异步操作的默认行为。
- * <p>
- *     todo 重命名 为 CacheConstant
- * </p>
  *
  * @author Yat
  * Date 2024/8/22 09:28
  * version 1.0
  */
-public interface CacheConsts {
+public interface DefaultCacheConstant {
 
     /**
      * 默认的缓存区域名称。

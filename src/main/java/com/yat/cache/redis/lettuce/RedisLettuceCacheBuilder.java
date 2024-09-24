@@ -36,7 +36,7 @@ public class RedisLettuceCacheBuilder<T extends ExternalCacheBuilder<T>> extends
         return (RedisLettuceCacheConfig) config;
     }
 
-    public T redisClient(AbstractRedisClient redisClient){
+    public T redisClient(AbstractRedisClient redisClient) {
         getConfig().setRedisClient(redisClient);
         return self();
     }

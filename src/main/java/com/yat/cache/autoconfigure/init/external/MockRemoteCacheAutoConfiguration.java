@@ -1,6 +1,9 @@
-package com.yat.cache.autoconfigure;
+package com.yat.cache.autoconfigure.init.external;
 
-import com.yat.cache.anno.api.CacheConsts;
+import com.yat.cache.anno.api.DefaultCacheConstant;
+import com.yat.cache.autoconfigure.JetCacheCondition;
+import com.yat.cache.autoconfigure.properties.BaseCacheProperties;
+import com.yat.cache.autoconfigure.properties.enums.RemoteCacheTypeEnum;
 import com.yat.cache.core.CacheBuilder;
 import com.yat.cache.core.external.MockRemoteCacheBuilder;
 import org.springframework.context.annotation.Conditional;
@@ -14,22 +17,27 @@ import org.springframework.stereotype.Component;
 @Component
 @Conditional(MockRemoteCacheAutoConfiguration.MockRemoteCacheCondition.class)
 public class MockRemoteCacheAutoConfiguration extends ExternalCacheAutoInit {
+
     public MockRemoteCacheAutoConfiguration() {
-        super("mock");
+        super(RemoteCacheTypeEnum.MOCK.getUpperName());
     }
 
     @Override
-    protected CacheBuilder initCache(ConfigTree ct, String cacheAreaWithPrefix) {
+    protected CacheBuilder initCache(BaseCacheProperties cacheProperties, String cacheAreaWithPrefix) {
         MockRemoteCacheBuilder builder = MockRemoteCacheBuilder.createMockRemoteCacheBuilder();
-        parseGeneralConfig(builder, ct);
+        parseGeneralConfig(builder, cacheProperties);
         return builder;
     }
 
     @Override
-    protected void parseGeneralConfig(CacheBuilder builder, ConfigTree ct) {
-        super.parseGeneralConfig(builder, ct);
+    protected void parseGeneralConfig(CacheBuilder builder, BaseCacheProperties properties) {
+        super.parseGeneralConfig(builder, properties);
         MockRemoteCacheBuilder b = (MockRemoteCacheBuilder) builder;
-        b.limit(Integer.parseInt(ct.getProperty("limit", String.valueOf(CacheConsts.DEFAULT_LOCAL_LIMIT))));
+        Integer limit = properties.getLimit();
+        if (limit == null) {
+            limit = DefaultCacheConstant.DEFAULT_LOCAL_LIMIT;
+        }
+        b.limit(limit);
     }
 
     public static class MockRemoteCacheCondition extends JetCacheCondition {

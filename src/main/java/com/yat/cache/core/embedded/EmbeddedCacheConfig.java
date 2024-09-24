@@ -1,6 +1,6 @@
 package com.yat.cache.core.embedded;
 
-import com.yat.cache.anno.api.CacheConsts;
+import com.yat.cache.anno.api.DefaultCacheConstant;
 import com.yat.cache.core.CacheConfig;
 
 /**
@@ -9,7 +9,7 @@ import com.yat.cache.core.CacheConfig;
  * @author huangli
  */
 public class EmbeddedCacheConfig<K, V> extends CacheConfig<K, V> {
-    private int limit = CacheConsts.DEFAULT_LOCAL_LIMIT;
+    private int limit = DefaultCacheConstant.DEFAULT_LOCAL_LIMIT;
 
     public int getLimit() {
         return limit;

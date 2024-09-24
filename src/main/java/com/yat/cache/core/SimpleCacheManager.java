@@ -250,6 +250,7 @@ public class SimpleCacheManager implements CacheManager, AutoCloseable {
         EmbeddedCacheBuilder cacheBuilder = (EmbeddedCacheBuilder) cacheBuilderTemplate.getCacheBuilder(
                 0, config.getArea()
         );
+
         // 如果缓存构建器为null，抛出异常
         Assert.notNull(cacheBuilder, () -> new CacheConfigException("no local cache builder: " + config.getArea()));
 

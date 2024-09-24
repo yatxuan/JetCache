@@ -187,6 +187,7 @@ class SpelEvaluator implements Function<Object, Object> {
             parameterNames = parameterNameDiscoverer.getParameterNames(defineMethod);
         }
     }
+
     /**
      * 应用函数，使用给定的根对象评估SpEL表达式。
      *

@@ -1,13 +1,17 @@
 package com.yat.cache.core.embedded;
 
 /**
- * Created on 2016/11/29.
+ * ClassName LinkedHashMapCacheBuilder
+ * <p>Description LinkedHashMap缓存构建器</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 13:22
+ * version 1.0
  */
 public class LinkedHashMapCacheBuilder<T extends EmbeddedCacheBuilder<T>> extends EmbeddedCacheBuilder<T> {
+
     protected LinkedHashMapCacheBuilder() {
-        buildFunc((c) -> new LinkedHashMapCache((EmbeddedCacheConfig) c));
+        buildFunc((c) -> new LinkedHashMapCache<>((EmbeddedCacheConfig) c));
     }
 
     public static LinkedHashMapCacheBuilderImpl createLinkedHashMapCacheBuilder() {

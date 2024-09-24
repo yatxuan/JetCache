@@ -1,7 +1,7 @@
 package com.yat.cache.core.template;
 
-import com.yat.cache.anno.api.CacheConsts;
 import com.yat.cache.anno.api.CacheType;
+import com.yat.cache.anno.api.DefaultCacheConstant;
 import com.yat.cache.core.CacheLoader;
 import com.yat.cache.core.RefreshPolicy;
 import lombok.Getter;
@@ -24,7 +24,7 @@ public class QuickConfig {
      * 如果在配置中配置了多个缓存区域，在这里指定使用哪个区域
      */
     @Getter
-    private String area = CacheConsts.DEFAULT_AREA;
+    private String area = DefaultCacheConstant.DEFAULT_AREA;
     /**
      * 指定缓存的唯一名称，不是必须的，
      * 如果没有指定，会使用类名+方法名。
@@ -122,7 +122,7 @@ public class QuickConfig {
 
     public static class Builder {
         private final String name;
-        private String area = CacheConsts.DEFAULT_AREA;
+        private String area = DefaultCacheConstant.DEFAULT_AREA;
         private Duration expire;
         private Duration localExpire;
         private Integer localLimit;

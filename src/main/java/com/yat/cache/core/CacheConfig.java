@@ -1,6 +1,6 @@
 package com.yat.cache.core;
 
-import com.yat.cache.anno.api.CacheConsts;
+import com.yat.cache.anno.api.DefaultCacheConstant;
 import com.yat.cache.core.exception.CacheException;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +25,7 @@ public class CacheConfig<K, V> implements Cloneable {
     /**
      * 写入后过期时间（毫秒），默认为 DEFAULT_EXPIRE * 1000 毫秒。
      */
-    private long expireAfterWriteInMillis = CacheConsts.DEFAULT_EXPIRE * 1000L;
+    private long expireAfterWriteInMillis = DefaultCacheConstant.DEFAULT_EXPIRE * 1000L;
     /**
      * 访问后过期时间（毫秒），默认为 0。
      */

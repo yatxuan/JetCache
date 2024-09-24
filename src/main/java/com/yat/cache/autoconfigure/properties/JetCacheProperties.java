@@ -1,9 +1,13 @@
-package com.yat.cache.autoconfigure;
+package com.yat.cache.autoconfigure.properties;
 
+import com.yat.cache.anno.api.DefaultCacheConstant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * ClassName JetCacheProperties
@@ -16,7 +20,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ConfigurationProperties(prefix = "jetcache")
+@ConfigurationProperties(prefix = "jet-cache")
 public class JetCacheProperties {
 
     /**
@@ -44,9 +48,12 @@ public class JetCacheProperties {
      */
     private boolean enableMethodCache = true;
 
-    public void setHidePackages(String[] hidePackages) {
-        // keep same with GlobalCacheConfig
-        this.hiddenPackages = hidePackages;
-    }
-
+    /**
+     * 本地缓存的信息 key-缓存区域标识-{@link DefaultCacheConstant#DEFAULT_AREA}
+     */
+    private Map<String, LocalCacheProperties> localCache = new LinkedHashMap<>();
+    /**
+     * 远程缓存的信息 key-缓存区域标识-{@link DefaultCacheConstant#DEFAULT_AREA}
+     */
+    private Map<String, RemoteCacheProperties> remoteCache = new LinkedHashMap<>();
 }

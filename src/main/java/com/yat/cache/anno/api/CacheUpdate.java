@@ -28,7 +28,7 @@ public @interface CacheUpdate {
      *
      * @return 缓存区域的名称
      */
-    String area() default CacheConsts.DEFAULT_AREA;
+    String area() default DefaultCacheConstant.DEFAULT_AREA;
 
     /**
      * 需要更新操作的此缓存实例的名称
@@ -42,7 +42,7 @@ public @interface CacheUpdate {
      *
      * @return 指定键的表达式脚本
      */
-    String key() default CacheConsts.UNDEFINED_STRING;
+    String key() default DefaultCacheConstant.UNDEFINED_STRING;
 
     /**
      * 通过表达式脚本指定缓存值.
@@ -57,7 +57,7 @@ public @interface CacheUpdate {
      *
      * @return 控制缓存操作的条件表达式脚本
      */
-    String condition() default CacheConsts.UNDEFINED_STRING;
+    String condition() default DefaultCacheConstant.UNDEFINED_STRING;
 
     /**
      * 如果评估后的键和值都是数组或实现了 `java.lang.Iterable` 接口的实例，
@@ -65,5 +65,5 @@ public @interface CacheUpdate {
      *
      * @return 是否对可迭代键和值进行批量更新
      */
-    boolean multi() default CacheConsts.DEFAULT_MULTI;
+    boolean multi() default DefaultCacheConstant.DEFAULT_MULTI;
 }

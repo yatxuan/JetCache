@@ -3,21 +3,14 @@ package com.yat.cache.anno.support;
 import java.util.function.Function;
 
 /**
- * Created on 2022/04/06.
+ * ClassName ParserFunction
+ * <p>Description KeyConvertorEnum转换器函数</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/9/23 15:46
+ * version 1.0
  */
-public class ParserFunction implements Function {
-
-    private final String value;
-
-    public ParserFunction(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
+public record ParserFunction(String value) implements Function<Object, Object> {
 
     @Override
     public Object apply(Object t) {

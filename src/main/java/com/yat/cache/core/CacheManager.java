@@ -1,6 +1,6 @@
 package com.yat.cache.core;
 
-import com.yat.cache.anno.api.CacheConsts;
+import com.yat.cache.anno.api.DefaultCacheConstant;
 import com.yat.cache.core.support.BroadcastManager;
 import com.yat.cache.core.template.QuickConfig;
 
@@ -33,7 +33,7 @@ public interface CacheManager {
      * @return 缓存实例
      */
     default <K, V> Cache<K, V> getCache(String cacheName) {
-        return getCache(CacheConsts.DEFAULT_AREA, cacheName);
+        return getCache(DefaultCacheConstant.DEFAULT_AREA, cacheName);
     }
 
     /**
@@ -54,7 +54,7 @@ public interface CacheManager {
      * @param cache     缓存实例
      */
     default void putCache(String cacheName, Cache cache) {
-        putCache(CacheConsts.DEFAULT_AREA, cacheName, cache);
+        putCache(DefaultCacheConstant.DEFAULT_AREA, cacheName, cache);
     }
 
     /**
@@ -83,7 +83,7 @@ public interface CacheManager {
      * @param broadcastManager 广播管理器实例
      */
     default void putBroadcastManager(BroadcastManager broadcastManager) {
-        putBroadcastManager(CacheConsts.DEFAULT_AREA, broadcastManager);
+        putBroadcastManager(DefaultCacheConstant.DEFAULT_AREA, broadcastManager);
     }
 
     /**

@@ -1,9 +1,9 @@
 package com.yat.cache.core.external;
 
-import com.yat.cache.anno.api.CacheConsts;
+import com.yat.cache.anno.api.DefaultCacheConstant;
 
 public class MockRemoteCacheConfig<K, V> extends ExternalCacheConfig<K, V> {
-    private int limit = CacheConsts.DEFAULT_LOCAL_LIMIT;
+    private int limit = DefaultCacheConstant.DEFAULT_LOCAL_LIMIT;
 
     public int getLimit() {
         return limit;

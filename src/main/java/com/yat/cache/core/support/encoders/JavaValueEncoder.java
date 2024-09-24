@@ -18,16 +18,16 @@ public class JavaValueEncoder extends AbstractValueEncoder {
     private static final int INIT_BUF_SIZE = 2048;
     static ObjectPool<ByteArrayOutputStream> bosPool = new ObjectPool<>(16,
             new ObjectPool.ObjectFactory<ByteArrayOutputStream>() {
-        @Override
-        public ByteArrayOutputStream create() {
-            return new ByteArrayOutputStream(INIT_BUF_SIZE);
-        }
+                @Override
+                public ByteArrayOutputStream create() {
+                    return new ByteArrayOutputStream(INIT_BUF_SIZE);
+                }
 
-        @Override
-        public void reset(ByteArrayOutputStream obj) {
-            obj.reset();
-        }
-    });
+                @Override
+                public void reset(ByteArrayOutputStream obj) {
+                    obj.reset();
+                }
+            });
     public static final JavaValueEncoder INSTANCE = new JavaValueEncoder(true);
 
     public JavaValueEncoder(boolean useIdentityNumber) {

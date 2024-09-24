@@ -31,7 +31,7 @@ public @interface CacheInvalidate {
      *
      * @return 缓存区域的名称
      */
-    String area() default CacheConsts.DEFAULT_AREA;
+    String area() default DefaultCacheConstant.DEFAULT_AREA;
 
 
     /**
@@ -47,7 +47,7 @@ public @interface CacheInvalidate {
      *
      * @return 指定键的表达式脚本
      */
-    String key() default CacheConsts.UNDEFINED_STRING;
+    String key() default DefaultCacheConstant.UNDEFINED_STRING;
 
     /**
      * 用于条件控制缓存操作的表达式脚本，当评估结果为 `false` 时，将阻止缓存操作。
@@ -55,7 +55,7 @@ public @interface CacheInvalidate {
      *
      * @return 控制缓存操作的条件表达式脚本
      */
-    String condition() default CacheConsts.UNDEFINED_STRING;
+    String condition() default DefaultCacheConstant.UNDEFINED_STRING;
 
     /**
      * 如果评估后的键是一个数组或实现了 `java.lang.Iterable` 接口的实例，
@@ -63,5 +63,5 @@ public @interface CacheInvalidate {
      *
      * @return 是否对可迭代键中的每个元素进行无效化操作
      */
-    boolean multi() default CacheConsts.DEFAULT_MULTI;
+    boolean multi() default DefaultCacheConstant.DEFAULT_MULTI;
 }

@@ -1,6 +1,6 @@
 package com.yat.cache.core.support;
 
-import com.yat.cache.anno.api.CacheConsts;
+import com.yat.cache.anno.api.DefaultCacheConstant;
 import com.yat.cache.core.AbstractCache;
 import com.yat.cache.core.Cache;
 import com.yat.cache.core.CacheManager;
@@ -26,7 +26,7 @@ public class CacheNotifyMonitor implements CacheMonitor {
     private final String sourceId;
 
     public CacheNotifyMonitor(CacheManager cacheManager, String cacheName) {
-        this(cacheManager, CacheConsts.DEFAULT_AREA, cacheName);
+        this(cacheManager, DefaultCacheConstant.DEFAULT_AREA, cacheName);
     }
 
     public CacheNotifyMonitor(CacheManager cacheManager, String area, String cacheName) {

@@ -85,7 +85,7 @@ public class SpringDataBroadcastManager extends BroadcastManager {
             }
             this.listenerContainer.addMessageListener(listener, topic);
             logger.info("subscribe JetCache invalidate notification. channel={}", config.getBroadcastChannel());
-        }finally {
+        } finally {
             reentrantLock.unlock();
         }
     }
@@ -101,7 +101,7 @@ public class SpringDataBroadcastManager extends BroadcastManager {
                 }
             }
             this.listenerContainer = null;
-        }finally {
+        } finally {
             reentrantLock.unlock();
         }
     }

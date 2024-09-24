@@ -3,7 +3,7 @@
  */
 package com.yat.cache.anno.method;
 
-import com.yat.cache.anno.api.CacheConsts;
+import com.yat.cache.anno.api.DefaultCacheConstant;
 import com.yat.cache.anno.support.CacheAnnoConfig;
 import com.yat.cache.anno.support.CacheUpdateAnnoConfig;
 import com.yat.cache.anno.support.CachedAnnoConfig;
@@ -22,7 +22,7 @@ class ExpressionUtil {
         String condition = cac.getCondition();
         try {
             if (cac.getConditionEvaluator() == null) {
-                if (CacheConsts.isUndefined(condition)) {
+                if (DefaultCacheConstant.isUndefined(condition)) {
                     cac.setConditionEvaluator(o -> true);
                 } else {
                     ExpressionEvaluator e = new ExpressionEvaluator(condition, cac.getDefineMethod());
@@ -40,7 +40,7 @@ class ExpressionUtil {
         String postCondition = cac.getPostCondition();
         try {
             if (cac.getPostConditionEvaluator() == null) {
-                if (CacheConsts.isUndefined(postCondition)) {
+                if (DefaultCacheConstant.isUndefined(postCondition)) {
                     cac.setPostConditionEvaluator(o -> true);
                 } else {
                     ExpressionEvaluator e = new ExpressionEvaluator(postCondition, cac.getDefineMethod());
@@ -58,7 +58,7 @@ class ExpressionUtil {
         String keyScript = cac.getKey();
         try {
             if (cac.getKeyEvaluator() == null) {
-                if (CacheConsts.isUndefined(keyScript)) {
+                if (DefaultCacheConstant.isUndefined(keyScript)) {
                     cac.setKeyEvaluator(o -> {
                         CacheInvokeContext c = (CacheInvokeContext) o;
                         return c.getArgs() == null || c.getArgs().length == 0 ? "_$JETCACHE_NULL_KEY$_" : c.getArgs();

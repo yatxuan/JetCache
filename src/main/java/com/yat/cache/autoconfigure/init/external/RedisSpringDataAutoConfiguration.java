@@ -1,5 +1,9 @@
-package com.yat.cache.autoconfigure;
+package com.yat.cache.autoconfigure.init.external;
 
+import com.yat.cache.autoconfigure.JetCacheCondition;
+import com.yat.cache.autoconfigure.properties.BaseCacheProperties;
+import com.yat.cache.autoconfigure.properties.RemoteCacheProperties;
+import com.yat.cache.autoconfigure.properties.enums.RemoteCacheTypeEnum;
 import com.yat.cache.core.CacheBuilder;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.external.ExternalCacheBuilder;
@@ -31,7 +35,7 @@ public class RedisSpringDataAutoConfiguration {
 
     public static class SpringDataRedisCondition extends JetCacheCondition {
         public SpringDataRedisCondition() {
-            super("redis.springdata");
+            super(RemoteCacheTypeEnum.REDIS_SPRING_DATA.getUpperName());
         }
     }
 
@@ -40,21 +44,25 @@ public class RedisSpringDataAutoConfiguration {
         private ApplicationContext applicationContext;
 
         public SpringDataRedisAutoInit() {
-            super("redis.springdata");
+            super(RemoteCacheTypeEnum.REDIS_SPRING_DATA.getUpperName());
         }
 
         @Override
-        protected CacheBuilder initCache(ConfigTree ct, String cacheAreaWithPrefix) {
+        protected CacheBuilder initCache(BaseCacheProperties cacheProperties, String cacheAreaWithPrefix) {
             Map<String, RedisConnectionFactory> beans = applicationContext.getBeansOfType(RedisConnectionFactory.class);
             if (beans == null || beans.isEmpty()) {
                 throw new CacheConfigException("no RedisConnectionFactory in spring context");
             }
             RedisConnectionFactory factory = beans.values().iterator().next();
             if (beans.size() > 1) {
-                String connectionFactoryName = ct.getProperty("connectionFactory");
+                RemoteCacheProperties remoteCacheProperties = (RemoteCacheProperties) cacheProperties;
+
+                String connectionFactoryName = remoteCacheProperties.getConnectionFactory();
+
                 if (connectionFactoryName == null) {
                     throw new CacheConfigException(
-                            "connectionFactory is required, because there is multiple RedisConnectionFactory in Spring context");
+                            "connectionFactory is required, because there is multiple RedisConnectionFactory in " +
+                                    "Spring context");
                 }
                 if (!beans.containsKey(connectionFactoryName)) {
                     throw new CacheConfigException("there is no RedisConnectionFactory named "
@@ -63,7 +71,7 @@ public class RedisSpringDataAutoConfiguration {
                 factory = beans.get(connectionFactoryName);
             }
             ExternalCacheBuilder builder = RedisSpringDataCacheBuilder.createBuilder().connectionFactory(factory);
-            parseGeneralConfig(builder, ct);
+            parseGeneralConfig(builder, cacheProperties);
             return builder;
         }
 

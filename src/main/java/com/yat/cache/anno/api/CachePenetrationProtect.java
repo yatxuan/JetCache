@@ -38,7 +38,7 @@ public @interface CachePenetrationProtect {
      *
      * @return 缓存穿透保护的有效时间
      */
-    int timeout() default CacheConsts.UNDEFINED_INT;
+    int timeout() default DefaultCacheConstant.UNDEFINED_INT;
 
     /**
      * 指定有效时间的时间单位。默认为秒。

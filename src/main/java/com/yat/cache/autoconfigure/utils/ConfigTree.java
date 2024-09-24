@@ -1,4 +1,4 @@
-package com.yat.cache.autoconfigure;
+package com.yat.cache.autoconfigure.utils;
 
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
@@ -83,7 +83,7 @@ public class ConfigTree {
     public Set<String> directChildrenKeys() {
         Map<String, Object> m = getProperties();
         return m.keySet().stream().map(
-                s -> s.indexOf('.') >= 0 ? s.substring(0, s.indexOf('.')) : null)
+                        s -> s.indexOf('.') >= 0 ? s.substring(0, s.indexOf('.')) : null)
                 .filter(s -> s != null)
                 .collect(Collectors.toSet());
     }

@@ -38,7 +38,7 @@ public @interface CacheRefresh {
      *
      * @return 停止刷新的时间
      */
-    int stopRefreshAfterLastAccess() default CacheConsts.UNDEFINED_INT;
+    int stopRefreshAfterLastAccess() default DefaultCacheConstant.UNDEFINED_INT;
 
     /**
      * 指定刷新锁的超时时间（秒）。
@@ -47,7 +47,7 @@ public @interface CacheRefresh {
      *
      * @return 刷新锁的超时时间
      */
-    int refreshLockTimeout() default CacheConsts.UNDEFINED_INT;
+    int refreshLockTimeout() default DefaultCacheConstant.UNDEFINED_INT;
 
     /**
      * 指定时间单位。（默认:秒）

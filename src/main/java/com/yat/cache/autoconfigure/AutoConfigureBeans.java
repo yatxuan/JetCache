@@ -19,11 +19,17 @@ import java.util.Map;
 @Setter
 @Getter
 public class AutoConfigureBeans {
-
+    /**
+     * 本地缓存
+     */
     private Map<String, CacheBuilder> localCacheBuilders = new HashMap<>();
-
+    /**
+     * 远程缓存
+     */
     private Map<String, CacheBuilder> remoteCacheBuilders = new HashMap<>();
-
+    /**
+     * 存放自定义对象的同步容器
+     */
     private Map<String, Object> customContainer = Collections.synchronizedMap(new HashMap<>());
 
 }

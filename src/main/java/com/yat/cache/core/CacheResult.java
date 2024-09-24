@@ -1,6 +1,6 @@
 package com.yat.cache.core;
 
-import com.yat.cache.anno.api.CacheConsts;
+import com.yat.cache.anno.api.DefaultCacheConstant;
 import lombok.Setter;
 
 import java.time.Duration;
@@ -28,7 +28,7 @@ public class CacheResult {
     /**
      * 默认的异步操作等待时间
      */
-    private static Duration DEFAULT_TIMEOUT = CacheConsts.ASYNC_RESULT_TIMEOUT;
+    private static Duration DEFAULT_TIMEOUT = DefaultCacheConstant.ASYNC_RESULT_TIMEOUT;
     /**
      * 非法参数错误信息
      */

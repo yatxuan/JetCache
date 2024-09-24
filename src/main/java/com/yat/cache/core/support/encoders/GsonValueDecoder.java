@@ -21,6 +21,7 @@ public class GsonValueDecoder extends AbstractJsonDecoder {
     public GsonValueDecoder(boolean useIdentityNumber) {
         super(useIdentityNumber);
     }
+
     /**
      * 将字节数组解析成指定类型的对象。
      * 该方法重写了AbstractJsonDecoder中的方法，使用 Gson 进行JSON解析。

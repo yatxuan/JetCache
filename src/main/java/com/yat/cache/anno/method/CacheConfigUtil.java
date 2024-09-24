@@ -1,12 +1,12 @@
 package com.yat.cache.anno.method;
 
-import com.yat.cache.anno.api.CacheConsts;
 import com.yat.cache.anno.api.CacheInvalidate;
 import com.yat.cache.anno.api.CacheInvalidateContainer;
 import com.yat.cache.anno.api.CachePenetrationProtect;
 import com.yat.cache.anno.api.CacheRefresh;
 import com.yat.cache.anno.api.CacheUpdate;
 import com.yat.cache.anno.api.Cached;
+import com.yat.cache.anno.api.DefaultCacheConstant;
 import com.yat.cache.anno.api.EnableCache;
 import com.yat.cache.anno.support.CacheInvalidateAnnoConfig;
 import com.yat.cache.anno.support.CacheUpdateAnnoConfig;
@@ -225,13 +225,13 @@ public class CacheConfigUtil {
         policy.setRefreshMillis(t.toMillis(cacheRefresh.refresh()));
 
         // 如果停止刷新时间（自最后访问后）明确且不为默认的未定义值
-        if (!CacheConsts.isUndefined(cacheRefresh.stopRefreshAfterLastAccess())) {
+        if (!DefaultCacheConstant.isUndefined(cacheRefresh.stopRefreshAfterLastAccess())) {
             // 将停止刷新时间转换为毫秒并设置到策略对象中
             policy.setStopRefreshAfterLastAccessMillis(t.toMillis(cacheRefresh.stopRefreshAfterLastAccess()));
         }
 
         // 如果刷新锁超时时间明确且不为默认的未定义值
-        if (!CacheConsts.isUndefined(cacheRefresh.refreshLockTimeout())) {
+        if (!DefaultCacheConstant.isUndefined(cacheRefresh.refreshLockTimeout())) {
             // 将刷新锁超时时间转换为毫秒并设置到策略对象中
             policy.setRefreshLockTimeoutMillis(t.toMillis(cacheRefresh.refreshLockTimeout()));
         }
@@ -256,7 +256,7 @@ public class CacheConfigUtil {
         protectConfig.setPenetrationProtect(protectAnno.value());
 
         // 如果注解中的 timeout 不是未定义，则计算timeout的毫秒值
-        if (!CacheConsts.isUndefined(protectAnno.timeout())) {
+        if (!DefaultCacheConstant.isUndefined(protectAnno.timeout())) {
             // 根据注解中指定的时间单位和时间值，转换为毫秒
             long timeout = protectAnno.timeUnit().toMillis(protectAnno.timeout());
             // 设置穿透保护的超时时间

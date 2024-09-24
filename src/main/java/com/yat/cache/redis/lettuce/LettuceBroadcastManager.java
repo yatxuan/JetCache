@@ -86,7 +86,7 @@ public class LettuceBroadcastManager extends BroadcastManager {
             RedisPubSubAsyncCommands<byte[], byte[]> asyncCommands = config.getPubSubConnection().async();
             asyncCommands.subscribe(channel);
             this.subscribeThreadStart = true;
-        }finally {
+        } finally {
             reentrantLock.unlock();
         }
     }

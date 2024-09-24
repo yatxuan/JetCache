@@ -1,5 +1,8 @@
-package com.yat.cache.autoconfigure;
+package com.yat.cache.autoconfigure.init.embedded;
 
+import com.yat.cache.autoconfigure.JetCacheCondition;
+import com.yat.cache.autoconfigure.properties.BaseCacheProperties;
+import com.yat.cache.autoconfigure.properties.enums.LocalCacheTypeEnum;
 import com.yat.cache.core.CacheBuilder;
 import com.yat.cache.core.embedded.CaffeineCacheBuilder;
 import org.springframework.context.annotation.Conditional;
@@ -14,13 +17,13 @@ import org.springframework.stereotype.Component;
 @Conditional(CaffeineAutoConfiguration.CaffeineCondition.class)
 public class CaffeineAutoConfiguration extends EmbeddedCacheAutoInit {
     public CaffeineAutoConfiguration() {
-        super("caffeine");
+        super(LocalCacheTypeEnum.CAFFEINE.getUpperName());
     }
 
     @Override
-    protected CacheBuilder initCache(ConfigTree ct, String cacheAreaWithPrefix) {
+    protected CacheBuilder initCache(BaseCacheProperties cacheProperties, String cacheAreaWithPrefix) {
         CaffeineCacheBuilder builder = CaffeineCacheBuilder.createCaffeineCacheBuilder();
-        parseGeneralConfig(builder, ct);
+        parseGeneralConfig(builder, cacheProperties);
         return builder;
     }
 

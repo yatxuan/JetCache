@@ -1,6 +1,7 @@
 package com.yat.cache.autoconfigure;
 
 import com.yat.cache.autoconfigure.constants.BeanNameConstant;
+import com.yat.cache.autoconfigure.init.AbstractCacheAutoInit;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;

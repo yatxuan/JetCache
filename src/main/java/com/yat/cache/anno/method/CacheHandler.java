@@ -201,11 +201,13 @@ public class CacheHandler implements InvocationHandler {
             Iterable<Object> keyIt = toIterable(key);
             Iterable<Object> valueIt = toIterable(value);
             if (keyIt == null) {
-                logger.error("JetCache @CacheUpdate key is not instance of Iterable or array: {}", updateAnnoConfig.getDefineMethod());
+                logger.error("JetCache @CacheUpdate key is not instance of Iterable or array: {}",
+                        updateAnnoConfig.getDefineMethod());
                 return;
             }
             if (valueIt == null) {
-                logger.error("JetCache @CacheUpdate value is not instance of Iterable or array: {}", updateAnnoConfig.getDefineMethod());
+                logger.error("JetCache @CacheUpdate value is not instance of Iterable or array: {}",
+                        updateAnnoConfig.getDefineMethod());
                 return;
             }
 
@@ -214,10 +216,11 @@ public class CacheHandler implements InvocationHandler {
             keyIt.forEach(keyList::add);
             valueIt.forEach(valueList::add);
             if (keyList.size() != valueList.size()) {
-                logger.error("JetCache @CacheUpdate key size not equals with value size: {}", updateAnnoConfig.getDefineMethod());
+                logger.error("JetCache @CacheUpdate key size not equals with value size: {}",
+                        updateAnnoConfig.getDefineMethod());
                 return;
             } else {
-                Map<Object,Object> m = new HashMap<>();
+                Map<Object, Object> m = new HashMap<>();
                 for (int i = 0; i < valueList.size(); i++) {
                     m.put(keyList.get(i), valueList.get(i));
                 }
@@ -244,7 +247,8 @@ public class CacheHandler implements InvocationHandler {
         if (annoConfig.isMulti()) {
             Iterable it = toIterable(key);
             if (it == null) {
-                logger.error("JetCache @CacheInvalidate key is not instance of Iterable or array: {}", annoConfig.getDefineMethod());
+                logger.error("JetCache @CacheInvalidate key is not instance of Iterable or array: {}",
+                        annoConfig.getDefineMethod());
                 return;
             }
             Set keys = new HashSet<>();

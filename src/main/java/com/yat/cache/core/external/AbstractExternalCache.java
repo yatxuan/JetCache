@@ -62,7 +62,8 @@ public abstract class AbstractExternalCache<K, V> extends AbstractCache<K, V> {
     private boolean isPreservedKey(Object key) {
         if (key instanceof byte[]) {
             byte[] keyBytes = (byte[]) key;
-            return endWith(keyBytes, RefreshCache.LOCK_KEY_SUFFIX) || endWith(keyBytes, RefreshCache.TIMESTAMP_KEY_SUFFIX);
+            return endWith(keyBytes, RefreshCache.LOCK_KEY_SUFFIX) || endWith(keyBytes,
+                    RefreshCache.TIMESTAMP_KEY_SUFFIX);
         }
         return false;
     }

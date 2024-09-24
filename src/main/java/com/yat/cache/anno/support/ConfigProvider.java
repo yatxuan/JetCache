@@ -85,7 +85,7 @@ public class ConfigProvider extends AbstractLifecycle {
             // 如果键转换器是 ParserFunction 类型，则解析并设置新的键转换器
             if (eb.getConfig().getKeyConvertor() instanceof ParserFunction) {
                 ParserFunction f = (ParserFunction) eb.getConfig().getKeyConvertor();
-                eb.setKeyConvertor(parseKeyConvertor(f.getValue()));
+                eb.setKeyConvertor(parseKeyConvertor(f.value()));
             }
         }
         // 遍历并配置远程缓存构建器
@@ -94,17 +94,17 @@ public class ConfigProvider extends AbstractLifecycle {
             // 如果键转换器是 ParserFunction 类型，则解析并设置新的键转换器
             if (eb.getConfig().getKeyConvertor() instanceof ParserFunction) {
                 ParserFunction f = (ParserFunction) eb.getConfig().getKeyConvertor();
-                eb.setKeyConvertor(parseKeyConvertor(f.getValue()));
+                eb.setKeyConvertor(parseKeyConvertor(f.value()));
             }
             // 如果值编码器是 ParserFunction 类型，则解析并设置新的值编码器
             if (eb.getConfig().getValueEncoder() instanceof ParserFunction) {
                 ParserFunction f = (ParserFunction) eb.getConfig().getValueEncoder();
-                eb.setValueEncoder(parseValueEncoder(f.getValue()));
+                eb.setValueEncoder(parseValueEncoder(f.value()));
             }
             // 如果值解码器是 ParserFunction 类型，则解析并设置新的值解码器
             if (eb.getConfig().getValueDecoder() instanceof ParserFunction) {
                 ParserFunction f = (ParserFunction) eb.getConfig().getValueDecoder();
-                eb.setValueDecoder(parseValueDecoder(f.getValue()));
+                eb.setValueDecoder(parseValueDecoder(f.value()));
             }
         }
         // 初始化缓存监控安装器

@@ -17,17 +17,17 @@ public class Kryo5ValueEncoder extends AbstractValueEncoder {
     //Default size = 32K
     static ObjectPool<Kryo5Cache> kryoCacheObjectPool = new ObjectPool<>(16,
             new ObjectPool.ObjectFactory<Kryo5Cache>() {
-        @Override
-        public Kryo5Cache create() {
-            return new Kryo5Cache();
-        }
+                @Override
+                public Kryo5Cache create() {
+                    return new Kryo5Cache();
+                }
 
-        @Override
-        public void reset(Kryo5Cache obj) {
-            obj.getKryo().reset();
-            obj.getOutput().reset();
-        }
-    });
+                @Override
+                public void reset(Kryo5Cache obj) {
+                    obj.getKryo().reset();
+                    obj.getOutput().reset();
+                }
+            });
     private static final int INIT_BUFFER_SIZE = 2048;
     public static final Kryo5ValueEncoder INSTANCE = new Kryo5ValueEncoder(true);
 

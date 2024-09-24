@@ -188,7 +188,7 @@ public class CachePointcut extends StaticMethodMatcherPointcut implements ClassF
                 logger.trace("check method match false: method={}, declaringClass={}, targetClass={}",
                         method.getName(),
                         ClassUtil.getShortClassName(method.getDeclaringClass().getName()),
-                         ClassUtil.getShortClassName(targetClass.getName()));
+                        ClassUtil.getShortClassName(targetClass.getName()));
             }
         }
         // 返回匹配结果

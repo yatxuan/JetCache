@@ -1,6 +1,6 @@
 package com.yat.cache.anno.support;
 
-import com.yat.cache.anno.api.CacheConsts;
+import com.yat.cache.anno.api.DefaultCacheConstant;
 import com.yat.cache.anno.api.EnableCache;
 import com.yat.cache.anno.method.CacheInvokeContext;
 import com.yat.cache.core.Cache;
@@ -130,7 +130,7 @@ public class CacheContext {
         // 获取缓存名，检查是否定义
         String cacheName = ac.getName();
         // 如果缓存名未定义，则生成缓存名
-        if (CacheConsts.isUndefined(cacheName)) {
+        if (DefaultCacheConstant.isUndefined(cacheName)) {
             // 根据配置提供者和调用上下文信息生成缓存名
             cacheName = configProvider.createCacheNameGenerator(invokeContext.getHiddenPackages())
                     .generateCacheName(invokeContext.getMethod(), invokeContext.getTargetObject());
@@ -175,12 +175,12 @@ public class CacheContext {
         b.syncLocal(cac.isSyncLocal());
 
         // 设置键转换器
-        if (!CacheConsts.isUndefined(cac.getKeyConvertor())) {
+        if (!DefaultCacheConstant.isUndefined(cac.getKeyConvertor())) {
             b.keyConvertor(configProvider.parseKeyConvertor(cac.getKeyConvertor()));
         }
 
         // 设置值的序列化策略
-        if (!CacheConsts.isUndefined(cac.getSerialPolicy())) {
+        if (!DefaultCacheConstant.isUndefined(cac.getSerialPolicy())) {
             b.valueEncoder(configProvider.parseValueEncoder(cac.getSerialPolicy()));
             b.valueDecoder(configProvider.parseValueDecoder(cac.getSerialPolicy()));
         }

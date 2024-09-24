@@ -30,7 +30,7 @@ public @interface Cached {
      *
      * @return 缓存区域的名称
      */
-    String area() default CacheConsts.DEFAULT_AREA;
+    String area() default DefaultCacheConstant.DEFAULT_AREA;
 
     /**
      * 此缓存实例的名称，可选。如果不指定，JetCache 将自动生成一个。
@@ -39,7 +39,7 @@ public @interface Cached {
      *
      * @return 缓存的名称
      */
-    String name() default CacheConsts.UNDEFINED_STRING;
+    String name() default DefaultCacheConstant.UNDEFINED_STRING;
 
     /**
      * 指定是否启用方法缓存。
@@ -48,7 +48,7 @@ public @interface Cached {
      *
      * @return 如果启用了方法缓存
      */
-    boolean enabled() default CacheConsts.DEFAULT_ENABLED;
+    boolean enabled() default DefaultCacheConstant.DEFAULT_ENABLED;
 
     /**
      * 指定过期时间的时间单位.(默认:秒)
@@ -63,7 +63,7 @@ public @interface Cached {
      *
      * @return 缓存过期时间
      */
-    int expire() default CacheConsts.UNDEFINED_INT;
+    int expire() default DefaultCacheConstant.UNDEFINED_INT;
 
     /**
      * 当缓存类型为 {@link CacheType#BOTH} 时，指定本地缓存的过期时间。
@@ -71,7 +71,7 @@ public @interface Cached {
      *
      * @return 本地缓存的过期时间
      */
-    int localExpire() default CacheConsts.UNDEFINED_INT;
+    int localExpire() default DefaultCacheConstant.UNDEFINED_INT;
 
     /**
      * 缓存实例的类型。可能是 {@link CacheType#REMOTE}、{@link CacheType#LOCAL} 或 {@link CacheType#BOTH}。
@@ -92,11 +92,11 @@ public @interface Cached {
     /**
      * 当缓存类型为 LOCAL 或 BOTH 时，指定本地内存中的最大元素数量。
      * 如果未指定此属性值，则使用全局配置，
-     * 如果也没有定义全局配置，则使用 {@link CacheConsts#DEFAULT_LOCAL_LIMIT}。
+     * 如果也没有定义全局配置，则使用 {@link DefaultCacheConstant#DEFAULT_LOCAL_LIMIT}。
      *
      * @return local maximal elements of the LOCAL/BOTH cache
      */
-    int localLimit() default CacheConsts.UNDEFINED_INT;
+    int localLimit() default DefaultCacheConstant.UNDEFINED_INT;
 
     /**
      * 当缓存类型为 REMOTE 或 BOTH 时，指定远程缓存的序列化策略。
@@ -106,7 +106,7 @@ public @interface Cached {
      *
      * @return 缓存值的序列化策略名称
      */
-    String serialPolicy() default CacheConsts.UNDEFINED_STRING;
+    String serialPolicy() default DefaultCacheConstant.UNDEFINED_STRING;
 
     /**
      * 指定键转换器。用于转换复杂的键对象。
@@ -116,7 +116,7 @@ public @interface Cached {
      *
      * @return 缓存键的转换器名称
      */
-    String keyConvertor() default CacheConsts.UNDEFINED_STRING;
+    String keyConvertor() default DefaultCacheConstant.UNDEFINED_STRING;
 
     /**
      * 通过表达式脚本指定键，可选。
@@ -124,14 +124,14 @@ public @interface Cached {
      *
      * @return 指定键的表达式脚本
      */
-    String key() default CacheConsts.UNDEFINED_STRING;
+    String key() default DefaultCacheConstant.UNDEFINED_STRING;
 
     /**
      * 指定是否应该缓存空值.
      *
      * @return 是否应该缓存空值
      */
-    boolean cacheNullValue() default CacheConsts.DEFAULT_CACHE_NULL_VALUE;
+    boolean cacheNullValue() default DefaultCacheConstant.DEFAULT_CACHE_NULL_VALUE;
 
     /**
      * 用于条件控制方法缓存的表达式脚本，在方法真正调用之前评估。
@@ -139,7 +139,7 @@ public @interface Cached {
      *
      * @return 控制方法缓存的条件表达式脚本。
      */
-    String condition() default CacheConsts.UNDEFINED_STRING;
+    String condition() default DefaultCacheConstant.UNDEFINED_STRING;
 
     /**
      * 用于条件控制方法缓存更新的表达式脚本，在方法真正调用之后评估。
@@ -148,6 +148,6 @@ public @interface Cached {
      *
      * @return 控制方法缓存更新的条件表达式脚本
      */
-    String postCondition() default CacheConsts.UNDEFINED_STRING;
+    String postCondition() default DefaultCacheConstant.UNDEFINED_STRING;
 
 }
