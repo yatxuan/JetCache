@@ -46,18 +46,22 @@ public abstract class ExternalCacheAutoInit extends AbstractCacheAutoInit {
         ecb.setBroadcastChannel(parseBroadcastChannel(remoteCacheProperties));
 
         // 默认序列化策略
-        String value = DefaultCacheConstant.DEFAULT_SERIAL_POLICY;
-        // 如果指定了序列化策略类型，则使用它
-        SerialPolicyTypeEnum serialPolicyTypeEnum = remoteCacheProperties.getSerialPolicyTypeEnum();
-        if (Objects.nonNull(serialPolicyTypeEnum)) {
-            value = serialPolicyTypeEnum.name();
+        String valueEncoder = DefaultCacheConstant.DEFAULT_SERIAL_POLICY;
+        // 指定序列化策略类型
+        SerialPolicyTypeEnum encoder = remoteCacheProperties.getValueEncoder();
+        if (Objects.nonNull(encoder)) {
+            valueEncoder = encoder.name();
+        }
+
+        String valueDecoder = DefaultCacheConstant.DEFAULT_SERIAL_POLICY;
+        SerialPolicyTypeEnum decoder = remoteCacheProperties.getValueDecoder();
+        if (Objects.nonNull(decoder)) {
+            valueDecoder = decoder.name();
         }
 
         // 创建一个解析函数，用于根据序列化策略解析数据
-        ParserFunction parserFunction = new ParserFunction(value);
-        // 设置值编码器和解码器为同一解析函数
-        ecb.setValueEncoder(parserFunction);
-        ecb.setValueDecoder(parserFunction);
+        ecb.setValueEncoder(new ParserFunction(valueEncoder));
+        ecb.setValueDecoder(new ParserFunction(valueDecoder));
     }
 
 

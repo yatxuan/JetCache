@@ -1,6 +1,7 @@
 package com.yat.cache.anno.support;
 
 import com.yat.cache.anno.api.KeyConvertor;
+import com.yat.cache.autoconfigure.properties.enums.KeyConvertorEnum;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.support.convertor.GsonKeyConvertor;
 import com.yat.cache.core.support.convertor.JacksonKeyConvertor;
@@ -17,16 +18,17 @@ import java.util.function.Function;
  * version 1.0
  */
 public class DefaultKeyConvertorParser implements KeyConvertorParser {
+
     @Override
     public Function<Object, Object> parseKeyConvertor(String convertor) {
         if (Objects.isNull(convertor)) {
             return null;
         }
-        if (KeyConvertor.GSON.equalsIgnoreCase(convertor)) {
+        if (KeyConvertorEnum.GSON.name().equalsIgnoreCase(convertor)) {
             return GsonKeyConvertor.INSTANCE;
-        } else if (KeyConvertor.JACKSON.equalsIgnoreCase(convertor)) {
+        } else if (KeyConvertorEnum.JACKSON.name().equalsIgnoreCase(convertor)) {
             return JacksonKeyConvertor.INSTANCE;
-        } else if (KeyConvertor.NONE.equalsIgnoreCase(convertor)) {
+        } else if (KeyConvertorEnum.NONE.name().equalsIgnoreCase(convertor)) {
             return KeyConvertor.NONE_INSTANCE;
         }
         throw new CacheConfigException("not supported:" + convertor);

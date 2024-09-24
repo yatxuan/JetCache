@@ -3,6 +3,8 @@ package com.yat.cache.core.external;
 import com.yat.cache.core.CacheConfig;
 import com.yat.cache.core.support.DecoderMap;
 import com.yat.cache.core.support.encoders.JavaValueEncoder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -12,6 +14,8 @@ import java.util.function.Supplier;
  *
  * @author huangli
  */
+@Setter
+@Getter
 public class ExternalCacheConfig<K, V> extends CacheConfig<K, V> {
 
     private Supplier<String> keyPrefixSupplier;
@@ -27,35 +31,4 @@ public class ExternalCacheConfig<K, V> extends CacheConfig<K, V> {
         this.keyPrefixSupplier = () -> keyPrefix;
     }
 
-    public Supplier<String> getKeyPrefixSupplier() {
-        return keyPrefixSupplier;
-    }
-
-    public void setKeyPrefixSupplier(Supplier<String> keyPrefixSupplier) {
-        this.keyPrefixSupplier = keyPrefixSupplier;
-    }
-
-    public Function<Object, byte[]> getValueEncoder() {
-        return valueEncoder;
-    }
-
-    public void setValueEncoder(Function<Object, byte[]> valueEncoder) {
-        this.valueEncoder = valueEncoder;
-    }
-
-    public Function<byte[], Object> getValueDecoder() {
-        return valueDecoder;
-    }
-
-    public void setValueDecoder(Function<byte[], Object> valueDecoder) {
-        this.valueDecoder = valueDecoder;
-    }
-
-    public String getBroadcastChannel() {
-        return broadcastChannel;
-    }
-
-    public void setBroadcastChannel(String broadcastChannel) {
-        this.broadcastChannel = broadcastChannel;
-    }
 }

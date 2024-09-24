@@ -12,14 +12,6 @@ import java.util.function.Function;
  */
 public interface SerialPolicy extends Identity {
 
-    String JAVA = "JAVA";
-
-    String GSON = "GSON";
-
-    String KRYO = "KRYO";
-
-    String KRYO5 = "KRYO5";
-
     /**
      * 获取编码器，用于将对象转换为字节数组。
      *

@@ -4,6 +4,7 @@ import com.yat.cache.anno.api.DefaultCacheConstant;
 import com.yat.cache.autoconfigure.JetCacheCondition;
 import com.yat.cache.autoconfigure.properties.BaseCacheProperties;
 import com.yat.cache.autoconfigure.properties.RemoteCacheProperties;
+import com.yat.cache.autoconfigure.properties.enums.ReadFromEnum;
 import com.yat.cache.autoconfigure.properties.enums.RedisModeEnum;
 import com.yat.cache.autoconfigure.properties.enums.RemoteCacheTypeEnum;
 import com.yat.cache.autoconfigure.properties.redis.RedisPropertiesConfig;
@@ -117,7 +118,12 @@ public class RedisLettuceAutoConfiguration {
         ) {
             StatefulRedisPubSubConnection<byte[], byte[]> pubSubConnection = null;
             ClusterPropertiesConfig cluster = remoteCacheProperties.getCluster();
-            ReadFrom readFrom = remoteCacheProperties.getReadFrom();
+
+            ReadFromEnum readFromEnum = remoteCacheProperties.getReadFrom();
+            ReadFrom readFrom = null;
+            if (readFromEnum != null) {
+                readFrom = ReadFrom.valueOf(readFromEnum.name().trim());
+            }
 
             List<RedisURI> redisURIList = cluster.getNodes().stream()
                     .map(this::createRedisURI)
@@ -137,15 +143,19 @@ public class RedisLettuceAutoConfiguration {
                     .pubSubConnection(pubSubConnection)
                     .redisClient(client)
                     .asyncResultTimeoutInMillis(asyncResultTimeoutInMillis);
-
         }
 
         private ExternalCacheBuilder createSentinel(
                 RemoteCacheProperties remoteCacheProperties, boolean enablePubSub, Long asyncResultTimeoutInMillis
         ) {
             SentinelPropertiesConfig sentinel = remoteCacheProperties.getSentinel();
-            ReadFrom readFrom = remoteCacheProperties.getReadFrom();
             RedisPropertiesConfig master = sentinel.getMaster();
+
+            ReadFromEnum readFromEnum = remoteCacheProperties.getReadFrom();
+            ReadFrom readFrom = null;
+            if (readFromEnum != null) {
+                readFrom = ReadFrom.valueOf(readFromEnum.name().trim());
+            }
 
             StatefulRedisPubSubConnection<byte[], byte[]> pubSubConnection = null;
 
@@ -185,7 +195,7 @@ public class RedisLettuceAutoConfiguration {
         }
 
         private ExternalCacheBuilder createStandalone(
-                 RedisPropertiesConfig singleton, boolean enablePubSub, Long asyncResultTimeoutInMillis
+                RedisPropertiesConfig singleton, boolean enablePubSub, Long asyncResultTimeoutInMillis
         ) {
             StatefulRedisPubSubConnection<byte[], byte[]> pubSubConnection = null;
 
@@ -213,7 +223,7 @@ public class RedisLettuceAutoConfiguration {
                     .asyncResultTimeoutInMillis(asyncResultTimeoutInMillis);
         }
 
-        private RedisURI createRedisURI( RedisPropertiesConfig redisProperties) {
+        private RedisURI createRedisURI(RedisPropertiesConfig redisProperties) {
             RedisURI redisURI;
 
             String url = redisProperties.getUrl();

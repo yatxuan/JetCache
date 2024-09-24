@@ -1,6 +1,6 @@
 package com.yat.cache.anno.support;
 
-import com.yat.cache.anno.api.SerialPolicy;
+import com.yat.cache.autoconfigure.properties.enums.SerialPolicyTypeEnum;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.lang.Assert;
 import com.yat.cache.core.support.encoders.GsonValueDecoder;
@@ -36,13 +36,13 @@ public class DefaultEncoderParser implements EncoderParser {
         URI uri = URI.create(valueEncoder);
         valueEncoder = uri.getPath();
         boolean useIdentityNumber = isUseIdentityNumber(uri);
-        if (SerialPolicy.KRYO.equalsIgnoreCase(valueEncoder)) {
+        if (SerialPolicyTypeEnum.KRYO.name().equalsIgnoreCase(valueEncoder)) {
             return new KryoValueEncoder(useIdentityNumber);
-        } else if (SerialPolicy.JAVA.equalsIgnoreCase(valueEncoder)) {
+        } else if (SerialPolicyTypeEnum.JAVA.name().equalsIgnoreCase(valueEncoder)) {
             return new JavaValueEncoder(useIdentityNumber);
-        } else if (SerialPolicy.KRYO5.equalsIgnoreCase(valueEncoder)) {
+        } else if (SerialPolicyTypeEnum.KRYO5.name().equalsIgnoreCase(valueEncoder)) {
             return new Kryo5ValueEncoder(useIdentityNumber);
-        } else if (SerialPolicy.GSON.equalsIgnoreCase(valueEncoder)) {
+        } else if (SerialPolicyTypeEnum.GSON.name().equalsIgnoreCase(valueEncoder)) {
             return new GsonValueEncoder(useIdentityNumber);
         } else {
             throw new CacheConfigException("not supported:" + valueEncoder);
@@ -57,13 +57,13 @@ public class DefaultEncoderParser implements EncoderParser {
         URI uri = URI.create(valueDecoder);
         valueDecoder = uri.getPath();
         boolean useIdentityNumber = isUseIdentityNumber(uri);
-        if (SerialPolicy.KRYO.equalsIgnoreCase(valueDecoder)) {
+        if (SerialPolicyTypeEnum.KRYO.name().equalsIgnoreCase(valueDecoder)) {
             return new KryoValueDecoder(useIdentityNumber);
-        } else if (SerialPolicy.JAVA.equalsIgnoreCase(valueDecoder)) {
+        } else if (SerialPolicyTypeEnum.JAVA.name().equalsIgnoreCase(valueDecoder)) {
             return javaValueDecoder(useIdentityNumber);
-        } else if (SerialPolicy.KRYO5.equalsIgnoreCase(valueDecoder)) {
+        } else if (SerialPolicyTypeEnum.KRYO5.name().equalsIgnoreCase(valueDecoder)) {
             return new Kryo5ValueDecoder(useIdentityNumber);
-        } else if (SerialPolicy.GSON.equalsIgnoreCase(valueDecoder)) {
+        } else if (SerialPolicyTypeEnum.GSON.name().equalsIgnoreCase(valueDecoder)) {
             return new GsonValueDecoder(useIdentityNumber);
         } else {
             throw new CacheConfigException("not supported:" + valueDecoder);

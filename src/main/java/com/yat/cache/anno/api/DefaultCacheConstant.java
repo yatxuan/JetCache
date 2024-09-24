@@ -1,5 +1,7 @@
 package com.yat.cache.anno.api;
 
+import com.yat.cache.autoconfigure.properties.enums.SerialPolicyTypeEnum;
+
 import java.time.Duration;
 
 /**
@@ -16,6 +18,19 @@ public interface DefaultCacheConstant {
      * 默认的缓存区域名称。
      */
     String DEFAULT_AREA = "default";
+    /**
+     * 自定义的key转换器名称。
+     */
+    String BEAN_KEY_CUSTOM = "BEAN_KEY_CUSTOM";
+
+    /**
+     * 自定义序列化编码器
+     */
+    String BEAN_ENCODER_CUSTOM = "BEAN_ENCODER_CUSTOM";
+    /**
+     * 自定义序列化解码器
+     */
+    String BEAN_DECODER_CUSTOM = "BEAN_DECODER_CUSTOM";
     /**
      * 默认启用方法缓存的状态。
      *
@@ -48,7 +63,7 @@ public interface DefaultCacheConstant {
     /**
      * 默认的序列化策略。
      */
-    String DEFAULT_SERIAL_POLICY = SerialPolicy.JAVA;
+    String DEFAULT_SERIAL_POLICY = SerialPolicyTypeEnum.JAVA.name();
     /**
      * 默认情况下是否启用批量更新。
      *

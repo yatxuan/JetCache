@@ -53,10 +53,10 @@ public class DefaultSpringEncoderParser extends DefaultEncoderParser implements 
      * @return 解析后的Bean名称，如果字符串不匹配则返回null。
      */
     static String parseBeanName(String str) {
-        final String beanPrefix = "bean:";
+        final String beanPrefix = "BEAN_";
         int len = beanPrefix.length();
         if (str != null && str.startsWith(beanPrefix) && str.length() > len) {
-            return str.substring(len);
+            return str;
         } else {
             return null;
         }

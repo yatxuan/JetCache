@@ -12,12 +12,6 @@ import java.util.function.Function;
  * version 1.0
  */
 public interface KeyConvertor extends Function<Object, Object> {
-
-    String NONE = "NONE";
-    String GSON = "GSON";
-
-    String JACKSON = "JACKSON";
-
     /**
      * 提供了一个预定义的 Function 实例，表示不进行任何转换。
      */

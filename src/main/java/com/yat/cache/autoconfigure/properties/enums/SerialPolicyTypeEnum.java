@@ -14,4 +14,12 @@ public enum SerialPolicyTypeEnum {
     KRYO,
     KRYO5,
     GSON,
+    /**
+     * 自定义序列化解码器
+     */
+    BEAN_DECODER_CUSTOM,
+    /**
+     * 自定义序列化编码器
+     */
+    BEAN_ENCODER_CUSTOM,
 }

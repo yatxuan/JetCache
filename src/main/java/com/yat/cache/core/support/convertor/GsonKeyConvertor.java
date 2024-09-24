@@ -14,6 +14,7 @@ import java.util.function.Function;
  * version 1.0
  */
 public class GsonKeyConvertor implements Function<Object, Object> {
+
     /**
      * 单例实例，因为键转换器不需要每次创建新的实例
      */

@@ -4,13 +4,21 @@ import com.yat.cache.anno.api.SerialPolicy;
 import com.yat.cache.core.CacheValueHolder;
 import com.yat.cache.core.exception.CacheEncodeException;
 import com.yat.cache.core.support.CacheMessage;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author huangli
+ * ClassName AbstractJsonEncoder
+ * <p>Description 抽象 JSON 编码器:提供了基于 JSON 的值编码功能</p>
+ *
+ * @author Yat
+ * Date 2024/8/22 13:14
+ * version 1.0
  */
 public abstract class AbstractJsonEncoder extends AbstractValueEncoder {
+
     public AbstractJsonEncoder(boolean useIdentityNumber) {
         super(useIdentityNumber);
     }
@@ -127,24 +135,11 @@ public abstract class AbstractJsonEncoder extends AbstractValueEncoder {
 
     protected abstract byte[] encodeSingleValue(Object value);
 
+    @Setter
+    @Getter
     private static class JsonData {
         private byte[] className;
         private byte[] data;
 
-        public byte[] getClassName() {
-            return className;
-        }
-
-        public void setClassName(byte[] className) {
-            this.className = className;
-        }
-
-        public byte[] getData() {
-            return data;
-        }
-
-        public void setData(byte[] data) {
-            this.data = data;
-        }
     }
 }

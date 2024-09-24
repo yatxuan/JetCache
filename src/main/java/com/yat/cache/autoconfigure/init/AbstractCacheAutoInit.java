@@ -1,6 +1,5 @@
 package com.yat.cache.autoconfigure.init;
 
-import com.yat.cache.anno.api.KeyConvertor;
 import com.yat.cache.anno.support.ParserFunction;
 import com.yat.cache.autoconfigure.AutoConfigureBeans;
 import com.yat.cache.autoconfigure.properties.BaseCacheProperties;
@@ -171,7 +170,7 @@ public abstract class AbstractCacheAutoInit implements InitializingBean {
 
     private String getKeyConvertor(KeyConvertorEnum keyConvertor) {
         if (Objects.isNull(keyConvertor)) {
-            return KeyConvertor.GSON;
+            return KeyConvertorEnum.GSON.name();
         }
         return keyConvertor.name();
     }

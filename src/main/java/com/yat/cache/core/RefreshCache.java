@@ -20,26 +20,48 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
- * Created on 2017/5/25.
+ * ClassName: RefreshCache
+ * <p>
+ * Description: 实现了一个可刷新的缓存类，继承自LoadingCache。
+ * 提供了缓存项的刷新机制，并支持多级缓存。
+ * </p>
  *
- * @author huangli
+ * @author Yat
+ * Date: 2024/8/22 20:39
+ * version: 1.0
  */
 public class RefreshCache<K, V> extends LoadingCache<K, V> {
 
     private static final Logger logger = LoggerFactory.getLogger(RefreshCache.class);
 
+    /**
+     * 常量定义：锁后缀的字节数组形式。
+     */
     public static final byte[] LOCK_KEY_SUFFIX = "_#RL#".getBytes();
+
+    /**
+     * 常量定义：时间戳后缀的字节数组形式。
+     */
     public static final byte[] TIMESTAMP_KEY_SUFFIX = "_#TS#".getBytes();
-
-    private ConcurrentHashMap<Object, RefreshTask> taskMap = new ConcurrentHashMap<>();
-
-    private boolean multiLevelCache;
+    /**
+     * 用于存储刷新任务的并发哈希映射。
+     */
+    private final ConcurrentHashMap<Object, RefreshTask> taskMap = new ConcurrentHashMap<>();
+    /**
+     * 标记是否为多级缓存。
+     */
+    private final boolean multiLevelCache;
 
     public RefreshCache(Cache cache) {
         super(cache);
         multiLevelCache = isMultiLevelCache();
     }
 
+    /**
+     * 检查当前缓存是否为多级缓存。
+     *
+     * @return 如果是多级缓存则返回true，否则返回false
+     */
     private boolean isMultiLevelCache() {
         Cache c = getTargetCache();
         while (c instanceof ProxyCache) {
@@ -48,23 +70,51 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
         return c instanceof MultiLevelCache;
     }
 
+    /**
+     * 关闭缓存实例。
+     */
     @Override
     public void close() {
         stopRefresh();
         super.close();
     }
 
+    /**
+     * 重写computeIfAbsent方法，根据指定的键和加载器计算值。
+     *
+     * @param key    键
+     * @param loader 加载器
+     * @return 计算得到的值
+     */
     @Override
     public V computeIfAbsent(K key, Function<K, V> loader) {
         return computeIfAbsent(key, loader, config().isCacheNullValue());
     }
 
+    /**
+     * 重写computeIfAbsent方法，根据指定的键、加载器以及是否缓存null值来计算值。
+     *
+     * @param key                           键
+     * @param loader                        加载器
+     * @param cacheNullWhenLoaderReturnNull 是否在加载器返回null时缓存null值
+     * @return 计算得到的值
+     */
     @Override
     public V computeIfAbsent(K key, Function<K, V> loader, boolean cacheNullWhenLoaderReturnNull) {
         return AbstractCache.computeIfAbsentImpl(key, loader, cacheNullWhenLoaderReturnNull,
                 0, null, this);
     }
 
+    /**
+     * 重写computeIfAbsent方法，根据指定的键、加载器、是否缓存null值、过期时间及单位来计算值。
+     *
+     * @param key                           键
+     * @param loader                        加载器
+     * @param cacheNullWhenLoaderReturnNull 是否在加载器返回null时缓存null值
+     * @param expireAfterWrite              过期时间
+     * @param timeUnit                      时间单位
+     * @return 计算得到的值
+     */
     @Override
     public V computeIfAbsent(K key, Function<K, V> loader, boolean cacheNullWhenLoaderReturnNull,
                              long expireAfterWrite, TimeUnit timeUnit) {
@@ -72,6 +122,9 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
                 expireAfterWrite, timeUnit, this);
     }
 
+    /**
+     * 停止所有刷新任务。
+     */
     protected void stopRefresh() {
         List<RefreshTask> tasks = new ArrayList<>();
         tasks.addAll(taskMap.values());
@@ -86,10 +139,21 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
         return super.get(key);
     }
 
+    /**
+     * 检查是否存在加载器。
+     *
+     * @return 如果配置了加载器则返回true，否则返回false
+     */
     private boolean hasLoader() {
         return config.getLoader() != null;
     }
 
+    /**
+     * 添加或更新刷新任务。
+     *
+     * @param key    缓存键
+     * @param loader 缓存加载器
+     */
     protected void addOrUpdateRefreshTask(K key, CacheLoader<K, V> loader) {
         RefreshPolicy refreshPolicy = config.getRefreshPolicy();
         if (refreshPolicy == null) {
@@ -102,15 +166,22 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
                 logger.debug("add refresh task. interval={},  key={}", refreshMillis, key);
                 RefreshTask task = new RefreshTask(taskId, key, loader);
                 task.lastAccessTime = System.currentTimeMillis();
-                ScheduledFuture<?> future = JetCacheExecutor.heavyIOExecutor().scheduleWithFixedDelay(
-                        task, refreshMillis, refreshMillis, TimeUnit.MILLISECONDS);
-                task.future = future;
+                task.future = JetCacheExecutor.heavyIOExecutor()
+                        .scheduleWithFixedDelay(
+                                task, refreshMillis, refreshMillis, TimeUnit.MILLISECONDS
+                        );
                 return task;
             });
             refreshTask.lastAccessTime = System.currentTimeMillis();
         }
     }
 
+    /**
+     * 获取任务ID。
+     *
+     * @param key 缓存键
+     * @return 任务ID
+     */
     private Object getTaskId(K key) {
         Cache c = concreteCache();
         if (c instanceof AbstractEmbeddedCache) {
@@ -124,16 +195,21 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
         }
     }
 
+    /**
+     * 获取实际的缓存实例。
+     *
+     * @return 返回实际的缓存实例
+     */
     protected Cache concreteCache() {
-        Cache c = getTargetCache();
+        Cache cache = getTargetCache();
         while (true) {
-            if (c instanceof ProxyCache) {
-                c = ((ProxyCache) c).getTargetCache();
-            } else if (c instanceof MultiLevelCache) {
-                Cache[] caches = ((MultiLevelCache) c).caches();
-                c = caches[caches.length - 1];
+            if (cache instanceof ProxyCache) {
+                cache = ((ProxyCache) cache).getTargetCache();
+            } else if (cache instanceof MultiLevelCache) {
+                Cache[] caches = ((MultiLevelCache) cache).caches();
+                cache = caches[caches.length - 1];
             } else {
-                return c;
+                return cache;
             }
         }
     }
@@ -148,19 +224,35 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
         return super.getAll(keys);
     }
 
+    /**
+     * 合并两个字节数组为一个新的字节数组。
+     *
+     * @param bs1 第一个字节数组
+     * @param bs2 第二个字节数组
+     * @return 新的字节数组
+     */
     private byte[] combine(byte[] bs1, byte[] bs2) {
         byte[] newArray = Arrays.copyOf(bs1, bs1.length + bs2.length);
         System.arraycopy(bs2, 0, newArray, bs1.length, bs2.length);
         return newArray;
     }
 
+    /**
+     * ClassName RefreshTask
+     * <p>Description 刷新任务类，实现Runnable接口</p>
+     * 该类负责在后台刷新缓存中的数据，以确保数据的时效性。
+     *
+     * @author Yat
+     * Date 2024/8/22 20:44
+     * version 1.0
+     */
     class RefreshTask implements Runnable {
-        private Object taskId;
-        private K key;
-        private CacheLoader<K, V> loader;
+        private final Object taskId;
+        private final K key;
+        private final CacheLoader<K, V> loader;
 
         private long lastAccessTime;
-        private ScheduledFuture future;
+        private ScheduledFuture<?> future;
 
         RefreshTask(Object taskId, K key, CacheLoader<K, V> loader) {
             this.taskId = taskId;

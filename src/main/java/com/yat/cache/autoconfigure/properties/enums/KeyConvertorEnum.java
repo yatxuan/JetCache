@@ -13,4 +13,8 @@ public enum KeyConvertorEnum {
     NONE,
     GSON,
     JACKSON,
+    /**
+     * 自定义 bean
+     */
+    BEAN_KEY_CUSTOM,
 }

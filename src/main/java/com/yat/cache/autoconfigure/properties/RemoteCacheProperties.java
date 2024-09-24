@@ -1,12 +1,12 @@
 package com.yat.cache.autoconfigure.properties;
 
+import com.yat.cache.autoconfigure.properties.enums.ReadFromEnum;
 import com.yat.cache.autoconfigure.properties.enums.RedisModeEnum;
 import com.yat.cache.autoconfigure.properties.enums.RemoteCacheTypeEnum;
 import com.yat.cache.autoconfigure.properties.enums.SerialPolicyTypeEnum;
 import com.yat.cache.autoconfigure.properties.redis.RedisPropertiesConfig;
 import com.yat.cache.autoconfigure.properties.redis.lettuce.ClusterPropertiesConfig;
 import com.yat.cache.autoconfigure.properties.redis.lettuce.SentinelPropertiesConfig;
-import io.lettuce.core.ReadFrom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -34,7 +34,8 @@ public class RemoteCacheProperties extends BaseCacheProperties {
     /**
      * 序列化器的全局配置 todo SerialPolicy
      */
-    private SerialPolicyTypeEnum serialPolicyTypeEnum;
+    private SerialPolicyTypeEnum valueEncoder;
+    private SerialPolicyTypeEnum valueDecoder;
     /**
      * 广播通道名称
      * 其他JVM中的local cache，但多个服务共用redis同一个channel可能会造成广播风暴，
@@ -52,8 +53,7 @@ public class RemoteCacheProperties extends BaseCacheProperties {
     /**
      * 数据读取策略
      */
-    @NestedConfigurationProperty
-    private ReadFrom readFrom;
+    private ReadFromEnum readFrom;
     private Long asyncResultTimeoutInMillis;
     private Integer enablePeriodicRefresh;
     private Boolean enableAllAdaptiveRefreshTriggers;

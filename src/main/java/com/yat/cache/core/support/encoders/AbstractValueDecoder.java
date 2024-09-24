@@ -2,6 +2,8 @@ package com.yat.cache.core.support.encoders;
 
 import com.yat.cache.core.exception.CacheEncodeException;
 import com.yat.cache.core.support.DecoderMap;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -13,7 +15,9 @@ import java.util.function.Function;
  */
 public abstract class AbstractValueDecoder implements Function<byte[], Object>, ValueEncoders {
 
+    @Setter
     private DecoderMap decoderMap = DecoderMap.defaultInstance();
+    @Getter
     protected boolean useIdentityNumber;
 
     public AbstractValueDecoder(boolean useIdentityNumber) {
@@ -51,11 +55,4 @@ public abstract class AbstractValueDecoder implements Function<byte[], Object>, 
 
     protected abstract Object doApply(byte[] buffer) throws Exception;
 
-    public boolean isUseIdentityNumber() {
-        return useIdentityNumber;
-    }
-
-    public void setDecoderMap(DecoderMap decoderMap) {
-        this.decoderMap = decoderMap;
-    }
 }
