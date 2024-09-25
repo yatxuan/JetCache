@@ -70,7 +70,7 @@ public class RedisSpringDataAutoConfiguration {
 
         private static String getConnectionFactoryName(RemoteCacheProperties remoteCacheProperties, Map<String,
                 RedisConnectionFactory> beans) {
-            String connectionFactoryName = remoteCacheProperties.getConnectionFactory();
+            String connectionFactoryName = remoteCacheProperties.getRedisData().getConnectionFactory();
 
             if (connectionFactoryName == null) {
                 throw new CacheConfigException(

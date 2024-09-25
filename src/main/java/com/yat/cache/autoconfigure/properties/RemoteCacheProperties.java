@@ -43,26 +43,36 @@ public class RemoteCacheProperties extends BaseCacheProperties {
      */
     private String broadcastChannel;
 
-    /**
-     * redis连接工厂
-     */
-    private String connectionFactory;
-
-    // ======= lettuce =========
-    private RedisModeEnum mode = RedisModeEnum.SINGLETON;
-    /**
-     * 数据读取策略
-     */
-    private ReadFromEnum readFrom;
-    private Long asyncResultTimeoutInMillis;
-    private Integer enablePeriodicRefresh;
-    private Boolean enableAllAdaptiveRefreshTriggers;
-
     @NestedConfigurationProperty
-    private RedisPropertiesConfig singleton;
+    private RedisDataProperties redisData;
     @NestedConfigurationProperty
-    private SentinelPropertiesConfig sentinel;
-    @NestedConfigurationProperty
-    private ClusterPropertiesConfig cluster;
+    private RedisLettuceProperties lettuce;
 
+    @Data
+    public static class RedisDataProperties {
+        /**
+         * redis连接工厂
+         */
+        private String connectionFactory;
+
+    }
+
+    @Data
+    public static class RedisLettuceProperties {
+        private RedisModeEnum mode = RedisModeEnum.SINGLETON;
+        /**
+         * 数据读取策略
+         */
+        private ReadFromEnum readFrom;
+        private Long asyncResultTimeoutInMillis;
+        private Integer enablePeriodicRefresh;
+        private Boolean enableAllAdaptiveRefreshTriggers;
+
+        @NestedConfigurationProperty
+        private RedisPropertiesConfig singleton;
+        @NestedConfigurationProperty
+        private SentinelPropertiesConfig sentinel;
+        @NestedConfigurationProperty
+        private ClusterPropertiesConfig cluster;
+    }
 }

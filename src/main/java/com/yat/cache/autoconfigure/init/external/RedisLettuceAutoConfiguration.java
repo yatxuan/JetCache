@@ -74,10 +74,10 @@ public class RedisLettuceAutoConfiguration {
         protected CacheBuilder initCache(BaseCacheProperties cacheProperties, String cacheAreaWithPrefix) {
 
             RemoteCacheProperties remoteCacheProperties = (RemoteCacheProperties) cacheProperties;
-            RedisModeEnum mode = remoteCacheProperties.getMode();
+            RedisModeEnum mode = remoteCacheProperties.getLettuce().getMode();
             boolean enablePubSub = parseBroadcastChannel(remoteCacheProperties) != null;
 
-            Long asyncResultTimeoutInMillis = remoteCacheProperties.getAsyncResultTimeoutInMillis();
+            Long asyncResultTimeoutInMillis = remoteCacheProperties.getLettuce().getAsyncResultTimeoutInMillis();
             if (asyncResultTimeoutInMillis == null) {
                 asyncResultTimeoutInMillis = DefaultCacheConstant.ASYNC_RESULT_TIMEOUT.toMillis();
             }
@@ -94,7 +94,7 @@ public class RedisLettuceAutoConfiguration {
                 );
             } else if (mode == RedisModeEnum.SINGLETON) {
                 externalCacheBuilder = createStandalone(
-                        remoteCacheProperties.getSingleton(), enablePubSub, asyncResultTimeoutInMillis
+                        remoteCacheProperties.getLettuce().getSingleton(), enablePubSub, asyncResultTimeoutInMillis
                 );
             } else {
                 throw new IllegalArgumentException("unknown mode:" + mode);
@@ -121,9 +121,9 @@ public class RedisLettuceAutoConfiguration {
                 RemoteCacheProperties remoteCacheProperties, boolean enablePubSub, Long asyncResultTimeoutInMillis
         ) {
             StatefulRedisPubSubConnection<byte[], byte[]> pubSubConnection = null;
-            ClusterPropertiesConfig cluster = remoteCacheProperties.getCluster();
+            ClusterPropertiesConfig cluster = remoteCacheProperties.getLettuce().getCluster();
 
-            ReadFromEnum readFromEnum = remoteCacheProperties.getReadFrom();
+            ReadFromEnum readFromEnum = remoteCacheProperties.getLettuce().getReadFrom();
             ReadFrom readFrom = null;
             if (readFromEnum != null) {
                 readFrom = ReadFrom.valueOf(readFromEnum.name().trim());
@@ -152,10 +152,10 @@ public class RedisLettuceAutoConfiguration {
         private ExternalCacheBuilder createSentinel(
                 RemoteCacheProperties remoteCacheProperties, boolean enablePubSub, Long asyncResultTimeoutInMillis
         ) {
-            SentinelPropertiesConfig sentinel = remoteCacheProperties.getSentinel();
+            SentinelPropertiesConfig sentinel = remoteCacheProperties.getLettuce().getSentinel();
             RedisPropertiesConfig master = sentinel.getMaster();
 
-            ReadFromEnum readFromEnum = remoteCacheProperties.getReadFrom();
+            ReadFromEnum readFromEnum = remoteCacheProperties.getLettuce().getReadFrom();
             ReadFrom readFrom = null;
             if (readFromEnum != null) {
                 readFrom = ReadFrom.valueOf(readFromEnum.name().trim());
@@ -258,12 +258,12 @@ public class RedisLettuceAutoConfiguration {
                 boolean pubsub
         ) {
             // 获取周期性刷新使能的间隔时间，默认为60秒
-            Integer enablePeriodicRefresh = remoteCacheProperties.getEnablePeriodicRefresh();
+            Integer enablePeriodicRefresh = remoteCacheProperties.getLettuce().getEnablePeriodicRefresh();
             if (Objects.isNull(enablePeriodicRefresh)) {
                 enablePeriodicRefresh = 60;
             }
             // 获取是否启用所有自适应刷新触发器的标志，默认为true
-            Boolean enableAllAdaptiveRefreshTriggers = remoteCacheProperties.getEnableAllAdaptiveRefreshTriggers();
+            Boolean enableAllAdaptiveRefreshTriggers = remoteCacheProperties.getLettuce().getEnableAllAdaptiveRefreshTriggers();
             if (Objects.isNull(enablePeriodicRefresh)) {
                 enableAllAdaptiveRefreshTriggers = true;
             }
