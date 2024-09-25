@@ -1,7 +1,7 @@
 package com.yat.cache.autoconfigure.init.embedded;
 
 import com.yat.cache.autoconfigure.JetCacheCondition;
-import com.yat.cache.autoconfigure.properties.BaseCacheProperties;
+import com.yat.cache.autoconfigure.properties.LocalCacheProperties;
 import com.yat.cache.autoconfigure.properties.enums.LocalCacheTypeEnum;
 import com.yat.cache.core.CacheBuilder;
 import com.yat.cache.core.embedded.LinkedHashMapCacheBuilder;
@@ -25,9 +25,9 @@ public class LinkedHashMapAutoConfiguration extends EmbeddedCacheAutoInit {
     }
 
     @Override
-    protected CacheBuilder initCache(BaseCacheProperties cacheProperties, String cacheAreaWithPrefix) {
+    protected CacheBuilder initEmbeddedCache(LocalCacheProperties cacheProperties, String cacheAreaWithPrefix) {
         LinkedHashMapCacheBuilder<?> builder = LinkedHashMapCacheBuilder.createLinkedHashMapCacheBuilder();
-        parseGeneralConfig(builder, cacheProperties);
+        parseEmbeddedGeneralConfig(builder, cacheProperties);
         return builder;
     }
 

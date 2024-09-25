@@ -1,7 +1,7 @@
 package com.yat.cache.autoconfigure.init.embedded;
 
 import com.yat.cache.autoconfigure.JetCacheCondition;
-import com.yat.cache.autoconfigure.properties.BaseCacheProperties;
+import com.yat.cache.autoconfigure.properties.LocalCacheProperties;
 import com.yat.cache.autoconfigure.properties.enums.LocalCacheTypeEnum;
 import com.yat.cache.core.CacheBuilder;
 import com.yat.cache.core.embedded.CaffeineCacheBuilder;
@@ -25,9 +25,9 @@ public class CaffeineAutoConfiguration extends EmbeddedCacheAutoInit {
     }
 
     @Override
-    protected CacheBuilder initCache(BaseCacheProperties cacheProperties, String cacheAreaWithPrefix) {
-        CaffeineCacheBuilder builder = CaffeineCacheBuilder.createCaffeineCacheBuilder();
-        parseGeneralConfig(builder, cacheProperties);
+    protected CacheBuilder initEmbeddedCache(LocalCacheProperties cacheProperties, String cacheAreaWithPrefix) {
+        CaffeineCacheBuilder<?> builder = CaffeineCacheBuilder.createCaffeineCacheBuilder();
+        parseEmbeddedGeneralConfig(builder, cacheProperties);
         return builder;
     }
 

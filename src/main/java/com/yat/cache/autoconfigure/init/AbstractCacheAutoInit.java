@@ -167,7 +167,13 @@ public abstract class AbstractCacheAutoInit implements InitializingBean {
         }
     }
 
-    private String getKeyConvertor(KeyConvertorEnum keyConvertor) {
+    /**
+     * 获取key转换器的全局配置
+     *
+     * @param keyConvertor KeyConvertor的枚举值
+     * @return key转换器
+     */
+    protected String getKeyConvertor(KeyConvertorEnum keyConvertor) {
         if (Objects.isNull(keyConvertor)) {
             return KeyConvertorEnum.NONE.name();
         }
