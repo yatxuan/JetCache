@@ -165,12 +165,11 @@ public abstract class AbstractCacheAutoInit implements InitializingBean {
         if (expireAfterAccessInMillis != null) {
             acb.setExpireAfterAccessInMillis(expireAfterAccessInMillis);
         }
-
     }
 
     private String getKeyConvertor(KeyConvertorEnum keyConvertor) {
         if (Objects.isNull(keyConvertor)) {
-            return KeyConvertorEnum.GSON.name();
+            return KeyConvertorEnum.NONE.name();
         }
         return keyConvertor.name();
     }
