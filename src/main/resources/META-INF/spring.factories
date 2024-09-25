@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.yat.jetCache.autoconfigure.JetCacheAutoConfiguration
+com.yat.cache.autoconfigure.JetCacheAutoConfiguration
