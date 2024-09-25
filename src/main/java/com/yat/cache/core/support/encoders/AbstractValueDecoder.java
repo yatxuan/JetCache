@@ -60,6 +60,7 @@ public abstract class AbstractValueDecoder implements Function<byte[], Object>, 
             throw new CacheEncodeException("decode error", e);
         }
     }
+
     /**
      * 解析字节数组头部信息。
      *
@@ -77,6 +78,7 @@ public abstract class AbstractValueDecoder implements Function<byte[], Object>, 
         x = x | (buf[3] & 0xFF);
         return x;
     }
+
     /**
      * 执行实际的解码逻辑。
      *

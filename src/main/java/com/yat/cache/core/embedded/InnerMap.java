@@ -59,6 +59,7 @@ public interface InnerMap {
      * @param key 键
      * @return {@link boolean}
      */
+    @SuppressWarnings("UnusedReturnValue")
     boolean removeValue(Object key);
 
     /**

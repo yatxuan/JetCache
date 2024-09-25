@@ -54,7 +54,7 @@ public class ClassUtil {
             Collections.addAll(s, its);
             c = c.getSuperclass();
         } while (c != null);
-        return s.toArray(new Class<?>[s.size()]);
+        return s.toArray(new Class<?>[0]);
     }
 
     /**
@@ -65,15 +65,13 @@ public class ClassUtil {
      */
     public static String getMethodSig(Method m) {
         String sig = methodSigMap.get(m);
-        if (sig != null) {
-            return sig;
-        } else {
+        if (sig == null) {
             StringBuilder sb = new StringBuilder();
             getMethodSig(sb, m);
             sig = sb.toString();
             methodSigMap.put(m, sig);
-            return sig;
         }
+        return sig;
     }
 
     /**

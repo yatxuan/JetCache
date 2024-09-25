@@ -1,13 +1,13 @@
 package com.yat.cache.anno.method;
 
-import com.yat.cache.anno.api.CacheInvalidate;
-import com.yat.cache.anno.api.CacheInvalidateContainer;
-import com.yat.cache.anno.api.CachePenetrationProtect;
-import com.yat.cache.anno.api.CacheRefresh;
-import com.yat.cache.anno.api.CacheUpdate;
-import com.yat.cache.anno.api.Cached;
 import com.yat.cache.anno.api.DefaultCacheConstant;
-import com.yat.cache.anno.api.EnableCache;
+import com.yat.cache.anno.api.EnableJetCache;
+import com.yat.cache.anno.api.JetCacheInvalidate;
+import com.yat.cache.anno.api.JetCacheInvalidateContainer;
+import com.yat.cache.anno.api.JetCachePenetrationProtect;
+import com.yat.cache.anno.api.JetCacheRefresh;
+import com.yat.cache.anno.api.JetCacheUpdate;
+import com.yat.cache.anno.api.JetCached;
 import com.yat.cache.anno.support.CacheInvalidateAnnoConfig;
 import com.yat.cache.anno.support.CacheUpdateAnnoConfig;
 import com.yat.cache.anno.support.CachedAnnoConfig;
@@ -78,7 +78,7 @@ public class CacheConfigUtil {
     }
 
     private static CachedAnnoConfig parseCached(Method m) {
-        Cached anno = m.getAnnotation(Cached.class);
+        JetCached anno = m.getAnnotation(JetCached.class);
         if (anno == null) {
             return null;
         }
@@ -104,14 +104,14 @@ public class CacheConfigUtil {
         // 关联当前方法作为定义方法
         cc.setDefineMethod(m);
 
-        CacheRefresh cacheRefresh = m.getAnnotation(CacheRefresh.class);
-        if (cacheRefresh != null) {
+        JetCacheRefresh jetCacheRefresh = m.getAnnotation(JetCacheRefresh.class);
+        if (jetCacheRefresh != null) {
             // 解析刷新策略并设置到缓存的配置中
-            RefreshPolicy policy = parseRefreshPolicy(cacheRefresh);
+            RefreshPolicy policy = parseRefreshPolicy(jetCacheRefresh);
             cc.setRefreshPolicy(policy);
         }
 
-        CachePenetrationProtect protectAnno = m.getAnnotation(CachePenetrationProtect.class);
+        JetCachePenetrationProtect protectAnno = m.getAnnotation(JetCachePenetrationProtect.class);
         if (protectAnno != null) {
             // 解析穿透保护配置并设置到缓存的配置中
             PenetrationProtectConfig protectConfig = parsePenetrationProtectConfig(protectAnno);
@@ -128,7 +128,7 @@ public class CacheConfigUtil {
      * @return 如果存在 EnableCache 注解则返回 true，否则返回 false
      */
     private static boolean parseEnableCache(Method m) {
-        EnableCache anno = m.getAnnotation(EnableCache.class);
+        EnableJetCache anno = m.getAnnotation(EnableJetCache.class);
         return anno != null;
     }
 
@@ -145,18 +145,18 @@ public class CacheConfigUtil {
         List<CacheInvalidateAnnoConfig> annoList = null;
 
         // 尝试获取单个 CacheInvalidate 注解
-        CacheInvalidate ci = m.getAnnotation(CacheInvalidate.class);
+        JetCacheInvalidate ci = m.getAnnotation(JetCacheInvalidate.class);
         if (ci != null) {
             annoList = new ArrayList<>(1);
             annoList.add(createCacheInvalidateAnnoConfig(ci, m));
         } else {
             // 如果没有单个注解，则尝试获取 CacheInvalidateContainer 注解集合
-            CacheInvalidateContainer cic = m.getAnnotation(CacheInvalidateContainer.class);
+            JetCacheInvalidateContainer cic = m.getAnnotation(JetCacheInvalidateContainer.class);
             if (cic != null) {
-                CacheInvalidate[] cacheInvalidates = cic.value();
-                annoList = new ArrayList<>(cacheInvalidates.length);
-                for (CacheInvalidate cacheInvalidate : cacheInvalidates) {
-                    annoList.add(createCacheInvalidateAnnoConfig(cacheInvalidate, m));
+                JetCacheInvalidate[] jetCacheInvalidates = cic.value();
+                annoList = new ArrayList<>(jetCacheInvalidates.length);
+                for (JetCacheInvalidate jetCacheInvalidate : jetCacheInvalidates) {
+                    annoList.add(createCacheInvalidateAnnoConfig(jetCacheInvalidate, m));
                 }
             }
         }
@@ -174,7 +174,7 @@ public class CacheConfigUtil {
      */
     private static CacheUpdateAnnoConfig parseCacheUpdate(Method m) throws CacheConfigException {
         // 获取方法上的@CacheUpdate注解
-        CacheUpdate anno = m.getAnnotation(CacheUpdate.class);
+        JetCacheUpdate anno = m.getAnnotation(JetCacheUpdate.class);
         // 如果方法上没有@CacheUpdate注解，则返回null
         if (anno == null) {
             return null;
@@ -211,29 +211,29 @@ public class CacheConfigUtil {
     /**
      * 解析缓存刷新策略
      *
-     * @param cacheRefresh 缓存刷新配置对象，包含刷新相关的时间设置和单位
+     * @param jetCacheRefresh 缓存刷新配置对象，包含刷新相关的时间设置和单位
      * @return RefreshPolicy对象，表示解析后的刷新策略，包括刷新间隔、停止刷新时间等
      */
-    public static RefreshPolicy parseRefreshPolicy(CacheRefresh cacheRefresh) {
+    public static RefreshPolicy parseRefreshPolicy(JetCacheRefresh jetCacheRefresh) {
         // 创建一个刷新策略对象来存储解析后的刷新策略
         RefreshPolicy policy = new RefreshPolicy();
 
         // 获取时间单位，用于时间值的转换
-        TimeUnit t = cacheRefresh.timeUnit();
+        TimeUnit t = jetCacheRefresh.timeUnit();
 
         // 设置刷新间隔时间，将根据时间单位转换刷新时间到毫秒
-        policy.setRefreshMillis(t.toMillis(cacheRefresh.refresh()));
+        policy.setRefreshMillis(t.toMillis(jetCacheRefresh.refresh()));
 
         // 如果停止刷新时间（自最后访问后）明确且不为默认的未定义值
-        if (!DefaultCacheConstant.isUndefined(cacheRefresh.stopRefreshAfterLastAccess())) {
+        if (!DefaultCacheConstant.isUndefined(jetCacheRefresh.stopRefreshAfterLastAccess())) {
             // 将停止刷新时间转换为毫秒并设置到策略对象中
-            policy.setStopRefreshAfterLastAccessMillis(t.toMillis(cacheRefresh.stopRefreshAfterLastAccess()));
+            policy.setStopRefreshAfterLastAccessMillis(t.toMillis(jetCacheRefresh.stopRefreshAfterLastAccess()));
         }
 
         // 如果刷新锁超时时间明确且不为默认的未定义值
-        if (!DefaultCacheConstant.isUndefined(cacheRefresh.refreshLockTimeout())) {
+        if (!DefaultCacheConstant.isUndefined(jetCacheRefresh.refreshLockTimeout())) {
             // 将刷新锁超时时间转换为毫秒并设置到策略对象中
-            policy.setRefreshLockTimeoutMillis(t.toMillis(cacheRefresh.refreshLockTimeout()));
+            policy.setRefreshLockTimeoutMillis(t.toMillis(jetCacheRefresh.refreshLockTimeout()));
         }
 
         // 返回解析后的刷新策略对象
@@ -243,13 +243,13 @@ public class CacheConfigUtil {
     /**
      * 从缓存穿透保护注解中解析出穿透保护配置
      * <p>
-     * 此方法负责将注解 {@link CachePenetrationProtect} 中的信息转换为 {@link PenetrationProtectConfig} 对象
+     * 此方法负责将注解 {@link JetCachePenetrationProtect} 中的信息转换为 {@link PenetrationProtectConfig} 对象
      * 它提取了注解中的 value 和 timeout 信息，为穿透保护配置提供必要的参数
      *
      * @param protectAnno 缓存穿透保护注解，包含配置参数
      * @return PenetrationProtectConfig对象，用于在缓存操作中应用穿透保护
      */
-    public static PenetrationProtectConfig parsePenetrationProtectConfig(CachePenetrationProtect protectAnno) {
+    public static PenetrationProtectConfig parsePenetrationProtectConfig(JetCachePenetrationProtect protectAnno) {
         // 创建一个新的穿透保护配置实例
         PenetrationProtectConfig protectConfig = new PenetrationProtectConfig();
         // 设置是否启用穿透保护
@@ -275,7 +275,7 @@ public class CacheConfigUtil {
      * @return 解析后的缓存失效配置对象
      * @throws CacheConfigException 如果注解的name属性为空或字符串为空，则抛出此异常
      */
-    private static CacheInvalidateAnnoConfig createCacheInvalidateAnnoConfig(CacheInvalidate anno, Method m) {
+    private static CacheInvalidateAnnoConfig createCacheInvalidateAnnoConfig(JetCacheInvalidate anno, Method m) {
         // 创建一个新的缓存失效配置对象
         CacheInvalidateAnnoConfig cc = new CacheInvalidateAnnoConfig();
 

@@ -7,11 +7,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * ClassName CacheUpdate
+ * ClassName JetCacheUpdate
  * <p>Description 用于配置缓存更新操作</p>
- * <p>
- *     todo 重命名 JetCacheUpdate
- * </p>
  *
  * @author Yat
  * Date 2024/8/22 09:54
@@ -20,7 +17,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface CacheUpdate {
+public @interface JetCacheUpdate {
 
     /**
      * 如果你想使用多后端缓存系统，你可以在配置中设置多个“缓存区域”，

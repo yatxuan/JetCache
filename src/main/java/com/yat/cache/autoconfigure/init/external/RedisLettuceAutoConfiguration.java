@@ -161,8 +161,6 @@ public class RedisLettuceAutoConfiguration {
                 readFrom = ReadFrom.valueOf(readFromEnum.name().trim());
             }
 
-            StatefulRedisPubSubConnection<byte[], byte[]> pubSubConnection = null;
-
             RedisURI.Builder builder = RedisURI.Builder
                     .sentinel(master.getHost(), master.getPort(), sentinel.getMasterName())
                     .withPassword(master.getPassword().toCharArray());
@@ -192,7 +190,8 @@ public class RedisLettuceAutoConfiguration {
                             .redisClient(client)
                             .asyncResultTimeoutInMillis(asyncResultTimeoutInMillis);
             if (enablePubSub) {
-                pubSubConnection = client.connectPubSub(new JetCacheCodec());
+                StatefulRedisPubSubConnection<byte[], byte[]> pubSubConnection =
+                        client.connectPubSub(new JetCacheCodec());
                 redisLettuceCacheBuilder.pubSubConnection(pubSubConnection);
             }
             return redisLettuceCacheBuilder;

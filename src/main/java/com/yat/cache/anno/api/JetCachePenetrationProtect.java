@@ -9,11 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * ClassName JetCachePenetrationProtect
- * <p>Description 用于防止缓存穿透攻击: 需求配合 {@link Cached} 一起使用</p>
- *
- * <p>
- *     todo 重命名 JetCachePenetrationProtect
- * </p>
+ * <p>Description 用于防止缓存穿透攻击: 需求配合 {@link JetCached} 一起使用</p>
  *
  * @author Yat
  * Date 2024/8/22 09:51
@@ -22,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD})
-public @interface CachePenetrationProtect {
+public @interface JetCachePenetrationProtect {
 
     /**
      * 指定是否启用防止缓存穿透保护。

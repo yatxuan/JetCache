@@ -24,15 +24,15 @@ public class CacheLoadAllEvent extends CacheEvent {
     /**
      * 缓存键集合
      */
-    private Set keys;
+    private final Set keys;
     /**
      * 缓存值
      */
-    private Map loadedValue;
+    private final Map loadedValue;
     /**
      * 是否成功
      */
-    private boolean success;
+    private final boolean success;
 
     public CacheLoadAllEvent(Cache cache, long millis, Set keys, Map loadedValue, boolean success) {
         super(cache);

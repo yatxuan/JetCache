@@ -17,6 +17,7 @@ import java.util.List;
 @Setter
 @Getter
 public class CacheInvokeConfig {
+
     /**
      * 默认的无缓存调用配置实例，用于表示未启用缓存或缓存配置为空的情况。
      */

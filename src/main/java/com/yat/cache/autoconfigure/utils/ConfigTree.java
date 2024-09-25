@@ -7,6 +7,7 @@ import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,8 +21,8 @@ import java.util.stream.Collectors;
  */
 public class ConfigTree {
 
-    private ConfigurableEnvironment environment;
-    private String prefix;
+    private final ConfigurableEnvironment environment;
+    private final String prefix;
 
     public ConfigTree(ConfigurableEnvironment environment, String prefix) {
         Assert.notNull(environment, "environment is required");
@@ -88,7 +89,7 @@ public class ConfigTree {
         Map<String, Object> m = getProperties();
         return m.keySet().stream().map(
                         s -> s.indexOf('.') >= 0 ? s.substring(0, s.indexOf('.')) : null)
-                .filter(s -> s != null)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
 

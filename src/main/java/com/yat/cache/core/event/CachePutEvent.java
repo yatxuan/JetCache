@@ -3,6 +3,7 @@ package com.yat.cache.core.event;
 import com.yat.cache.core.Cache;
 import com.yat.cache.core.CacheResult;
 import lombok.Getter;
+
 /**
  * ClassName CachePutEvent
  * <p>Description 表示向缓存中放入数据的事件</p>
@@ -17,22 +18,22 @@ public class CachePutEvent extends CacheEvent {
     /**
      * 事件发生的时间戳（毫秒）。
      */
-    private long millis;
+    private final long millis;
 
     /**
      * 放入缓存的键。
      */
-    private Object key;
+    private final Object key;
 
     /**
      * 放入缓存的值。
      */
-    private Object value;
+    private final Object value;
 
     /**
      * 放入操作的结果。
      */
-    private CacheResult result;
+    private final CacheResult result;
 
     /**
      * 构造一个新的 CachePutEvent 实例。

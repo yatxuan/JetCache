@@ -11,6 +11,7 @@ import org.springframework.aop.ClassFilter;
 import org.springframework.aop.support.StaticMethodMatcherPointcut;
 import org.springframework.asm.Type;
 import org.springframework.lang.NonNull;
+import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -73,7 +74,7 @@ public class CachePointcut extends StaticMethodMatcherPointcut implements ClassF
         // 获取类实现的所有接口
         Class<?>[] cs = clazz.getInterfaces();
         // 遍历所有接口，递归检查接口是否匹配条件
-        if (cs != null) {
+        if (ObjectUtils.isArray(cs)) {
             for (Class<?> c : cs) {
                 if (matchesImpl(c)) {
                     return Boolean.TRUE;

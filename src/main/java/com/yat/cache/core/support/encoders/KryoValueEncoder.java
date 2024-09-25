@@ -3,7 +3,7 @@ package com.yat.cache.core.support.encoders;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.CompatibleFieldSerializer;
-import com.yat.cache.anno.api.SerialPolicy;
+import com.yat.cache.autoconfigure.properties.enums.SerialPolicyTypeEnum;
 import com.yat.cache.core.exception.CacheEncodeException;
 import com.yat.cache.core.support.ObjectPool;
 import lombok.Getter;
@@ -45,6 +45,7 @@ public class KryoValueEncoder extends AbstractValueEncoder {
      * KryoValueEncoder 的单例实例
      */
     public static final KryoValueEncoder INSTANCE = new KryoValueEncoder(true);
+
     /**
      * 初始化 KryoValueEncoder。
      *
@@ -53,6 +54,7 @@ public class KryoValueEncoder extends AbstractValueEncoder {
     public KryoValueEncoder(boolean useIdentityNumber) {
         super(useIdentityNumber);
     }
+
     /**
      * 序列化对象为字节数组。
      *
@@ -67,7 +69,7 @@ public class KryoValueEncoder extends AbstractValueEncoder {
             kryoCache = kryoCacheObjectPool.borrowObject();
             Output output = kryoCache.getOutput();
             if (useIdentityNumber) {
-                writeInt(output, SerialPolicy.IDENTITY_NUMBER_KRYO4);
+                writeInt(output);
             }
             kryoCache.getKryo().writeClassAndObject(output, value);
             return output.toBytes();
@@ -81,19 +83,21 @@ public class KryoValueEncoder extends AbstractValueEncoder {
             }
         }
     }
+
     /**
      * 手动写入 int 值到输出流。
      *
      * @param output 输出流。
-     * @param value  要写入的 int 值。
      */
-    private void writeInt(Output output, int value) {
+    private void writeInt(Output output) {
         // kryo5 change writeInt to little endian, so we write int manually
-        output.writeByte(value >>> 24);
-        output.writeByte(value >>> 16);
-        output.writeByte(value >>> 8);
-        output.writeByte(value);
+        int identityNumberKryo4 = SerialPolicyTypeEnum.KRYO.getCode();
+        output.writeByte(identityNumberKryo4 >>> 24);
+        output.writeByte(identityNumberKryo4 >>> 16);
+        output.writeByte(identityNumberKryo4 >>> 8);
+        output.writeByte(identityNumberKryo4);
     }
+
     /**
      * KryoCache 内部类，封装了 Kryo 和 Output，用于高效序列化。
      */

@@ -82,8 +82,7 @@ public class MetricsMonitorInstaller extends AbstractLifecycle implements CacheM
         }
         // 尝试获取抽象缓存实例，以便于监控器的添加。
         cache = CacheUtil.getAbstractCache(cache);
-        if (cache instanceof MultiLevelCache) {
-            MultiLevelCache mc = (MultiLevelCache) cache;
+        if (cache instanceof MultiLevelCache mc) {
             // 处理多级缓存情况，目前仅支持两级缓存。
             if (mc.caches().length == 2) {
                 Cache local = mc.caches()[0];

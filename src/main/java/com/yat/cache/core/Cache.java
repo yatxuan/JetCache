@@ -203,7 +203,7 @@ public interface Cache<K, V> extends Closeable {
      *
      * @param key              键，用于标识缓存中的项。
      * @param value            值，要与键关联的缓存数据。
-     * @param expireAfterWrite 写入后到期时间，表示缓存项在写入后的一段时间内将被视为过期并可能被删除。
+     * @param expireAfterWrite 写入后到期时间，表示缓存项在写入后的一段时间内将被 视为过期并可能被删除。
      * @param timeUnit         时间单位，用于指定 expireAfterWrite 的度量单位。
      * @return 返回一个包含操作结果和旧值（如果存在的话）的 CacheResult 对象。
      * 由于此操作是插入操作，旧值将为 null，因为这是针对不存在的键执行的操作。

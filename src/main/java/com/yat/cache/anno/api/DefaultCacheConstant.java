@@ -24,14 +24,6 @@ public interface DefaultCacheConstant {
     String BEAN_KEY_CUSTOM = "BEAN_KEY_CUSTOM";
 
     /**
-     * 自定义序列化编码器
-     */
-    String BEAN_ENCODER_CUSTOM = "BEAN_ENCODER_CUSTOM";
-    /**
-     * 自定义序列化解码器
-     */
-    String BEAN_DECODER_CUSTOM = "BEAN_DECODER_CUSTOM";
-    /**
      * 默认启用方法缓存的状态。
      *
      * @value 默认启用状态 true

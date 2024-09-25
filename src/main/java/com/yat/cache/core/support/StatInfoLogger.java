@@ -85,7 +85,7 @@ public class StatInfoLogger implements Consumer<StatInfo> {
 
         for (CacheStat s : stats) {
             String title = String.format(
-                    "%-10s|%10s|%14s|%14s|%14s|%14s|%14s|%9s|%7s|%7s", "oper", "qps/tps", "count",
+                    "%-10s|%10s|%14s|%14s|%14s|%14s|%14s|%9s|%7s|%7s", "opera", "qps/tps", "count",
                     "success/hit", "fail", "miss", "expired", "avgTime", "minTime", "maxTime"
             );
 

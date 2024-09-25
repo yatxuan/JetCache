@@ -3,7 +3,7 @@ package com.yat.cache.core.support.encoders;
 import com.esotericsoftware.kryo.kryo5.Kryo;
 import com.esotericsoftware.kryo.kryo5.io.Output;
 import com.esotericsoftware.kryo.kryo5.serializers.CompatibleFieldSerializer;
-import com.yat.cache.anno.api.SerialPolicy;
+import com.yat.cache.autoconfigure.properties.enums.SerialPolicyTypeEnum;
 import com.yat.cache.core.exception.CacheEncodeException;
 import com.yat.cache.core.support.ObjectPool;
 import lombok.Getter;
@@ -23,7 +23,7 @@ public class Kryo5ValueEncoder extends AbstractValueEncoder {
      * 默认大小为32K
      */
     static ObjectPool<Kryo5Cache> kryoCacheObjectPool = new ObjectPool<>(16,
-            new ObjectPool.ObjectFactory< >() {
+            new ObjectPool.ObjectFactory<>() {
                 @Override
                 public Kryo5Cache create() {
                     return new Kryo5Cache();
@@ -41,11 +41,13 @@ public class Kryo5ValueEncoder extends AbstractValueEncoder {
     private static final int INIT_BUFFER_SIZE = 2048;
     /**
      * 单例实例，支持身份编码的Kryo5ValueEncoder
-     */ public static final Kryo5ValueEncoder INSTANCE = new Kryo5ValueEncoder(true);
+     */
+    public static final Kryo5ValueEncoder INSTANCE = new Kryo5ValueEncoder(true);
 
     public Kryo5ValueEncoder(boolean useIdentityNumber) {
         super(useIdentityNumber);
     }
+
     /**
      * 序列化给定的对象值。
      *
@@ -59,35 +61,35 @@ public class Kryo5ValueEncoder extends AbstractValueEncoder {
         try {
             kryoCache = kryoCacheObjectPool.borrowObject();
             if (useIdentityNumber) {
-                writeInt(kryoCache.getOutput(), SerialPolicy.IDENTITY_NUMBER_KRYO5);
+                writeInt(kryoCache.getOutput());
             }
             kryoCache.getKryo().writeClassAndObject(kryoCache.getOutput(), value);
             return kryoCache.getOutput().toBytes();
         } catch (Exception e) {
-            StringBuilder sb = new StringBuilder("Kryo Encode error. ");
-            sb.append("msg=").append(e.getMessage());
-            throw new CacheEncodeException(sb.toString(), e);
+            throw new CacheEncodeException("Kryo Encode error. " + "msg=" + e.getMessage(), e);
         } finally {
             if (kryoCache != null) {
                 kryoCacheObjectPool.returnObject(kryoCache);
             }
         }
     }
+
     /**
      * 手动写入一个整数到Output中。
      * Kryo5改变了写入整数的方式，使用小端字节序，
      * 因此在这里手动实现整数的写入。
      *
      * @param output 要写入的Output流
-     * @param value  要写入的整数值
      */
-    private void writeInt(Output output, int value) {
+    private void writeInt(Output output) {
         // kryo5 change writeInt to little endian, so we write int manually
-        output.writeByte(value >>> 24);
-        output.writeByte(value >>> 16);
-        output.writeByte(value >>> 8);
-        output.writeByte(value);
+        int identityNumberKryo5 = SerialPolicyTypeEnum.KRYO5.getCode();
+        output.writeByte(identityNumberKryo5 >>> 24);
+        output.writeByte(identityNumberKryo5 >>> 16);
+        output.writeByte(identityNumberKryo5 >>> 8);
+        output.writeByte(identityNumberKryo5);
     }
+
     /**
      * Kryo5缓存类，封装了Kryo实例和Output流，
      * 用于Kryo5序列化操作。

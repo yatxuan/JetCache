@@ -8,11 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * ClassName JetCacheInvalidateContainer
- * <p>Description 用于收集多个 {@link CacheInvalidate} 注解</p>
- *
- * <p>
- *  todo 重命名 JetCacheRemoveContainer
- * </p>
+ * <p>Description 用于收集多个 {@link JetCacheInvalidate} 注解</p>
  *
  * @author Yat
  * <p>
@@ -22,10 +18,10 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface CacheInvalidateContainer {
+public @interface JetCacheInvalidateContainer {
 
     /**
-     * 返回 {@link CacheInvalidate} 注解数组。
+     * 返回 {@link JetCacheInvalidate} 注解数组。
      */
-    CacheInvalidate[] value();
+    JetCacheInvalidate[] value();
 }

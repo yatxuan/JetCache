@@ -90,9 +90,9 @@ public class MultiGetResult<K, V> extends CacheResult {
             return null;
         }
         Map<K, V> m = new HashMap<>();
-        values.entrySet().forEach((en) -> {
-            if (en.getValue().isSuccess()) {
-                m.put(en.getKey(), en.getValue().getValue());
+        values.forEach((key, value) -> {
+            if (value.isSuccess()) {
+                m.put(key, value.getValue());
             }
         });
         return m;

@@ -4,6 +4,7 @@ import com.yat.cache.anno.method.ClassUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
@@ -17,8 +18,18 @@ import java.util.regex.Pattern;
  */
 public class DefaultCacheNameGenerator implements CacheNameGenerator {
 
+    private static final Map<Class<?>, Character> characterMap = Map.of(
+            Integer.TYPE, 'I',
+            Void.TYPE, 'V',
+            Boolean.TYPE, 'Z',
+            Byte.TYPE, 'B',
+            Character.TYPE, 'C',
+            Short.TYPE, 'S',
+            Double.TYPE, 'D',
+            Float.TYPE, 'F',
+            Long.TYPE, 'J'
+    );
     protected final String[] hiddenPackages;
-
     protected final ConcurrentHashMap<Method, String> cacheNameMap = new ConcurrentHashMap<>();
 
     public DefaultCacheNameGenerator(String[] hiddenPackages) {
@@ -70,7 +81,7 @@ public class DefaultCacheNameGenerator implements CacheNameGenerator {
                 if (p != null && packageOrFullClassName.startsWith(p)) {
                     packageOrFullClassName = Pattern.compile(p, Pattern.LITERAL).matcher(
                             packageOrFullClassName).replaceFirst("");
-                    if (packageOrFullClassName.length() > 0 && packageOrFullClassName.charAt(0) == '.') {
+                    if (!packageOrFullClassName.isEmpty() && packageOrFullClassName.charAt(0) == '.') {
                         packageOrFullClassName = packageOrFullClassName.substring(1);
                     }
                     return packageOrFullClassName;
@@ -82,28 +93,10 @@ public class DefaultCacheNameGenerator implements CacheNameGenerator {
 
     protected void getDescriptor(final StringBuilder sb, final Class<?> c, String[] hiddenPackages) {
         Class<?> d = c;
+
         while (true) {
             if (d.isPrimitive()) {
-                char car;
-                if (d == Integer.TYPE) {
-                    car = 'I';
-                } else if (d == Void.TYPE) {
-                    car = 'V';
-                } else if (d == Boolean.TYPE) {
-                    car = 'Z';
-                } else if (d == Byte.TYPE) {
-                    car = 'B';
-                } else if (d == Character.TYPE) {
-                    car = 'C';
-                } else if (d == Short.TYPE) {
-                    car = 'S';
-                } else if (d == Double.TYPE) {
-                    car = 'D';
-                } else if (d == Float.TYPE) {
-                    car = 'F';
-                } else /* if (d == Long.TYPE) */ {
-                    car = 'J';
-                }
+                char car = characterMap.getOrDefault(d, 'J');
                 sb.append(car);
                 return;
             } else if (d.isArray()) {

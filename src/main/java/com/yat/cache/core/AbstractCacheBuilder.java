@@ -15,7 +15,7 @@ import java.util.function.Function;
  * Date 2024/8/22 11:39
  * version 1.0
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "unused"})
 public abstract class AbstractCacheBuilder<T extends AbstractCacheBuilder<T>> implements CacheBuilder, Cloneable {
 
     /**
@@ -30,6 +30,7 @@ public abstract class AbstractCacheBuilder<T extends AbstractCacheBuilder<T>> im
     /**
      * 设置构建函数，用于创建缓存实例
      */
+    @SuppressWarnings("UnusedReturnValue")
     public T buildFunc(Function<CacheConfig, Cache> buildFunc) {
         this.buildFunc = buildFunc;
         return self();
@@ -78,7 +79,11 @@ public abstract class AbstractCacheBuilder<T extends AbstractCacheBuilder<T>> im
         return cache;
     }
 
+    /**
+     * 在构建缓存之前可以执行一些操作
+     */
     protected void beforeBuild() {
+
     }
 
     /**
@@ -120,6 +125,7 @@ public abstract class AbstractCacheBuilder<T extends AbstractCacheBuilder<T>> im
      *
      * @param keyConvertor key转换器
      */
+    @SuppressWarnings("UnusedReturnValue")
     public T keyConvertor(Function<Object, Object> keyConvertor) {
         getConfig().setKeyConvertor(keyConvertor);
         return self();

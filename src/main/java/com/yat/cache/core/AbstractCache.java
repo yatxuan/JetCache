@@ -103,7 +103,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         long t = System.currentTimeMillis();
         CacheGetResult<V> result;
         if (key == null) {
-            result = new CacheGetResult<V>(CacheResultCode.FAIL, CacheResult.MSG_ILLEGAL_ARGUMENT, null);
+            result = new CacheGetResult<>(CacheResultCode.FAIL, CacheResult.MSG_ILLEGAL_ARGUMENT, null);
         } else {
             result = do_GET(key);
         }
@@ -346,8 +346,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         CacheLoader<K, V> newLoader = CacheUtil.createProxyLoader(cache, loader, abstractCache::notify);
         CacheGetResult<V> r;
         // 如果缓存支持刷新，则使用刷新缓存逻辑
-        if (cache instanceof RefreshCache) {
-            RefreshCache<K, V> refreshCache = ((RefreshCache<K, V>) cache);
+        if (cache instanceof RefreshCache<K, V> refreshCache) {
             r = refreshCache.GET(key);
             refreshCache.addOrUpdateRefreshTask(key, newLoader);
         } else {
@@ -401,7 +400,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         // 构建加载器锁的键
         Object lockKey = buildLoaderLockKey(abstractCache, key);
         while (true) {
-            // 用于标记是否创建了新的加载器锁
+            // 用于标记是否创建了新的 加载器锁
             boolean[] create = new boolean[1];
             // 计算并获取加载器锁，如果不存在则创建新的
             LoaderLock ll = loaderMap.computeIfAbsent(lockKey, (unusedKey) -> {
@@ -430,7 +429,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
                         return loadedValue;
                     }
                 } finally {
-                    // 如果创建了新的加载器锁，在完成后计数减一并移除锁
+                    // 如果创建了新的 加载器锁，在完成后计数减一并移除锁
                     if (create[0]) {
                         ll.signal.countDown();
                         loaderMap.remove(lockKey);

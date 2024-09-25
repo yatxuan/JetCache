@@ -134,11 +134,11 @@ public class LoadingCache<K, V> extends SimpleProxyCache<K, V> {
      */
     protected boolean needUpdate(V loadedValue, CacheLoader<K, V> loader) {
         if (loadedValue == null && !config.isCacheNullValue()) {
-            return false;
+            return Boolean.FALSE;
         }
         if (loader.vetoCacheUpdate()) {
-            return false;
+            return Boolean.FALSE;
         }
-        return true;
+        return Boolean.TRUE;
     }
 }

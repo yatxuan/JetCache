@@ -11,10 +11,6 @@ import java.util.concurrent.TimeUnit;
  * ClassName JetCached
  * <p>Description 缓存注解</p>
  *
- * <p>
- *     todo 重命名 JetCached
- * </p>
- *
  * @author Yat
  * Date 2024/8/22 09:30
  * version 1.0
@@ -22,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Cached {
+public @interface JetCached {
 
     /**
      * 如果你想使用多后端缓存系统，你可以在配置中设置多个“缓存区域”，
@@ -35,7 +31,7 @@ public @interface Cached {
     /**
      * 此缓存实例的名称，可选。如果不指定，JetCache 将自动生成一个。
      * 该名称用于显示统计信息，并在使用远程缓存时用作键前缀的一部分。
-     * 不要为具有相同区域的不同 {@link Cached} 注释分配相同的名称。
+     * 不要为具有相同区域的不同 {@link JetCached} 注释分配相同的名称。
      *
      * @return 缓存的名称
      */

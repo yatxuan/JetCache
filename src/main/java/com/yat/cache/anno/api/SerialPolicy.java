@@ -10,7 +10,7 @@ import java.util.function.Function;
  * Date 2024/8/22 09:58
  * version 1.0
  */
-public interface SerialPolicy extends Identity {
+public interface SerialPolicy {
 
     /**
      * 获取编码器，用于将对象转换为字节数组。

@@ -1,6 +1,6 @@
 package com.yat.cache.core.support;
 
-import com.yat.cache.anno.api.SerialPolicy;
+import com.yat.cache.autoconfigure.properties.enums.SerialPolicyTypeEnum;
 import com.yat.cache.core.support.encoders.AbstractValueDecoder;
 import com.yat.cache.core.support.encoders.GsonValueDecoder;
 import com.yat.cache.core.support.encoders.JavaValueDecoder;
@@ -82,13 +82,13 @@ public class DecoderMap {
                 return;
             }
             // 注册默认的Java值解码器
-            register(SerialPolicy.IDENTITY_NUMBER_JAVA, defaultJavaValueDecoder());
+            register(SerialPolicyTypeEnum.JAVA.getCode(), defaultJavaValueDecoder());
             // 注册Kryo4的解码器
-            register(SerialPolicy.IDENTITY_NUMBER_KRYO4, KryoValueDecoder.INSTANCE);
+            register(SerialPolicyTypeEnum.KRYO.getCode(), KryoValueDecoder.INSTANCE);
             // 注册Kryo5的解码器
-            register(SerialPolicy.IDENTITY_NUMBER_KRYO5, Kryo5ValueDecoder.INSTANCE);
+            register(SerialPolicyTypeEnum.KRYO5.getCode(), Kryo5ValueDecoder.INSTANCE);
             // 注册Gson的解码器
-            register(SerialPolicy.IDENTITY_NUMBER_GSON, GsonValueDecoder.INSTANCE);
+            register(SerialPolicyTypeEnum.GSON.getCode(), GsonValueDecoder.INSTANCE);
             inited = true;
         } finally {
             reentrantLock.unlock();

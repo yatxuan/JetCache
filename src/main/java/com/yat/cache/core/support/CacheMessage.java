@@ -17,6 +17,7 @@ import java.io.Serializable;
 @Setter
 @Getter
 public class CacheMessage implements Serializable {
+
     @Serial
     private static final long serialVersionUID = -462475561129953207L;
     /**

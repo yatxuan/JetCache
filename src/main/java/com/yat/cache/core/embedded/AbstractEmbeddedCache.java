@@ -7,12 +7,14 @@ import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.CacheResultCode;
 import com.yat.cache.core.CacheValueHolder;
 import com.yat.cache.core.MultiGetResult;
+import com.yat.cache.core.ResultData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
@@ -125,14 +127,14 @@ public abstract class AbstractEmbeddedCache<K, V> extends AbstractCache<K, V> {
                 lock.unlock();
             }
 
-            return new CacheGetResult(CacheResultCode.SUCCESS, null, holder);
+            return new CacheGetResult<>(CacheResultCode.SUCCESS, null, holder);
         }
     }
 
     @Override
     protected MultiGetResult<K, V> do_GET_ALL(Set<? extends K> keys) {
-        ArrayList<K> keyList = new ArrayList<K>(keys.size());
-        ArrayList<Object> newKeyList = new ArrayList<Object>(keys.size());
+        ArrayList<K> keyList = new ArrayList<>(keys.size());
+        ArrayList<Object> newKeyList = new ArrayList<>(keys.size());
         keys.forEach((k) -> {
             Object newKey = buildKey(k);
             keyList.add(k);
@@ -146,29 +148,36 @@ public abstract class AbstractEmbeddedCache<K, V> extends AbstractCache<K, V> {
             CacheValueHolder<V> holder = innerResultMap.get(newKey);
             resultMap.put(key, parseHolderResult(holder));
         }
-        MultiGetResult<K, V> result = new MultiGetResult<>(CacheResultCode.SUCCESS, null, resultMap);
-        return result;
+        return new MultiGetResult<>(CacheResultCode.SUCCESS, null, resultMap);
     }
 
     @Override
     protected CacheResult do_PUT(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
-        CacheValueHolder<V> cacheObject = new CacheValueHolder(value, timeUnit.toMillis(expireAfterWrite));
+        CacheValueHolder<V> cacheObject = new CacheValueHolder<>(value, timeUnit.toMillis(expireAfterWrite));
         innerMap.putValue(buildKey(key), cacheObject);
         return CacheResult.SUCCESS_WITHOUT_MSG;
     }
 
     @Override
     protected CacheResult do_PUT_ALL(Map<? extends K, ? extends V> map, long expireAfterWrite, TimeUnit timeUnit) {
-        HashMap newKeyMap = new HashMap();
+        HashMap<Object, CacheValueHolder<V>> newKeyMap = new HashMap<>();
         for (Map.Entry<? extends K, ? extends V> en : map.entrySet()) {
-            CacheValueHolder<V> cacheObject = new CacheValueHolder(en.getValue(), timeUnit.toMillis(expireAfterWrite));
+            CacheValueHolder<V> cacheObject = new CacheValueHolder<>(
+                    en.getValue(), timeUnit.toMillis(expireAfterWrite)
+            );
             newKeyMap.put(buildKey(en.getKey()), cacheObject);
         }
         innerMap.putAllValues(newKeyMap);
 
-        final HashMap resultMap = new HashMap();
-        map.keySet().forEach((k) -> resultMap.put(k, CacheResultCode.SUCCESS));
-        return CacheResult.SUCCESS_WITHOUT_MSG;
+        final HashMap<K, CacheResultCode> resultMap = new HashMap<>();
+        map.keySet().forEach((key) -> resultMap.put(key, CacheResultCode.SUCCESS));
+
+        return new CacheResult(
+                CompletableFuture.completedFuture(new ResultData(
+                                CacheResultCode.SUCCESS, null, resultMap
+                        )
+                )
+        );
     }
 
     @Override
@@ -179,7 +188,9 @@ public abstract class AbstractEmbeddedCache<K, V> extends AbstractCache<K, V> {
 
     @Override
     protected CacheResult do_REMOVE_ALL(Set<? extends K> keys) {
-        Set newKeys = keys.stream().map((key) -> buildKey(key)).collect(Collectors.toSet());
+        Set<Object> newKeys = keys.stream()
+                .map(this::buildKey)
+                .collect(Collectors.toSet());
         innerMap.removeAllValues(newKeys);
 
         return CacheResult.SUCCESS_WITHOUT_MSG;
@@ -187,7 +198,10 @@ public abstract class AbstractEmbeddedCache<K, V> extends AbstractCache<K, V> {
 
     @Override
     protected CacheResult do_PUT_IF_ABSENT(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
-        CacheValueHolder<V> cacheObject = new CacheValueHolder(value, timeUnit.toMillis(expireAfterWrite));
+        CacheValueHolder<V> cacheObject = new CacheValueHolder<>(
+                value, timeUnit.toMillis(expireAfterWrite)
+        );
+
         if (innerMap.putIfAbsentValue(buildKey(key), cacheObject)) {
             return CacheResult.SUCCESS_WITHOUT_MSG;
         } else {

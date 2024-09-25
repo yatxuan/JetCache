@@ -1,6 +1,7 @@
 package com.yat.cache.autoconfigure.properties;
 
 import com.yat.cache.anno.api.DefaultCacheConstant;
+import com.yat.cache.anno.api.JetCached;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,7 @@ import java.util.Map;
 public class JetCacheProperties {
 
     /**
-     * {@link com.yat.cache.anno.api.Cached}  自动生成name的时候，
+     * {@link JetCached}  自动生成name的时候，
      * 为了不让name太长，hiddenPackages指定的包名前缀被截掉
      * <p>与 GlobalCacheConfig 保持一致</p>
      */

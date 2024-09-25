@@ -26,6 +26,7 @@ public class NotifyMonitorInstaller implements CacheMonitorInstaller {
      * 远程缓存构建器模板，用于根据区域名生成对应的缓存构建器
      */
     private final Function<String, CacheBuilder> remoteBuilderTemplate;
+
     /**
      * 初始化远程缓存构建器模板
      *
@@ -34,6 +35,7 @@ public class NotifyMonitorInstaller implements CacheMonitorInstaller {
     public NotifyMonitorInstaller(Function<String, CacheBuilder> remoteBuilderTemplate) {
         this.remoteBuilderTemplate = remoteBuilderTemplate;
     }
+
     /**
      * 添加监控器到缓存管理器和缓存实例中
      *

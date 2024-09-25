@@ -12,9 +12,10 @@ import java.util.function.Supplier;
  * Date 2024/9/20 21:49
  * version 1.0
  */
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 public class Assert {
 
-    private static final String TEMPLATE_VALUE_MUST_BE_BETWEEN_AND = "The value must be between {} and {}.";
+    private static final String TEMPLATE_VALUE_MUST_BE_BETWEEN_AND = "The value must be between %s and %s.";
 
     /**
      * 断言是否为真，如果为 {@code false} 抛出 {@code IllegalArgumentException} 异常<br>
@@ -207,7 +208,7 @@ public class Assert {
      */
     public static <T> T isInstanceOf(Class<?> type, T obj, String errorMsgTemplate, Object... params) throws IllegalArgumentException {
         notNull(type, "Type to check against must not be null");
-        if (false == type.isInstance(obj)) {
+        if (Boolean.FALSE.equals(type.isInstance(obj))) {
             throw new IllegalArgumentException(String.format(errorMsgTemplate, params));
         }
         return obj;
@@ -307,7 +308,7 @@ public class Assert {
      * @throws IllegalStateException 表达式为 {@code false} 抛出此异常
      */
     public static void state(boolean expression, Supplier<String> errorMsgSupplier) throws IllegalStateException {
-        if (false == expression) {
+        if (Boolean.FALSE.equals(expression)) {
             throw new IllegalStateException(errorMsgSupplier.get());
         }
     }
@@ -339,7 +340,7 @@ public class Assert {
      * @throws IllegalStateException 表达式为 {@code false} 抛出此异常
      */
     public static void state(boolean expression, String errorMsgTemplate, Object... params) throws IllegalStateException {
-        if (false == expression) {
+        if (Boolean.FALSE.equals(expression)) {
             throw new IllegalStateException(String.format(errorMsgTemplate, params));
         }
     }
@@ -396,11 +397,12 @@ public class Assert {
      */
     private static String badIndexMsg(int index, int size, String desc, Object... params) {
         if (index < 0) {
-            return String.format("{} ({}) must not be negative", String.format(desc, params), index);
+            return String.format("%s (%s) must not be negative", String.format(desc, params), index);
         } else if (size < 0) {
             throw new IllegalArgumentException("negative size: " + size);
-        } else { // index >= size
-            return String.format("{} ({}) must be less than size ({})", String.format(desc, params), index, size);
+        } else {
+            // index >= size
+            return String.format("%s (%s) must be less than size (%s)", String.format(desc, params), index, size);
         }
     }
 

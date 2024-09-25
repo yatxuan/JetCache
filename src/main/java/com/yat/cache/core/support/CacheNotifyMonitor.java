@@ -94,41 +94,37 @@ public class CacheNotifyMonitor implements CacheMonitor {
         }
 
         // 根据不同的事件类型创建 CacheMessage 并广播
-        if (event instanceof CachePutEvent) {
+        if (event instanceof CachePutEvent e) {
             CacheMessage m = new CacheMessage();
             m.setArea(area);
             m.setCacheName(cacheName);
             m.setSourceId(sourceId);
-            CachePutEvent e = (CachePutEvent) event;
             m.setType(CacheMessage.TYPE_PUT);
             m.setKeys(new Object[]{convertKey(e.getKey(), localCache)});
             broadcastManager.publish(m);
-        } else if (event instanceof CacheRemoveEvent) {
+        } else if (event instanceof CacheRemoveEvent e) {
             CacheMessage m = new CacheMessage();
             m.setArea(area);
             m.setCacheName(cacheName);
             m.setSourceId(sourceId);
-            CacheRemoveEvent e = (CacheRemoveEvent) event;
             m.setType(CacheMessage.TYPE_REMOVE);
             m.setKeys(new Object[]{convertKey(e.getKey(), localCache)});
             broadcastManager.publish(m);
-        } else if (event instanceof CachePutAllEvent) {
+        } else if (event instanceof CachePutAllEvent e) {
             CacheMessage m = new CacheMessage();
             m.setArea(area);
             m.setCacheName(cacheName);
             m.setSourceId(sourceId);
-            CachePutAllEvent e = (CachePutAllEvent) event;
             m.setType(CacheMessage.TYPE_PUT_ALL);
             if (e.getMap() != null) {
                 m.setKeys(e.getMap().keySet().stream().map(k -> convertKey(k, localCache)).toArray());
             }
             broadcastManager.publish(m);
-        } else if (event instanceof CacheRemoveAllEvent) {
+        } else if (event instanceof CacheRemoveAllEvent e) {
             CacheMessage m = new CacheMessage();
             m.setArea(area);
             m.setCacheName(cacheName);
             m.setSourceId(sourceId);
-            CacheRemoveAllEvent e = (CacheRemoveAllEvent) event;
             m.setType(CacheMessage.TYPE_REMOVE_ALL);
             if (e.getKeys() != null) {
                 m.setKeys(e.getKeys().stream().map(k -> convertKey(k, localCache)).toArray());

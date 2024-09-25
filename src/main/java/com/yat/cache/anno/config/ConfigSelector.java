@@ -16,7 +16,8 @@ import java.util.List;
  * Date 2024/8/22 21:13
  * version 1.0
  */
-public class ConfigSelector extends AdviceModeImportSelector<EnableMethodCache> {
+@SuppressWarnings("all")
+public class ConfigSelector extends AdviceModeImportSelector<EnableJetMethodCache> {
 
     /**
      * 根据AdviceMode选择并返回需要导入的配置类
@@ -51,13 +52,13 @@ public class ConfigSelector extends AdviceModeImportSelector<EnableMethodCache> 
         return result.toArray(new String[0]);
     }
 
-    /**
-     * Return the imports to use if the {@link AdviceMode} is set to {@link AdviceMode#ASPECTJ}.
-     * <p>Take care of adding the necessary JSR-107 import if it is available.
-     */
-//    private String[] getAspectJImports() {
-//        List<String> result = new ArrayList<String>();
-//        result.add(CACHE_ASPECT_CONFIGURATION_CLASS_NAME);
-//        return result.toArray(new String[result.size()]);
-//    }
+    // /**
+    //  * Return the imports to use if the {@link AdviceMode} is set to {@link AdviceMode#ASPECTJ}.
+    //  * <p>Take care of adding the necessary JSR-107 import if it is available.
+    //  */
+    // private String[] getAspectJImports() {
+    //     List<String> result = new ArrayList<String>();
+    //     result.add(CACHE_ASPECT_CONFIGURATION_CLASS_NAME);
+    //     return result.toArray(new String[result.size()]);
+    // }
 }

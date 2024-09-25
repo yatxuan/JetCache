@@ -1,5 +1,6 @@
 package com.yat.cache.anno.support;
 
+import com.yat.cache.anno.api.JetCached;
 import com.yat.cache.core.CacheBuilder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ import java.util.Map;
 public class GlobalCacheConfig {
 
     /**
-     * {@link com.yat.cache.anno.api.Cached}  自动生成name的时候，
+     * {@link JetCached}  自动生成name的时候，
      * 为了不让name太长，hiddenPackages指定的包名前缀被截掉
      */
     private String[] hiddenPackages;

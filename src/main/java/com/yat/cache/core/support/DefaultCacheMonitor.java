@@ -75,35 +75,28 @@ public class DefaultCacheMonitor implements CacheMonitor {
     public void afterOperation(CacheEvent event) {
         reentrantLock.lock();
         try {
-            if (event instanceof CacheGetEvent) {
-                CacheGetEvent e = (CacheGetEvent) event;
+            if (event instanceof CacheGetEvent e) {
                 afterGet(e.getMillis(), e.getKey(), e.getResult());
-            } else if (event instanceof CachePutEvent) {
-                CachePutEvent e = (CachePutEvent) event;
+            } else if (event instanceof CachePutEvent e) {
                 afterPut(e.getMillis(), e.getKey(), e.getValue(), e.getResult());
-            } else if (event instanceof CacheRemoveEvent) {
-                CacheRemoveEvent e = (CacheRemoveEvent) event;
+            } else if (event instanceof CacheRemoveEvent e) {
                 afterRemove(e.getMillis(), e.getKey(), e.getResult());
-            } else if (event instanceof CacheLoadEvent) {
-                CacheLoadEvent e = (CacheLoadEvent) event;
+            } else if (event instanceof CacheLoadEvent e) {
                 afterLoad(e.getMillis(), e.getKey(), e.getLoadedValue(), e.isSuccess());
-            } else if (event instanceof CacheGetAllEvent) {
-                CacheGetAllEvent e = (CacheGetAllEvent) event;
+            } else if (event instanceof CacheGetAllEvent e) {
                 afterGetAll(e.getMillis(), e.getKeys(), e.getResult());
-            } else if (event instanceof CacheLoadAllEvent) {
-                CacheLoadAllEvent e = (CacheLoadAllEvent) event;
+            } else if (event instanceof CacheLoadAllEvent e) {
                 afterLoadAll(e.getMillis(), e.getKeys(), e.getLoadedValue(), e.isSuccess());
-            } else if (event instanceof CachePutAllEvent) {
-                CachePutAllEvent e = (CachePutAllEvent) event;
+            } else if (event instanceof CachePutAllEvent e) {
                 afterPutAll(e.getMillis(), e.getMap(), e.getResult());
-            } else if (event instanceof CacheRemoveAllEvent) {
-                CacheRemoveAllEvent e = (CacheRemoveAllEvent) event;
+            } else if (event instanceof CacheRemoveAllEvent e) {
                 afterRemoveAll(e.getMillis(), e.getKeys(), e.getResult());
             }
         } finally {
             reentrantLock.unlock();
         }
     }
+
     /**
      * Description: 处理单个获取操作
      * <p>
@@ -120,6 +113,7 @@ public class DefaultCacheMonitor implements CacheMonitor {
         cacheStat.getCount++;
         parseSingleGet(result);
     }
+
     /**
      * Description: 处理单个放入操作
      * <p>
@@ -149,6 +143,7 @@ public class DefaultCacheMonitor implements CacheMonitor {
                 logger.warn("JetCache PUT return unexpected code: {}", result.getResultCode());
         }
     }
+
     /**
      * Description:  处理单个移除操作
      * <p>
@@ -176,6 +171,7 @@ public class DefaultCacheMonitor implements CacheMonitor {
                 logger.warn("JetCache REMOVE return unexpected code: {}", result.getResultCode());
         }
     }
+
     /**
      * Description: 处理单个加载操作
      * <p>
@@ -197,6 +193,7 @@ public class DefaultCacheMonitor implements CacheMonitor {
             cacheStat.loadFailCount++;
         }
     }
+
     /**
      * Description: 处理批量获取操作
      * <p>
@@ -225,6 +222,7 @@ public class DefaultCacheMonitor implements CacheMonitor {
             }
         }
     }
+
     /**
      * Description: 处理批量加载操作
      * <p>
@@ -250,6 +248,7 @@ public class DefaultCacheMonitor implements CacheMonitor {
             cacheStat.loadFailCount += count;
         }
     }
+
     /**
      * Description: 处理批量放入操作
      * <p>
@@ -274,6 +273,7 @@ public class DefaultCacheMonitor implements CacheMonitor {
             cacheStat.putFailCount += keyCount;
         }
     }
+
     /**
      * Description: 处理批量移除操作
      * <p>
@@ -298,6 +298,7 @@ public class DefaultCacheMonitor implements CacheMonitor {
             cacheStat.removeFailCount += keyCount;
         }
     }
+
     /**
      * Description: 解析单个获取的结果
      * <p>

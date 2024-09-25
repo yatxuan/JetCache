@@ -118,7 +118,7 @@ public class LettuceBroadcastManager extends BroadcastManager {
             if (subscribeThreadStart) {
                 throw new IllegalStateException("startSubscribe has invoked");
             }
-            this.pubSubAdapter = new RedisPubSubAdapter<byte[], byte[]>() {
+            this.pubSubAdapter = new RedisPubSubAdapter<>() {
                 @Override
                 public void message(byte[] channel, byte[] message) {
                     processNotification(message, config.getValueDecoder());

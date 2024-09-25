@@ -53,12 +53,9 @@ public class Kryo5ValueDecoder extends AbstractValueDecoder {
             Kryo kryo = kryoCache.getKryo();
             // 获取当前线程的上下文类加载器，用于Kryo的类加载
             ClassLoader classLoader = Kryo5ValueDecoder.class.getClassLoader();
-            Thread t = Thread.currentThread();
-            if (t != null) {
-                ClassLoader ctxClassLoader = t.getContextClassLoader();
-                if (ctxClassLoader != null) {
-                    classLoader = ctxClassLoader;
-                }
+            ClassLoader ctxClassLoader = Thread.currentThread().getContextClassLoader();
+            if (ctxClassLoader != null) {
+                classLoader = ctxClassLoader;
             }
             kryo.setClassLoader(classLoader);
             // 使用Kryo读取并还原类和对象

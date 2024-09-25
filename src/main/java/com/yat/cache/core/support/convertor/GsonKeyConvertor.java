@@ -2,8 +2,7 @@ package com.yat.cache.core.support.convertor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import java.util.function.Function;
+import com.yat.cache.anno.api.KeyConvertor;
 
 /**
  * ClassName GsonKeyConvertor
@@ -13,12 +12,13 @@ import java.util.function.Function;
  * Date 2024/8/24 下午11:50
  * version 1.0
  */
-public class GsonKeyConvertor implements Function<Object, Object> {
+public class GsonKeyConvertor implements KeyConvertor {
 
     /**
      * 单例实例，因为键转换器不需要每次创建新的实例
      */
     public static final GsonKeyConvertor INSTANCE = new GsonKeyConvertor();
+
     private final Gson gson = new GsonBuilder().create();
 
     /**

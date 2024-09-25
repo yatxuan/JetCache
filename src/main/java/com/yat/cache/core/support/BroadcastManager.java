@@ -49,6 +49,7 @@ public abstract class BroadcastManager implements AutoCloseable {
     public BroadcastManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
     }
+
     /**
      * 检查配置项是否正确设置。
      *
@@ -59,12 +60,14 @@ public abstract class BroadcastManager implements AutoCloseable {
         Assert.notNull(config.getValueEncoder(), () -> new CacheConfigException("no value encoder"));
         Assert.notNull(config.getValueDecoder(), () -> new CacheConfigException("no value decoder"));
     }
+
     /**
      * 发布缓存消息。
      *
      * @param cacheMessage 缓存消息
      * @return 发布结果
      */
+    @SuppressWarnings("UnusedReturnValue")
     public abstract CacheResult publish(CacheMessage cacheMessage);
 
     /**
@@ -78,6 +81,7 @@ public abstract class BroadcastManager implements AutoCloseable {
     @Override
     public void close() throws Exception {
     }
+
     /**
      * 处理接收到的通知消息。
      *
@@ -104,6 +108,7 @@ public abstract class BroadcastManager implements AutoCloseable {
             SquashedLogger.getLogger(logger).error("receive cache notify error", e);
         }
     }
+
     /**
      * 处理缓存消息。
      *

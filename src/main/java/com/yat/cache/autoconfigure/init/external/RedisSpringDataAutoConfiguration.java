@@ -60,24 +60,30 @@ public class RedisSpringDataAutoConfiguration {
             }
             RedisConnectionFactory factory = beans.values().iterator().next();
             if (beans.size() > 1) {
-                RemoteCacheProperties remoteCacheProperties = (RemoteCacheProperties) cacheProperties;
-
-                String connectionFactoryName = remoteCacheProperties.getConnectionFactory();
-
-                if (connectionFactoryName == null) {
-                    throw new CacheConfigException(
-                            "connectionFactory is required, because there is multiple RedisConnectionFactory in " +
-                                    "Spring context");
-                }
-                if (!beans.containsKey(connectionFactoryName)) {
-                    throw new CacheConfigException("there is no RedisConnectionFactory named "
-                            + connectionFactoryName + " in Spring context");
-                }
+                String connectionFactoryName = getConnectionFactoryName((RemoteCacheProperties) cacheProperties, beans);
                 factory = beans.get(connectionFactoryName);
             }
             ExternalCacheBuilder builder = RedisSpringDataCacheBuilder.createBuilder().connectionFactory(factory);
             parseGeneralConfig(builder, cacheProperties);
             return builder;
+        }
+
+        private static String getConnectionFactoryName(RemoteCacheProperties remoteCacheProperties, Map<String,
+                RedisConnectionFactory> beans) {
+            String connectionFactoryName = remoteCacheProperties.getConnectionFactory();
+
+            if (connectionFactoryName == null) {
+                throw new CacheConfigException(
+                        "connectionFactory is required, because there is multiple RedisConnectionFactory in " +
+                                "Spring context"
+                );
+            }
+            if (!beans.containsKey(connectionFactoryName)) {
+                throw new CacheConfigException(
+                        "there is no RedisConnectionFactory named " + connectionFactoryName + " in Spring context"
+                );
+            }
+            return connectionFactoryName;
         }
 
         @Override

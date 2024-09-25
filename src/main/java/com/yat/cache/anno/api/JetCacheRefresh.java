@@ -9,11 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * ClassName JetCacheRefresh
- * <p>Description 用于配置缓存刷新策略: 需求配合 {@link Cached} 一起使用</p>
- *
- * <p>
- *     todo 重命名 JetCacheRefresh
- * </p>
+ * <p>Description 用于配置缓存刷新策略: 需求配合 {@link JetCached} 一起使用</p>
  *
  * @author Yat
  * Date 2024/8/22 09:52
@@ -22,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD})
-public @interface CacheRefresh {
+public @interface JetCacheRefresh {
 
     /**
      * 指定缓存刷新间隔时间（秒）。

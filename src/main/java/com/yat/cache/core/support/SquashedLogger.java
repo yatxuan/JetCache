@@ -44,6 +44,7 @@ public class SquashedLogger {
         this.interval = Duration.ofSeconds(intervalSeconds).toNanos();
         this.lastLogTime = new AtomicLong(System.nanoTime() - interval);
     }
+
     /**
      * 输出错误日志，根据配置的间隔来控制日志输出频率。
      * 如果达到输出间隔，直接使用给定的消息和异常输出日志；
@@ -75,6 +76,7 @@ public class SquashedLogger {
             logger.error(sb.toString());
         }
     }
+
     /**
      * 检查是否应该记录日志，根据时间间隔判断。
      *
@@ -89,6 +91,7 @@ public class SquashedLogger {
             return false;
         }
     }
+
     /**
      * 获取或创建与给定Logger实例关联的SquashedLogger实例，使用默认的日志输出间隔。
      *

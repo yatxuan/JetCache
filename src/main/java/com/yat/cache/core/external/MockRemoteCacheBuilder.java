@@ -46,6 +46,7 @@ public class MockRemoteCacheBuilder<T extends ExternalCacheBuilder<T>> extends E
      * @param limit 缓存限制
      * @return 当前构建器实例
      */
+    @SuppressWarnings("UnusedReturnValue")
     public T limit(int limit) {
         getConfig().setLimit(limit);
         return self();

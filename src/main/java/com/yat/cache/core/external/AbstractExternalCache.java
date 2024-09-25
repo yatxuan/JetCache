@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 public abstract class AbstractExternalCache<K, V> extends AbstractCache<K, V> {
 
-    private ExternalCacheConfig<K, V> config;
+    private final ExternalCacheConfig<K, V> config;
 
     public AbstractExternalCache(ExternalCacheConfig<K, V> config) {
         this.config = config;
@@ -43,7 +43,6 @@ public abstract class AbstractExternalCache<K, V> extends AbstractCache<K, V> {
         Assert.notNull(config.getKeyPrefix(), () -> new CacheConfigException("keyPrefix is required"));
     }
 
-
     /**
      * 根据给定的键和配置生成一个外部键
      * 该方法主要用于在缓存系统中生成统一的缓存键它考虑了键的转换器和键前缀
@@ -65,9 +64,7 @@ public abstract class AbstractExternalCache<K, V> extends AbstractCache<K, V> {
                     }
                 } else {
                     // 处理旧版本的键转换逻辑
-                    if (key instanceof byte[]) {
-                        newKey = key;
-                    } else if (key instanceof String) {
+                    if (key instanceof byte[] || key instanceof String) {
                         newKey = key;
                     } else {
                         newKey = config.getKeyConvertor().apply(key);

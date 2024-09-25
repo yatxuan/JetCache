@@ -21,9 +21,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
 
-    private Cache<K, CacheValueHolder<V>>[] caches;
+    private final Cache<K, CacheValueHolder<V>>[] caches;
 
-    private MultiLevelCacheConfig<K, V> config;
+    private final MultiLevelCacheConfig<K, V> config;
 
     public MultiLevelCache(MultiLevelCacheConfig<K, V> cacheConfig) throws CacheConfigException {
         this.config = cacheConfig;

@@ -2,9 +2,8 @@ package com.yat.cache.core.support.convertor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yat.cache.anno.api.KeyConvertor;
 import com.yat.cache.core.exception.CacheEncodeException;
-
-import java.util.function.Function;
 
 /**
  * ClassName JacksonKeyConvertor
@@ -14,7 +13,7 @@ import java.util.function.Function;
  * Date 2024/8/22 18:07
  * version 1.0
  */
-public class JacksonKeyConvertor implements Function<Object, Object> {
+public class JacksonKeyConvertor implements KeyConvertor {
 
     /**
      * 共享的ObjectMapper实例，用于对象的序列化和反序列化

@@ -71,7 +71,7 @@ public class CacheUtil {
         if (loader instanceof ProxyLoader) {
             return (ProxyLoader<K, V>) loader;
         }
-        return new ProxyLoader<K, V>() {
+        return new ProxyLoader<>() {
             @Override
             public Map<K, V> loadAll(Set<K> keys) throws Throwable {
                 long t = System.currentTimeMillis();
@@ -139,7 +139,7 @@ public class CacheUtil {
      * @param <K> 缓存键的类型。
      * @param <V> 缓存值的类型。
      */
-    private interface ProxyLoader<K, V> extends CacheLoader<K, V> {
+    public interface ProxyLoader<K, V> extends CacheLoader<K, V> {
     }
 
 }

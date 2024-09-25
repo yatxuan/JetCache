@@ -19,30 +19,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class LettuceFactory implements FactoryBean<Object> {
 
     /**
+     * 对象的类类型，用于反射或其他类型相关的操作。
+     */
+    private final Class<?> clazz;
+    /**
+     * 用于标识或查找的键值。
+     */
+    private final String key;
+    /**
      * 用于自动配置的Bean实例，负责处理特定条件下的Bean配置。
      */
     @Autowired
     private AutoConfigureBeans autoConfigureBeans;
-
     /**
      * 标记是否已经初始化，用于避免重复初始化操作。
      */
     private boolean inited;
-
     /**
      * 用于存储任意对象的引用。
      */
     private Object obj;
-
-    /**
-     * 对象的类类型，用于反射或其他类型相关的操作。
-     */
-    private Class<?> clazz;
-
-    /**
-     * 用于标识或查找的键值。
-     */
-    private String key;
 
     // for unit test
     LettuceFactory(AutoConfigureBeans autoConfigureBeans, String key, Class<?> clazz) {
@@ -83,7 +79,7 @@ public class LettuceFactory implements FactoryBean<Object> {
     }
 
     @Override
-    public Object getObject() throws Exception {
+    public Object getObject() {
         init();
         return obj;
     }

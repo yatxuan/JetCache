@@ -24,7 +24,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class LinkedHashMapCache<K, V> extends AbstractEmbeddedCache<K, V> {
 
-    private static Logger logger = LoggerFactory.getLogger(LinkedHashMapCache.class);
+    private static final Logger logger = LoggerFactory.getLogger(LinkedHashMapCache.class);
 
     public LinkedHashMapCache(EmbeddedCacheConfig<K, V> config) {
         super(config);
@@ -76,8 +76,7 @@ public class LinkedHashMapCache<K, V> extends AbstractEmbeddedCache<K, V> {
                 for (Iterator it = entrySet().iterator(); it.hasNext(); ) {
                     Map.Entry en = (Map.Entry) it.next();
                     Object value = en.getValue();
-                    if (value != null && value instanceof CacheValueHolder) {
-                        CacheValueHolder h = (CacheValueHolder) value;
+                    if (value instanceof CacheValueHolder h) {
                         if (System.currentTimeMillis() >= h.getExpireTime()) {
                             it.remove();
                         }
@@ -110,7 +109,7 @@ public class LinkedHashMapCache<K, V> extends AbstractEmbeddedCache<K, V> {
         public Map getAllValues(Collection keys) {
             Lock lock = readWriteLock.readLock();
             lock.lock();
-            Map values = new HashMap();
+            Map values = new HashMap<>();
             try {
                 for (Object key : keys) {
                     Object v = get(key);

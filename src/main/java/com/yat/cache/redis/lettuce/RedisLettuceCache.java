@@ -137,31 +137,31 @@ public class RedisLettuceCache<K, V> extends AbstractExternalCache<K, V> {
     @Override
     protected MultiGetResult<K, V> do_GET_ALL(Set<? extends K> keys) {
         try {
-            ArrayList<K> keyList = new ArrayList<K>(keys);
+            ArrayList<K> keyList = new ArrayList<>(keys);
             byte[][] newKeys = keyList.stream().map(this::buildKey).toArray(byte[][]::new);
 
             Map<K, CacheGetResult<V>> resultMap = new HashMap<>();
             if (newKeys.length == 0) {
-                return new MultiGetResult<K, V>(CacheResultCode.SUCCESS, null, resultMap);
+                return new MultiGetResult<>(CacheResultCode.SUCCESS, null, resultMap);
             }
-            RedisFuture<List<KeyValue<byte[], byte[]>>> mgetResults = stringAsyncCommands.mget(newKeys);
-            MultiGetResult<K, V> result = new MultiGetResult<>(mgetResults.handle((list, ex) -> {
+            RedisFuture<List<KeyValue<byte[], byte[]>>> mGetResults = stringAsyncCommands.mget(newKeys);
+            MultiGetResult<K, V> result = new MultiGetResult<>(mGetResults.handle((list, ex) -> {
                 if (ex != null) {
-                    JetCacheExecutor.defaultExecutor().execute(() -> logError("GET_ALL", "keys(" + keys.size() + ")",
-                            ex));
+                    JetCacheExecutor.defaultExecutor().execute(
+                            () -> logError("GET_ALL", "keys(" + keys.size() + ")", ex)
+                    );
                     return new ResultData(ex);
                 } else {
                     try {
                         for (int i = 0; i < list.size(); i++) {
-                            KeyValue kv = list.get(i);
+                            KeyValue<byte[], byte[]> kv = list.get(i);
                             K key = keyList.get(i);
                             if (kv != null && kv.hasValue()) {
-                                CacheValueHolder<V> holder =
-                                        (CacheValueHolder<V>) valueDecoder.apply((byte[]) kv.getValue());
+                                CacheValueHolder<V> holder = (CacheValueHolder<V>) valueDecoder.apply(kv.getValue());
                                 if (System.currentTimeMillis() >= holder.getExpireTime()) {
                                     resultMap.put(key, CacheGetResult.expiredWithoutMsg());
                                 } else {
-                                    CacheGetResult<V> r = new CacheGetResult<V>(CacheResultCode.SUCCESS, null, holder);
+                                    CacheGetResult<V> r = new CacheGetResult<>(CacheResultCode.SUCCESS, null, holder);
                                     resultMap.put(key, r);
                                 }
                             } else {

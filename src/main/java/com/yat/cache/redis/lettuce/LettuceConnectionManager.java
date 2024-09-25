@@ -214,7 +214,7 @@ public class LettuceConnectionManager {
      */
     public void removeAndClose(AbstractRedisClient redisClient) {
         // 从map中移除与redisClient关联的LettuceObjects对象
-        LettuceObjects lo = (LettuceObjects) map.remove(redisClient);
+        LettuceObjects lo = map.remove(redisClient);
 
         // 如果LettuceObjects对象为空，则无需进行任何操作
         if (lo == null) {

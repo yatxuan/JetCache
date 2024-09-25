@@ -1,7 +1,7 @@
 package com.yat.cache.anno.support;
 
 import com.yat.cache.anno.api.DefaultCacheConstant;
-import com.yat.cache.anno.api.EnableCache;
+import com.yat.cache.anno.api.EnableJetCache;
 import com.yat.cache.anno.method.CacheInvokeContext;
 import com.yat.cache.core.Cache;
 import com.yat.cache.core.CacheManager;
@@ -213,7 +213,7 @@ public class CacheContext {
      *
      * @param callback 一个 Supplier 接口，用于执行需要临时启用缓存的代码。
      * @return 执行 Supplier 接口中的代码所返回的结果。
-     * @see EnableCache
+     * @see EnableJetCache
      */
     public static <T> T enableCache(Supplier<T> callback) {
         // 从线程局部变量中获取缓存状态对象

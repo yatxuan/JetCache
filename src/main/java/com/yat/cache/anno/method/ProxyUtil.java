@@ -17,6 +17,7 @@ import java.lang.reflect.Proxy;
  * Date 2024/8/22 22:01
  * version 1.0
  */
+@SuppressWarnings("unused")
 public class ProxyUtil {
     /**
      * 根据注解为给定目标对象创建代理对象
@@ -31,19 +32,22 @@ public class ProxyUtil {
         final ConfigMap configMap = new ConfigMap();
         processType(configMap, target.getClass());
         Class<?>[] its = ClassUtil.getAllInterfaces(target);
-        CacheHandler h = new CacheHandler(target, configMap,
+        CacheHandler h = new CacheHandler(
+                target, configMap,
                 () -> configProvider.newContext(cacheManager).createCacheInvokeContext(configMap),
-                configProvider.getGlobalCacheConfig().getHiddenPackages());
+                configProvider.getGlobalCacheConfig().getHiddenPackages()
+        );
         Object o = Proxy.newProxyInstance(target.getClass().getClassLoader(), its, h);
         return (T) o;
     }
+
     /**
      * 处理给定类的信息，提取出带有缓存注解的方法配置
+     * <p> 如果类是Java标准库中的类，则直接返回不处理</p>
      *
      * @param configMap 配置映射对象，用于存储方法的缓存配置
      * @param clazz     需要处理的类
      * @throws IllegalArgumentException 如果类是注解、数组、枚举或基本类型，则抛出异常
-     * @note 如果类是Java标准库中的类，则直接返回不处理
      */
     private static void processType(ConfigMap configMap, Class<?> clazz) {
         if (clazz.isAnnotation() || clazz.isArray() || clazz.isEnum() || clazz.isPrimitive()) {
@@ -70,23 +74,31 @@ public class ProxyUtil {
             }
         }
     }
+
     /**
      * 处理给定方法的缓存配置，将其提取并存储到配置映射对象中
+     * <p>如果方法的缓存配置为空，则创建新的缓存配置对象，并将解析后的配置存储到映射中</p>
      *
      * @param configMap 配置映射对象，用于存储方法的缓存配置
      * @param m         需要处理的方法
-     * @note 如果方法的缓存配置为空，则创建新的缓存配置对象，并将解析后的配置存储到映射中
      */
     private static void processMethod(ConfigMap configMap, Method m) {
+        // 通过方法签名获取当前方法的唯一标识
         String sig = ClassUtil.getMethodSig(m);
+        // 从配置映射中获取当前方法的缓存配置
         CacheInvokeConfig cac = configMap.getByMethodInfo(sig);
+
+        // 如果当前方法没有缓存配置，则创建新的缓存配置对象
         if (cac == null) {
             cac = new CacheInvokeConfig();
+            // 解析方法的缓存配置，如果成功则将其存储到配置映射中
             if (CacheConfigUtil.parse(cac, m)) {
                 configMap.putByMethodInfo(sig, cac);
             }
         } else {
+            // 如果当前方法已有缓存配置，则更新现有的配置
             CacheConfigUtil.parse(cac, m);
         }
     }
+
 }

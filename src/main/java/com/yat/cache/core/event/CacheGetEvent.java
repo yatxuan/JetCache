@@ -18,17 +18,17 @@ public class CacheGetEvent extends CacheEvent {
     /**
      * 事件发生的时间戳（毫秒）。
      */
-    private long millis;
+    private final long millis;
 
     /**
      * 请求的缓存键。
      */
-    private Object key;
+    private final Object key;
 
     /**
      * 获取操作的结果。
      */
-    private CacheGetResult result;
+    private final CacheGetResult result;
 
     /**
      * 构造一个新的 CacheGetEvent 实例。

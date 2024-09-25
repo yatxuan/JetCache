@@ -1,6 +1,6 @@
 package com.yat.cache.core.support.encoders;
 
-import com.yat.cache.anno.api.SerialPolicy;
+import com.yat.cache.autoconfigure.properties.enums.SerialPolicyTypeEnum;
 import com.yat.cache.core.exception.CacheEncodeException;
 import com.yat.cache.core.support.ObjectPool;
 
@@ -54,10 +54,11 @@ public class JavaValueEncoder extends AbstractValueEncoder {
         try {
             bos = bosPool.borrowObject();
             if (useIdentityNumber) {
-                bos.write((SerialPolicy.IDENTITY_NUMBER_JAVA >> 24) & 0xFF);
-                bos.write((SerialPolicy.IDENTITY_NUMBER_JAVA >> 16) & 0xFF);
-                bos.write((SerialPolicy.IDENTITY_NUMBER_JAVA >> 8) & 0xFF);
-                bos.write(SerialPolicy.IDENTITY_NUMBER_JAVA & 0xFF);
+                int identityNumberJava = SerialPolicyTypeEnum.JAVA.getCode();
+                bos.write((identityNumberJava >> 24) & 0xFF);
+                bos.write((identityNumberJava >> 16) & 0xFF);
+                bos.write((identityNumberJava >> 8) & 0xFF);
+                bos.write(identityNumberJava & 0xFF);
             }
             ObjectOutputStream oos = new ObjectOutputStream(bos);
             oos.writeObject(value);

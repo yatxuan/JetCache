@@ -1,6 +1,6 @@
 package com.yat.cache.core.support.encoders;
 
-import com.yat.cache.anno.api.SerialPolicy;
+import com.yat.cache.autoconfigure.properties.enums.SerialPolicyTypeEnum;
 import com.yat.cache.core.CacheValueHolder;
 import com.yat.cache.core.exception.CacheEncodeException;
 import com.yat.cache.core.support.CacheMessage;
@@ -31,7 +31,7 @@ public abstract class AbstractJsonEncoder extends AbstractValueEncoder {
             byte[] buffer = useIdentityNumber ? new byte[len + 4] : new byte[len];
             int index = 0;
             if (useIdentityNumber) {
-                index = writeInt(buffer, index, SerialPolicy.IDENTITY_NUMBER_GSON);
+                index = writeInt(buffer, index, SerialPolicyTypeEnum.GSON.getCode());
             }
             if (data == null) {
                 writeShort(buffer, index, -1);
@@ -62,8 +62,7 @@ public abstract class AbstractJsonEncoder extends AbstractValueEncoder {
         if (value == null) {
             return null;
         }
-        if (value instanceof CacheValueHolder) {
-            CacheValueHolder h = (CacheValueHolder) value;
+        if (value instanceof CacheValueHolder h) {
             Object bizObject = h.getValue();
             h.setValue(null);
             JsonData[] result = new JsonData[2];
@@ -71,8 +70,7 @@ public abstract class AbstractJsonEncoder extends AbstractValueEncoder {
             result[1] = encodeJsonData(bizObject);
             h.setValue(bizObject);
             return result;
-        } else if (value instanceof CacheMessage) {
-            CacheMessage cm = (CacheMessage) value;
+        } else if (value instanceof CacheMessage cm) {
             Object[] keys = cm.getKeys();
             cm.setKeys(null);
             JsonData[] result = keys == null ? new JsonData[1] : new JsonData[keys.length + 1];

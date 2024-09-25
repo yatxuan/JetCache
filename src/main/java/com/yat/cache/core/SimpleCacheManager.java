@@ -56,15 +56,13 @@ public class SimpleCacheManager implements CacheManager, AutoCloseable {
             }
         });
         broadcastManagers.clear();
-        caches.forEach((area, areaMap) -> {
-            areaMap.forEach((cacheName, cache) -> {
-                try {
-                    cache.close();
-                } catch (Exception e) {
-                    logger.error("error during close Cache", e);
-                }
-            });
-        });
+        caches.forEach((area, areaMap) -> areaMap.forEach((cacheName, cache) -> {
+            try {
+                cache.close();
+            } catch (Exception e) {
+                logger.error("error during close Cache", e);
+            }
+        }));
         caches.clear();
     }
 

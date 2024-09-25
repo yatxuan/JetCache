@@ -126,9 +126,8 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
      * 停止所有刷新任务。
      */
     protected void stopRefresh() {
-        List<RefreshTask> tasks = new ArrayList<>();
-        tasks.addAll(taskMap.values());
-        tasks.forEach(task -> task.cancel());
+        List<RefreshTask> tasks = new ArrayList<>(taskMap.values());
+        tasks.forEach(RefreshTask::cancel);
     }
 
     @Override
@@ -288,14 +287,20 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
             }
         }
 
+        /**
+         * 取消当前刷新操作
+         * 此方法主要用于停止正在进行的刷新操作，包括日志记录，取消未来任务，并从任务映射中移除任务
+         */
         private void cancel() {
-            logger.debug("cancel refresh: {}", key);
+            // 记录取消刷新操作的日志
+            logger.debug("cancel refresh: '{}'", key);
+            // 取消未来任务，第二个参数表示是否中断正在运行的任务，在这里选择不中断
             future.cancel(false);
+            // 从任务映射中移除当前任务
             taskMap.remove(taskId);
         }
 
-        private void externalLoad(final Cache concreteCache, final long currentTime)
-                throws Throwable {
+        private void externalLoad(final Cache concreteCache, final long currentTime) {
             byte[] newKey = ((AbstractExternalCache) concreteCache).buildKey(key);
             byte[] lockKey = combine(newKey, LOCK_KEY_SUFFIX);
             long loadTimeOut = RefreshCache.this.config.getRefreshPolicy().getRefreshLockTimeoutMillis();

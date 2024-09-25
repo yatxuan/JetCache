@@ -107,7 +107,7 @@ class ExpressionUtil {
                 } else {
                     // 创建表达式评估器并评估键
                     ExpressionEvaluator e = new ExpressionEvaluator(keyScript, cac.getDefineMethod());
-                    cac.setKeyEvaluator(e::apply);
+                    cac.setKeyEvaluator(e);
                 }
             }
             return cac.getKeyEvaluator().apply(context);
@@ -133,7 +133,7 @@ class ExpressionUtil {
             if (cac.getValueEvaluator() == null) {
                 // 创建表达式评估器并评估值
                 ExpressionEvaluator e = new ExpressionEvaluator(valueScript, cac.getDefineMethod());
-                cac.setValueEvaluator(e::apply);
+                cac.setValueEvaluator(e);
             }
             return cac.getValueEvaluator().apply(context);
         } catch (Exception e) {

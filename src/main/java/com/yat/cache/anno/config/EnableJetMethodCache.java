@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import({CommonConfiguration.class, ConfigSelector.class})
-public @interface EnableMethodCache {
+public @interface EnableJetMethodCache {
 
     /**
      * 指定是否创建子类（CGLIB）代理而不是标准Java接口基于代理。

@@ -44,7 +44,7 @@ public class JetCacheProxyConfiguration implements ImportAware, ApplicationConte
     @Override
     public void setImportMetadata(AnnotationMetadata importMetadata) {
         this.enableMethodCache = AnnotationAttributes.fromMap(
-                importMetadata.getAnnotationAttributes(EnableMethodCache.class.getName(), false));
+                importMetadata.getAnnotationAttributes(EnableJetMethodCache.class.getName(), false));
         if (this.enableMethodCache == null) {
             throw new IllegalArgumentException(
                     "@EnableMethodCache is not present on importing class " + importMetadata.getClassName()

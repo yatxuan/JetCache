@@ -10,9 +10,6 @@ import java.lang.annotation.Target;
 /**
  * ClassName JetCacheInvalidate
  * <p>Description 用于标记需要从缓存中移除数据的方法。</p>
- * <p>
- *     todo 重命名 JetCacheRemove
- * </p>
  *
  * @author Yat
  * Date 2024/8/22 09:48
@@ -20,10 +17,9 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(CacheInvalidateContainer.class)
+@Repeatable(JetCacheInvalidateContainer.class)
 @Target(ElementType.METHOD)
-public @interface CacheInvalidate {
-
+public @interface JetCacheInvalidate {
 
     /**
      * 如果你想使用多后端缓存系统，你可以在配置中设置多个“缓存区域”，

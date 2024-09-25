@@ -36,12 +36,12 @@ import java.util.function.Supplier;
  */
 public class CacheHandler implements InvocationHandler {
 
-    private static Logger logger = LoggerFactory.getLogger(CacheHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(CacheHandler.class);
 
-    private Object src;
-    private Supplier<CacheInvokeContext> contextSupplier;
-    private String[] hiddenPackages;
-    private ConfigMap configMap;
+    private final Object src;
+    private final Supplier<CacheInvokeContext> contextSupplier;
+    private final String[] hiddenPackages;
+    private final ConfigMap configMap;
 
     public CacheHandler(Object src, ConfigMap configMap, Supplier<CacheInvokeContext> contextSupplier,
                         String[] hiddenPackages) {
@@ -139,7 +139,7 @@ public class CacheHandler implements InvocationHandler {
 
         Object key = ExpressionUtil.evalKey(context, cic.getCachedAnnoConfig());
         if (key == null) {
-            return loadAndCount(context, cache, key);
+            return loadAndCount(context, cache, null);
         }
 
         if (!ExpressionUtil.evalCondition(context, cic.getCachedAnnoConfig())) {
@@ -233,6 +233,113 @@ public class CacheHandler implements InvocationHandler {
     }
 
     /**
+     * 将给定的键值对更新到缓存中。
+     *
+     * @param context          缓存调用上下文，用于获取缓存函数和评估条件、值、键等。
+     * @param updateAnnoConfig 更新配置，包含缓存更新的详细配置信息，如键、值、条件等。
+     */
+    private static void doUpdate(CacheInvokeContext context, CacheUpdateAnnoConfig updateAnnoConfig) {
+        // 根据上下文和更新配置获取缓存实例
+        Cache cache = context.getCacheFunction().apply(context, updateAnnoConfig);
+        // 如果缓存为null，则直接返回
+        if (cache == null) {
+            return;
+        }
+        // 评估更新缓存的条件
+        boolean condition = ExpressionUtil.evalCondition(context, updateAnnoConfig);
+        // 如果条件不满足，则直接返回
+        if (!condition) {
+            return;
+        }
+
+        // 评估缓存更新的值
+        Object value = ExpressionUtil.evalValue(context, updateAnnoConfig);
+        // 评估缓存更新的键
+        Object key = ExpressionUtil.evalKey(context, updateAnnoConfig);
+        // 如果键为null或值评估失败，则直接返回
+        if (key == null || value == ExpressionUtil.EVAL_FAILED) {
+            return;
+        }
+        // 如果是批量更新
+        if (updateAnnoConfig.isMulti()) {
+            // 如果值为null，则直接返回
+            if (value == null) {
+                return;
+            }
+            // 将键和值转换为可迭代对象
+            Iterable<Object> keyIt = toIterable(key);
+            Iterable<Object> valueIt = toIterable(value);
+            // 如果键不是Iterable或数组类型，则记录错误并返回
+            if (keyIt == null) {
+                logger.error(
+                        "JetCache @CacheUpdate key is not instance of Iterable or array: {}",
+                        updateAnnoConfig.getDefineMethod()
+                );
+                return;
+            }
+            // 如果值不是Iterable或数组类型，则记录错误并返回
+            if (valueIt == null) {
+                logger.error(
+                        "JetCache @CacheUpdate value is not instance of Iterable or array: {}",
+                        updateAnnoConfig.getDefineMethod()
+                );
+                return;
+            }
+
+            // 将键和值的可迭代对象转换为列表
+            List<Object> keyList = new ArrayList<>();
+            List<Object> valueList = new ArrayList<>();
+            keyIt.forEach(keyList::add);
+            valueIt.forEach(valueList::add);
+            // 如果键和值的列表长度不一致，则记录错误并返回
+            if (keyList.size() != valueList.size()) {
+                logger.error(
+                        "JetCache @CacheUpdate key size not equals with value size: {}",
+                        updateAnnoConfig.getDefineMethod()
+                );
+            } else {
+                // 创建一个映射来存储键值对关系
+                Map<Object, Object> m = new HashMap<>();
+                // 遍历键值列表，将键值对添加到映射中
+                for (int i = 0; i < valueList.size(); i++) {
+                    m.put(keyList.get(i), valueList.get(i));
+                }
+                // 将所有键值对批量更新到缓存中
+                cache.putAll(m);
+            }
+        } else {
+            // 对于非批量更新，直接将键值对更新到缓存中
+            cache.put(key, value);
+        }
+    }
+
+    /**
+     * 将对象转换为Iterable类型
+     * 支持将数组或Iterable类型对象转换为Iterable，否则返回null
+     *
+     * @param obj 需要转换的对象
+     * @return 转换后的Iterable对象，如果转换失败则返回null
+     */
+    private static Iterable<Object> toIterable(Object obj) {
+        if (obj.getClass().isArray()) {
+            if (obj instanceof Object[]) {
+                return Arrays.asList((Object[]) obj);
+            } else {
+                List<Object> list = new ArrayList<>();
+                int len = Array.getLength(obj);
+                for (int i = 0; i < len; i++) {
+                    list.add(Array.get(obj, i));
+                }
+                return list;
+            }
+        } else if (obj instanceof Iterable) {
+            return (Iterable) obj;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * 执行缓存失效操作
      * 遍历缓存失效配置列表，逐个执行缓存失效操作
      *
@@ -242,63 +349,6 @@ public class CacheHandler implements InvocationHandler {
     private static void doInvalidate(CacheInvokeContext context, List<CacheInvalidateAnnoConfig> annoConfig) {
         for (CacheInvalidateAnnoConfig config : annoConfig) {
             doInvalidate(context, config);
-        }
-    }
-
-    /**
-     * 将给定的键值对更新到缓存中。
-     *
-     * @param context          缓存调用上下文
-     * @param updateAnnoConfig 更新配置
-     */
-    private static void doUpdate(CacheInvokeContext context, CacheUpdateAnnoConfig updateAnnoConfig) {
-        Cache cache = context.getCacheFunction().apply(context, updateAnnoConfig);
-        if (cache == null) {
-            return;
-        }
-        boolean condition = ExpressionUtil.evalCondition(context, updateAnnoConfig);
-        if (!condition) {
-            return;
-        }
-        Object key = ExpressionUtil.evalKey(context, updateAnnoConfig);
-        Object value = ExpressionUtil.evalValue(context, updateAnnoConfig);
-        if (key == null || value == ExpressionUtil.EVAL_FAILED) {
-            return;
-        }
-        if (updateAnnoConfig.isMulti()) {
-            if (value == null) {
-                return;
-            }
-            Iterable<Object> keyIt = toIterable(key);
-            Iterable<Object> valueIt = toIterable(value);
-            if (keyIt == null) {
-                logger.error("JetCache @CacheUpdate key is not instance of Iterable or array: {}",
-                        updateAnnoConfig.getDefineMethod());
-                return;
-            }
-            if (valueIt == null) {
-                logger.error("JetCache @CacheUpdate value is not instance of Iterable or array: {}",
-                        updateAnnoConfig.getDefineMethod());
-                return;
-            }
-
-            List<Object> keyList = new ArrayList<>();
-            List<Object> valueList = new ArrayList<>();
-            keyIt.forEach(keyList::add);
-            valueIt.forEach(valueList::add);
-            if (keyList.size() != valueList.size()) {
-                logger.error("JetCache @CacheUpdate key size not equals with value size: {}",
-                        updateAnnoConfig.getDefineMethod());
-                return;
-            } else {
-                Map<Object, Object> m = new HashMap<>();
-                for (int i = 0; i < valueList.size(); i++) {
-                    m.put(keyList.get(i), valueList.get(i));
-                }
-                cache.putAll(m);
-            }
-        } else {
-            cache.put(key, value);
         }
     }
 
@@ -333,32 +383,6 @@ public class CacheHandler implements InvocationHandler {
             cache.removeAll(keys);
         } else {
             cache.remove(key);
-        }
-    }
-
-    /**
-     * 将对象转换为Iterable类型
-     * 支持将数组或Iterable类型对象转换为Iterable，否则返回null
-     *
-     * @param obj 需要转换的对象
-     * @return 转换后的Iterable对象，如果转换失败则返回null
-     */
-    private static Iterable<Object> toIterable(Object obj) {
-        if (obj.getClass().isArray()) {
-            if (obj instanceof Object[]) {
-                return Arrays.asList((Object[]) obj);
-            } else {
-                List<Object> list = new ArrayList<>();
-                int len = Array.getLength(obj);
-                for (int i = 0; i < len; i++) {
-                    list.add(Array.get(obj, i));
-                }
-                return list;
-            }
-        } else if (obj instanceof Iterable) {
-            return (Iterable) obj;
-        } else {
-            return null;
         }
     }
 

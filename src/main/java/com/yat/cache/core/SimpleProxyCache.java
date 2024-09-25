@@ -95,6 +95,7 @@ public class SimpleProxyCache<K, V> implements ProxyCache<K, V> {
     public CacheConfig<K, V> config() {
         return cache.config();
     }
+
     /**
      * 向缓存中放入多个键值对。
      *
@@ -114,6 +115,7 @@ public class SimpleProxyCache<K, V> implements ProxyCache<K, V> {
     public CacheResult PUT_ALL(Map<? extends K, ? extends V> map, long expireAfterWrite, TimeUnit timeUnit) {
         return cache.PUT_ALL(map, expireAfterWrite, timeUnit);
     }
+
     /**
      * 如果键不存在，则放入一个键值对。
      *
@@ -130,6 +132,7 @@ public class SimpleProxyCache<K, V> implements ProxyCache<K, V> {
     public CacheResult PUT_IF_ABSENT(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
         return cache.PUT_IF_ABSENT(key, value, expireAfterWrite, timeUnit);
     }
+
     /**
      * 从缓存中移除一个键。
      *

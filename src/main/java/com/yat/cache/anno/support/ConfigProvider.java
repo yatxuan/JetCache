@@ -83,8 +83,7 @@ public class ConfigProvider extends AbstractLifecycle {
         for (CacheBuilder builder : globalCacheConfig.getLocalCacheBuilders().values()) {
             EmbeddedCacheBuilder eb = (EmbeddedCacheBuilder) builder;
             // 如果键转换器是 ParserFunction 类型，则解析并设置新的键转换器
-            if (eb.getConfig().getKeyConvertor() instanceof ParserFunction) {
-                ParserFunction f = (ParserFunction) eb.getConfig().getKeyConvertor();
+            if (eb.getConfig().getKeyConvertor() instanceof ParserFunction f) {
                 eb.setKeyConvertor(parseKeyConvertor(f.value()));
             }
         }
@@ -92,18 +91,15 @@ public class ConfigProvider extends AbstractLifecycle {
         for (CacheBuilder builder : globalCacheConfig.getRemoteCacheBuilders().values()) {
             ExternalCacheBuilder eb = (ExternalCacheBuilder) builder;
             // 如果键转换器是 ParserFunction 类型，则解析并设置新的键转换器
-            if (eb.getConfig().getKeyConvertor() instanceof ParserFunction) {
-                ParserFunction f = (ParserFunction) eb.getConfig().getKeyConvertor();
+            if (eb.getConfig().getKeyConvertor() instanceof ParserFunction f) {
                 eb.setKeyConvertor(parseKeyConvertor(f.value()));
             }
             // 如果值编码器是 ParserFunction 类型，则解析并设置新的值编码器
-            if (eb.getConfig().getValueEncoder() instanceof ParserFunction) {
-                ParserFunction f = (ParserFunction) eb.getConfig().getValueEncoder();
+            if (eb.getConfig().getValueEncoder() instanceof ParserFunction f) {
                 eb.setValueEncoder(parseValueEncoder(f.value()));
             }
             // 如果值解码器是 ParserFunction 类型，则解析并设置新的值解码器
-            if (eb.getConfig().getValueDecoder() instanceof ParserFunction) {
-                ParserFunction f = (ParserFunction) eb.getConfig().getValueDecoder();
+            if (eb.getConfig().getValueDecoder() instanceof ParserFunction f) {
                 eb.setValueDecoder(parseValueDecoder(f.value()));
             }
         }

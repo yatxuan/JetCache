@@ -44,12 +44,10 @@ public abstract class AbstractJsonDecoder extends AbstractValueDecoder {
         if (obj == null) {
             return null;
         }
-        if (obj instanceof CacheValueHolder) {
-            CacheValueHolder h = (CacheValueHolder) obj;
+        if (obj instanceof CacheValueHolder h) {
             h.setValue(readObject(buffer, indexHolder));
             return h;
-        } else if (obj instanceof CacheMessage) {
-            CacheMessage cm = (CacheMessage) obj;
+        } else if (obj instanceof CacheMessage cm) {
             if (objCount > 1) {
                 Object[] keys = new Object[objCount - 1];
                 for (int i = 0; i < objCount - 1; i++) {
@@ -62,6 +60,7 @@ public abstract class AbstractJsonDecoder extends AbstractValueDecoder {
             return obj;
         }
     }
+
     /**
      * 从字节数组中读取短整型。
      *
@@ -74,6 +73,7 @@ public abstract class AbstractJsonDecoder extends AbstractValueDecoder {
         x = (x << 8) | (buf[index + 1] & 0xFF);
         return (short) x;
     }
+
     /**
      * 从字节数组中读取对象。
      *
@@ -101,6 +101,7 @@ public abstract class AbstractJsonDecoder extends AbstractValueDecoder {
             return obj;
         }
     }
+
     /**
      * 从字节数组中读取整数。
      *
@@ -115,6 +116,7 @@ public abstract class AbstractJsonDecoder extends AbstractValueDecoder {
         x = (x << 8) | (buf[index + 3] & 0xFF);
         return x;
     }
+
     /**
      * 解析字节数组中的对象。
      *

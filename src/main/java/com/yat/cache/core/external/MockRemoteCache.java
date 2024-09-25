@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * version 1.0
  */
 public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
-    private static Method getHolder;
+    private static final Method getHolder;
 
     static {
         try {
@@ -41,8 +41,8 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
         }
     }
 
-    private Cache<ByteBuffer, byte[]> cache;
-    private ExternalCacheConfig<K, V> config;
+    private final Cache<ByteBuffer, byte[]> cache;
+    private final ExternalCacheConfig<K, V> config;
 
     public MockRemoteCache(MockRemoteCacheConfig<K, V> config) {
         super(config);
@@ -64,6 +64,7 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
     public <T> T unwrap(Class<T> clazz) {
         return cache.unwrap(clazz);
     }
+
     /**
      * 获取指定键的 CacheValueHolder。
      *
@@ -103,6 +104,7 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
     private ByteBuffer genKey(K key) {
         return ByteBuffer.wrap(buildKey(key));
     }
+
     /**
      * 转换 CacheGetResult 结果。
      *
@@ -115,7 +117,7 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
             LinkedList<CacheValueHolder> list = new LinkedList<>();
             while (originHolder != null) {
                 CacheValueHolder h = new CacheValueHolder();
-                if (list.size() > 0) {
+                if (!list.isEmpty()) {
                     list.getLast().setValue(h);
                 }
                 list.add(h);
@@ -127,10 +129,12 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
                     h.setValue(config.getValueDecoder().apply((byte[]) v));
                     break;
                 } else if (originHolder.getValue() == null) {
-                    originHolder = (CacheValueHolder) originHolder.getValue();
+                    originHolder = null;
                 }
             }
-            return new CacheGetResult(originResult.getResultCode(), originResult.getMessage(), list.peekFirst());
+            return new CacheGetResult<>(
+                    originResult.getResultCode(), originResult.getMessage(), list.peekFirst()
+            );
         } catch (Exception e) {
             throw new CacheException(e);
         }
@@ -140,7 +144,7 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
     protected MultiGetResult<K, V> do_GET_ALL(Set<? extends K> keys) {
         ArrayList<K> keyList = new ArrayList<>(keys.size());
         ArrayList<ByteBuffer> newKeyList = new ArrayList<>(keys.size());
-        keys.stream().forEach((k) -> {
+        keys.forEach((k) -> {
             ByteBuffer newKey = genKey(k);
             keyList.add(k);
             newKeyList.add(newKey);
@@ -171,7 +175,7 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
     @Override
     protected CacheResult do_PUT_ALL(Map<? extends K, ? extends V> map, long expireAfterWrite, TimeUnit timeUnit) {
         Map<ByteBuffer, byte[]> newMap = new HashMap<>();
-        map.entrySet().forEach((e) -> newMap.put(genKey(e.getKey()), config.getValueEncoder().apply(e.getValue())));
+        map.forEach((key, value) -> newMap.put(genKey(key), config.getValueEncoder().apply(value)));
         return cache.PUT_ALL(newMap, expireAfterWrite, timeUnit);
     }
 
@@ -182,7 +186,7 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
 
     @Override
     protected CacheResult do_REMOVE_ALL(Set<? extends K> keys) {
-        return cache.REMOVE_ALL(keys.stream().map((k) -> genKey(k)).collect(Collectors.toSet()));
+        return cache.REMOVE_ALL(keys.stream().map(this::genKey).collect(Collectors.toSet()));
     }
 
     @Override
