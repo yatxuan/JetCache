@@ -6,17 +6,24 @@ import com.esotericsoftware.kryo.kryo5.serializers.CompatibleFieldSerializer;
 import com.yat.cache.anno.api.SerialPolicy;
 import com.yat.cache.core.exception.CacheEncodeException;
 import com.yat.cache.core.support.ObjectPool;
+import lombok.Getter;
 
 /**
- * Created on 2016/10/4.
+ * ClassName Kryo5ValueEncoder
+ * <p>Description 基于Kryo5的值编码器，用于序列化对象</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 19:48
+ * version 1.0
  */
 public class Kryo5ValueEncoder extends AbstractValueEncoder {
 
-    //Default size = 32K
+    /**
+     * Kryo5缓存对象池，用于复用Kryo5和Output实例
+     * 默认大小为32K
+     */
     static ObjectPool<Kryo5Cache> kryoCacheObjectPool = new ObjectPool<>(16,
-            new ObjectPool.ObjectFactory<Kryo5Cache>() {
+            new ObjectPool.ObjectFactory< >() {
                 @Override
                 public Kryo5Cache create() {
                     return new Kryo5Cache();
@@ -28,13 +35,24 @@ public class Kryo5ValueEncoder extends AbstractValueEncoder {
                     obj.getOutput().reset();
                 }
             });
+    /**
+     * 初始缓冲区大小
+     */
     private static final int INIT_BUFFER_SIZE = 2048;
-    public static final Kryo5ValueEncoder INSTANCE = new Kryo5ValueEncoder(true);
+    /**
+     * 单例实例，支持身份编码的Kryo5ValueEncoder
+     */ public static final Kryo5ValueEncoder INSTANCE = new Kryo5ValueEncoder(true);
 
     public Kryo5ValueEncoder(boolean useIdentityNumber) {
         super(useIdentityNumber);
     }
-
+    /**
+     * 序列化给定的对象值。
+     *
+     * @param value 要序列化的对象
+     * @return 序列化后的字节数组
+     * @throws CacheEncodeException 如果序列化过程中发生错误
+     */
     @Override
     public byte[] apply(Object value) {
         Kryo5Cache kryoCache = null;
@@ -55,7 +73,14 @@ public class Kryo5ValueEncoder extends AbstractValueEncoder {
             }
         }
     }
-
+    /**
+     * 手动写入一个整数到Output中。
+     * Kryo5改变了写入整数的方式，使用小端字节序，
+     * 因此在这里手动实现整数的写入。
+     *
+     * @param output 要写入的Output流
+     * @param value  要写入的整数值
+     */
     private void writeInt(Output output, int value) {
         // kryo5 change writeInt to little endian, so we write int manually
         output.writeByte(value >>> 24);
@@ -63,24 +88,29 @@ public class Kryo5ValueEncoder extends AbstractValueEncoder {
         output.writeByte(value >>> 8);
         output.writeByte(value);
     }
-
+    /**
+     * Kryo5缓存类，封装了Kryo实例和Output流，
+     * 用于Kryo5序列化操作。
+     */
+    @Getter
     public static class Kryo5Cache {
+        /**
+         * 获取Output流
+         */
         final Output output;
+        /**
+         * 获取Kryo实例
+         */
         final Kryo kryo;
 
+        /**
+         * 初始化Kryo实例和Output流。
+         */
         public Kryo5Cache() {
             kryo = new Kryo();
             kryo.setDefaultSerializer(CompatibleFieldSerializer.class);
             kryo.setRegistrationRequired(false);
             output = new Output(INIT_BUFFER_SIZE, -1);
-        }
-
-        public Output getOutput() {
-            return output;
-        }
-
-        public Kryo getKryo() {
-            return kryo;
         }
 
     }

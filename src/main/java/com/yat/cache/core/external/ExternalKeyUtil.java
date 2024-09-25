@@ -1,6 +1,7 @@
 package com.yat.cache.core.external;
 
 import com.yat.cache.core.exception.CacheException;
+import com.yat.cache.core.lang.Assert;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,15 +12,29 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created on 2016/12/30.
+ * ClassName ExternalKeyUtil
+ * <p>Description 缓存键构建工具类:用于构建缓存键的方法，支持多种类型的键转换</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 13:41
+ * version 1.0
  */
 public class ExternalKeyUtil {
+
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss,SSS");
+
+    /**
+     * 根据给定的新键和前缀构建缓存键。
+     *
+     * @param newKey 新键。
+     * @param prefix 前缀。
+     * @return 构建后的缓存键。
+     * @throws IOException 如果发生 I/O 异常。
+     */
     public static byte[] buildKeyAfterConvert(Object newKey, String prefix) throws IOException {
-        if (newKey == null) {
-            throw new NullPointerException("key can't be null");
-        }
+
+        Assert.notNull(newKey, () -> new NullPointerException("key can't be null"));
+
         byte[] keyBytesWithOutPrefix;
         if (newKey instanceof String) {
             keyBytesWithOutPrefix = newKey.toString().getBytes(StandardCharsets.UTF_8);
@@ -28,7 +43,6 @@ public class ExternalKeyUtil {
         } else if (newKey instanceof Number) {
             keyBytesWithOutPrefix = (newKey.getClass().getSimpleName() + newKey).getBytes(StandardCharsets.UTF_8);
         } else if (newKey instanceof Date) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss,SSS");
             keyBytesWithOutPrefix = (newKey.getClass().getSimpleName() + sdf.format(newKey)).getBytes();
         } else if (newKey instanceof Boolean) {
             keyBytesWithOutPrefix = newKey.toString().getBytes(StandardCharsets.UTF_8);
@@ -40,6 +54,7 @@ public class ExternalKeyUtil {
             bos.close();
             keyBytesWithOutPrefix = bos.toByteArray();
         } else {
+            // throw new CacheException("无法转换 " + newKey.getClass() + " 类型的键");
             throw new CacheException("can't convert key of class: " + newKey.getClass());
         }
         byte[] prefixBytes = prefix.getBytes(StandardCharsets.UTF_8);

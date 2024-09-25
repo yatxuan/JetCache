@@ -1,25 +1,25 @@
-/**
- * Created on 2017/2/22.
- */
 package com.yat.cache.core.event;
 
 import com.yat.cache.core.Cache;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
- * The CacheEvent is used in single JVM while CacheMessage used for distributed message.
+ * ClassName CacheEvent
+ * <p>Description CacheEvent 用于单个 JVM 内部的缓存事件处理，而 CacheMessage 用于分布式环境下的消息传递。
+ * </p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 12:03
+ * version 1.0
  */
+@Getter
+@AllArgsConstructor
 public class CacheEvent {
 
+    /**
+     * 缓存
+     */
     protected Cache cache;
-
-    public CacheEvent(Cache cache) {
-        this.cache = cache;
-    }
-
-    public Cache getCache() {
-        return cache;
-    }
-
 }
+

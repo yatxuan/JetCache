@@ -1,6 +1,3 @@
-/**
- * Created on  13-09-09 15:59
- */
 package com.yat.cache.anno.method;
 
 import com.yat.cache.anno.support.CacheContext;
@@ -30,9 +27,15 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 /**
- * @author huangli
+ * ClassName CacheHandler
+ * <p>Description 缓存处理程序</p>
+ *
+ * @author Yat
+ * Date 2024/8/22 21:44
+ * version 1.0
  */
 public class CacheHandler implements InvocationHandler {
+
     private static Logger logger = LoggerFactory.getLogger(CacheHandler.class);
 
     private Object src;
@@ -48,6 +51,15 @@ public class CacheHandler implements InvocationHandler {
         this.hiddenPackages = hiddenPackages;
     }
 
+    /**
+     * 代理方法调用处理
+     *
+     * @param proxy  代理对象
+     * @param method 调用的方法
+     * @param args   方法参数
+     * @return 方法执行结果
+     * @throws Throwable 可能抛出的异常
+     */
     @Override
     public Object invoke(Object proxy, final Method method, final Object[] args) throws Throwable {
         CacheInvokeContext context = null;
@@ -69,6 +81,13 @@ public class CacheHandler implements InvocationHandler {
         }
     }
 
+    /**
+     * 静态方法调用处理
+     *
+     * @param context 调用上下文
+     * @return 方法执行结果
+     * @throws Throwable 可能抛出的异常
+     */
     public static Object invoke(CacheInvokeContext context) throws Throwable {
         if (context.getCacheInvokeConfig().isEnableCacheContext()) {
             try {
@@ -82,6 +101,13 @@ public class CacheHandler implements InvocationHandler {
         }
     }
 
+    /**
+     * 实际方法调用处理
+     *
+     * @param context 调用上下文
+     * @return 方法执行结果
+     * @throws Throwable 可能抛出的异常
+     */
     private static Object doInvoke(CacheInvokeContext context) throws Throwable {
         CacheInvokeConfig cic = context.getCacheInvokeConfig();
         CachedAnnoConfig cachedConfig = cic.getCachedAnnoConfig();
@@ -94,13 +120,20 @@ public class CacheHandler implements InvocationHandler {
         }
     }
 
+    /**
+     * 带缓存的方法调用处理
+     *
+     * @param context 调用上下文
+     * @return 方法执行结果
+     * @throws Throwable 可能抛出的异常
+     */
     private static Object invokeWithCached(CacheInvokeContext context)
             throws Throwable {
         CacheInvokeConfig cic = context.getCacheInvokeConfig();
         CachedAnnoConfig cac = cic.getCachedAnnoConfig();
         Cache cache = context.getCacheFunction().apply(context, cac);
         if (cache == null) {
-            logger.error("no cache with name: " + context.getMethod());
+            logger.error("no cache with name: {}", context.getMethod());
             return invokeOrigin(context);
         }
 
@@ -114,7 +147,7 @@ public class CacheHandler implements InvocationHandler {
         }
 
         try {
-            CacheLoader loader = new CacheLoader() {
+            CacheLoader loader = new CacheLoader<>() {
                 @Override
                 public Object load(Object k) throws Throwable {
                     Object result = invokeOrigin(context);
@@ -127,13 +160,20 @@ public class CacheHandler implements InvocationHandler {
                     return !ExpressionUtil.evalPostCondition(context, cic.getCachedAnnoConfig());
                 }
             };
-            Object result = cache.computeIfAbsent(key, loader);
-            return result;
+            return cache.computeIfAbsent(key, loader);
         } catch (CacheInvokeException e) {
             throw e.getCause();
         }
     }
 
+    /**
+     * 执行带有失效或更新操作的调用
+     * 该方法首先执行原始方法调用，然后根据配置进行缓存失效或更新操作
+     *
+     * @param context 缓存调用上下文
+     * @return 原始调用的结果
+     * @throws Throwable 如果原始调用过程中发生错误
+     */
     private static Object invokeWithInvalidateOrUpdate(CacheInvokeContext context) throws Throwable {
         Object originResult = invokeOrigin(context);
         context.setResult(originResult);
@@ -150,10 +190,28 @@ public class CacheHandler implements InvocationHandler {
         return originResult;
     }
 
+    /**
+     * 执行原始的缓存调用
+     * 该方法负责实际执行缓存中的方法调用
+     *
+     * @param context 缓存调用上下文
+     * @return 原始调用的结果
+     * @throws Throwable 如果调用过程中发生错误
+     */
     private static Object invokeOrigin(CacheInvokeContext context) throws Throwable {
         return context.getInvoker().invoke();
     }
 
+    /**
+     * 加载值并统计时间
+     * 该方法执行缓存调用，记录执行时间，并触发缓存加载事件
+     *
+     * @param context 缓存调用上下文
+     * @param cache   缓存实例
+     * @param key     缓存键
+     * @return 缓存调用的结果
+     * @throws Throwable 如果调用过程中发生错误
+     */
     private static Object loadAndCount(CacheInvokeContext context, Cache cache, Object key) throws Throwable {
         long t = System.currentTimeMillis();
         Object v = null;
@@ -174,12 +232,25 @@ public class CacheHandler implements InvocationHandler {
         return v;
     }
 
+    /**
+     * 执行缓存失效操作
+     * 遍历缓存失效配置列表，逐个执行缓存失效操作
+     *
+     * @param context    缓存调用上下文
+     * @param annoConfig 缓存失效注解配置列表
+     */
     private static void doInvalidate(CacheInvokeContext context, List<CacheInvalidateAnnoConfig> annoConfig) {
         for (CacheInvalidateAnnoConfig config : annoConfig) {
             doInvalidate(context, config);
         }
     }
 
+    /**
+     * 将给定的键值对更新到缓存中。
+     *
+     * @param context          缓存调用上下文
+     * @param updateAnnoConfig 更新配置
+     */
     private static void doUpdate(CacheInvokeContext context, CacheUpdateAnnoConfig updateAnnoConfig) {
         Cache cache = context.getCacheFunction().apply(context, updateAnnoConfig);
         if (cache == null) {
@@ -231,6 +302,12 @@ public class CacheHandler implements InvocationHandler {
         }
     }
 
+    /**
+     * 执行实际的缓存无效操作。
+     *
+     * @param context    缓存调用上下文
+     * @param annoConfig 无效配置
+     */
     private static void doInvalidate(CacheInvokeContext context, CacheInvalidateAnnoConfig annoConfig) {
         Cache cache = context.getCacheFunction().apply(context, annoConfig);
         if (cache == null) {
@@ -259,6 +336,13 @@ public class CacheHandler implements InvocationHandler {
         }
     }
 
+    /**
+     * 将对象转换为Iterable类型
+     * 支持将数组或Iterable类型对象转换为Iterable，否则返回null
+     *
+     * @param obj 需要转换的对象
+     * @return 转换后的Iterable对象，如果转换失败则返回null
+     */
     private static Iterable<Object> toIterable(Object obj) {
         if (obj.getClass().isArray()) {
             if (obj instanceof Object[]) {
@@ -278,20 +362,35 @@ public class CacheHandler implements InvocationHandler {
         }
     }
 
+    /**
+     * 支持缓存上下文的操作类。
+     */
     private static class CacheContextSupport extends CacheContext {
 
         public CacheContextSupport() {
             super(null, null, null);
         }
 
+
+        /**
+         * 启用缓存上下文。
+         */
         static void _enable() {
             enable();
         }
 
+        /**
+         * 禁用缓存上下文。
+         */
         static void _disable() {
             disable();
         }
 
+        /**
+         * 检查缓存上下文是否启用。
+         *
+         * @return 是否启用
+         */
         static boolean _isEnabled() {
             return isEnabled();
         }

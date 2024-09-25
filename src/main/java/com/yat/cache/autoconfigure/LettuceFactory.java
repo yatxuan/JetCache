@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author huangli
  */
 public class LettuceFactory implements FactoryBean<Object> {
+
     @Autowired
     private AutoConfigureBeans autoConfigureBeans;
 

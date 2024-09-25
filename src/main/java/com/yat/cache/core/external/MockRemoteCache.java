@@ -1,6 +1,3 @@
-/**
- * Created on  13-09-22 16:54
- */
 package com.yat.cache.core.external;
 
 import com.yat.cache.core.Cache;
@@ -24,7 +21,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * @author huangli
+ * ClassName MockRemoteCache
+ * <p>Description 模拟远程缓存实现</p>
+ * <p> 此类模拟了一个远程缓存的行为，实际上使用本地内存作为存储。 </p>
+ *
+ * @author Yat
+ * Date 2024/8/22 13:43
+ * version 1.0
  */
 public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
     private static Method getHolder;
@@ -61,7 +64,12 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
     public <T> T unwrap(Class<T> clazz) {
         return cache.unwrap(clazz);
     }
-
+    /**
+     * 获取指定键的 CacheValueHolder。
+     *
+     * @param key 键
+     * @return CacheValueHolder 对象
+     */
     public CacheValueHolder getHolder(K key) {
         try {
             CacheGetResult<V> r = GET(key);
@@ -71,6 +79,12 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
         }
     }
 
+    /**
+     * 获取单个键的缓存结果。
+     *
+     * @param key 键
+     * @return 缓存结果
+     */
     @Override
     protected CacheGetResult<V> do_GET(K key) {
         CacheGetResult r = cache.GET(genKey(key));
@@ -80,10 +94,21 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
         return r;
     }
 
+    /**
+     * 将键转换为 ByteBuffer 形式。
+     *
+     * @param key 键
+     * @return ByteBuffer 形式的键
+     */
     private ByteBuffer genKey(K key) {
         return ByteBuffer.wrap(buildKey(key));
     }
-
+    /**
+     * 转换 CacheGetResult 结果。
+     *
+     * @param originResult 原始结果
+     * @return 转换后的结果
+     */
     private CacheGetResult convertCacheGetResult(CacheGetResult originResult) {
         try {
             CacheValueHolder originHolder = (CacheValueHolder) getHolder.invoke(originResult);

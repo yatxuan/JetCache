@@ -6,18 +6,32 @@ import com.esotericsoftware.kryo.io.Input;
 import java.io.ByteArrayInputStream;
 
 /**
- * Created on 2016/10/4.
+ * ClassName KryoValueDecoder
+ * <p>Description 使用Kryo库进行对象的反序列化</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 19:53
+ * version 1.0
  */
 public class KryoValueDecoder extends AbstractValueDecoder {
 
     public static final KryoValueDecoder INSTANCE = new KryoValueDecoder(true);
 
+    /**
+     * 初始化是否使用标识号进行解码
+     *
+     * @param useIdentityNumber 标志是否使用标识号进行解码
+     */
     public KryoValueDecoder(boolean useIdentityNumber) {
         super(useIdentityNumber);
     }
 
+    /**
+     * 实际执行反序列化的函数从字节数组中读取对象信息，并通过Kryo库还原对象
+     *
+     * @param buffer 包含序列化对象数据的字节数组
+     * @return 反序列化后的原始对象
+     */
     @Override
     public Object doApply(byte[] buffer) {
         ByteArrayInputStream in;
@@ -31,6 +45,7 @@ public class KryoValueDecoder extends AbstractValueDecoder {
         try {
             kryoCache = KryoValueEncoder.kryoCacheObjectPool.borrowObject();
             Kryo kryo = kryoCache.getKryo();
+            // 获取当前线程的上下文类加载器，用于处理类加载问题
             ClassLoader classLoader = KryoValueDecoder.class.getClassLoader();
             Thread t = Thread.currentThread();
             if (t != null) {

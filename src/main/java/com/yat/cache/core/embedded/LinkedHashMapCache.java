@@ -15,7 +15,12 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * @author huangli
+ * ClassName LinkedHashMapCache
+ * <p>Description 基于 LinkedHashMap 的缓存实现</p>
+ *
+ * @author Yat
+ * Date 2024/8/22 11:09
+ * version 1.0
  */
 public class LinkedHashMapCache<K, V> extends AbstractEmbeddedCache<K, V> {
 

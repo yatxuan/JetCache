@@ -8,17 +8,31 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created on 2017/5/3.
+ * JetCacheExecutor类提供了两个静态的ScheduledExecutorService实例，
+ * 一个用于默认的缓存操作，另一个用于处理高IO负载的任务。
+ * 这些线程池在类加载时创建，并在JVM关闭时优雅地关闭。
+ * <p>
  *
- * @author huangli
+ * @author Yat
  */
 public class JetCacheExecutor {
-    private static AtomicInteger threadCount = new AtomicInteger(0);
+
+    /**
+     * 默认的缓存操作线程池
+     */
     protected volatile static ScheduledExecutorService defaultExecutor;
+    /**
+     * 用于处理高IO负载任务的线程池
+     */
     protected volatile static ScheduledExecutorService heavyIOExecutor;
+    /**
+     * 线程计数器，用于为高IO线程池中的线程命名
+     */
+    private static final AtomicInteger threadCount = new AtomicInteger(0);
     private static final ReentrantLock reentrantLock = new ReentrantLock();
 
     static {
+        // JVM关闭时，优雅关闭所有线程池的钩子
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -32,6 +46,12 @@ public class JetCacheExecutor {
         });
     }
 
+    /**
+     * 获取默认的缓存操作线程池实例。
+     * 如果实例尚未创建，则创建一个新实例。
+     *
+     * @return 默认的ScheduledExecutorService实例
+     */
     public static ScheduledExecutorService defaultExecutor() {
         if (defaultExecutor != null) {
             return defaultExecutor;
@@ -53,6 +73,12 @@ public class JetCacheExecutor {
         return defaultExecutor;
     }
 
+    /**
+     * 获取用于处理高IO负载任务的线程池实例。
+     * 如果实例尚未创建，则创建一个新实例。
+     *
+     * @return 用于高IO负载的ScheduledExecutorService实例
+     */
     public static ScheduledExecutorService heavyIOExecutor() {
         if (heavyIOExecutor != null) {
             return heavyIOExecutor;
@@ -74,10 +100,20 @@ public class JetCacheExecutor {
         return heavyIOExecutor;
     }
 
+    /**
+     * 外部设置默认的缓存操作线程池实例。
+     *
+     * @param executor 外部提供的ScheduledExecutorService实例
+     */
     public static void setDefaultExecutor(ScheduledExecutorService executor) {
         JetCacheExecutor.defaultExecutor = executor;
     }
 
+    /**
+     * 外部设置用于处理高IO负载任务的线程池实例。
+     *
+     * @param heavyIOExecutor 外部提供的ScheduledExecutorService实例
+     */
     public static void setHeavyIOExecutor(ScheduledExecutorService heavyIOExecutor) {
         JetCacheExecutor.heavyIOExecutor = heavyIOExecutor;
     }

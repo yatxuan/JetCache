@@ -20,9 +20,12 @@ import org.springframework.lang.NonNull;
 import java.util.Map;
 
 /**
- * Created on 2019/5/1.
+ * ClassName RedisSpringDataAutoConfiguration
+ * <p>Description 基于  SpringDataRedis 的远程缓存</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 22:11
+ * version 1.0
  */
 @Configuration
 @Conditional(RedisSpringDataAutoConfiguration.SpringDataRedisCondition.class)

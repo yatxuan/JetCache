@@ -1,6 +1,3 @@
-/**
- * Created on 2018/3/22.
- */
 package com.yat.cache.anno.support;
 
 import com.yat.cache.anno.method.ClassUtil;
@@ -11,13 +8,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
- * @author huangli
+ * ClassName DefaultCacheNameGenerator
+ * <p>Description 默认的缓存名称生成器</p>
+ *
+ * @author Yat
+ * Date 2024/8/22 22:04
+ * version 1.0
  */
 public class DefaultCacheNameGenerator implements CacheNameGenerator {
 
     protected final String[] hiddenPackages;
 
-    protected final ConcurrentHashMap<Method, String> cacheNameMap = new ConcurrentHashMap();
+    protected final ConcurrentHashMap<Method, String> cacheNameMap = new ConcurrentHashMap<>();
 
     public DefaultCacheNameGenerator(String[] hiddenPackages) {
         this.hiddenPackages = hiddenPackages;

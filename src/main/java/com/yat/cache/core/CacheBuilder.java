@@ -1,10 +1,14 @@
 package com.yat.cache.core;
 
 /**
- * Created on 2016/11/17.
+ * ClassName CacheBuilder
+ * <p>Description 缓存生成器</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 11:40
+ * version 1.0
  */
 public interface CacheBuilder {
-    <K, V> Cache<K, V> buildCache();
+
+   <K, V> Cache<K, V> buildCache();
 }

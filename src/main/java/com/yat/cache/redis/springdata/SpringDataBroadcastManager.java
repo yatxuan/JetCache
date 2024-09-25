@@ -19,8 +19,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
+
 /**
- * @author huangli
+ * 使用Spring Data Redis实现的BroadcastManager，用于管理和执行广播操作。
+ * 广播操作主要用于缓存失效通知等场景。
+ *
+ * @author Yat
+ * Date 2024/8/22 22:12
+ * version 1.0
  */
 public class SpringDataBroadcastManager extends BroadcastManager {
 
@@ -32,6 +38,12 @@ public class SpringDataBroadcastManager extends BroadcastManager {
     private final ReentrantLock reentrantLock = new ReentrantLock();
     private volatile RedisMessageListenerContainer listenerContainer;
 
+    /**
+     * 初始化广播管理器。
+     *
+     * @param cacheManager 缓存管理器，用于管理不同的缓存。
+     * @param config       配置信息，包含Redis连接工厂等必要设置。
+     */
     public SpringDataBroadcastManager(CacheManager cacheManager, RedisSpringDataCacheConfig<Object, byte[]> config) {
         super(cacheManager);
         this.config = config;
@@ -42,6 +54,12 @@ public class SpringDataBroadcastManager extends BroadcastManager {
         this.channel = config.getBroadcastChannel().getBytes(StandardCharsets.UTF_8);
     }
 
+    /**
+     * 发布消息到订阅者。
+     *
+     * @param cacheMessage 要发布的缓存消息。
+     * @return 发布结果，成功或失败。
+     */
     @Override
     public CacheResult publish(CacheMessage cacheMessage) {
         RedisConnection con = null;
@@ -65,6 +83,10 @@ public class SpringDataBroadcastManager extends BroadcastManager {
         }
     }
 
+    /**
+     * 开始订阅消息。
+     * 订阅特定主题的消息，接收广播通知。
+     */
     @Override
     public void startSubscribe() {
         reentrantLock.lock();
@@ -90,6 +112,12 @@ public class SpringDataBroadcastManager extends BroadcastManager {
         }
     }
 
+    /**
+     * 关闭订阅服务。
+     * 取消消息监听，并释放相关资源。
+     *
+     * @throws Exception 如果关闭过程中发生错误。
+     */
     @Override
     public void close() throws Exception {
         reentrantLock.lock();
@@ -106,6 +134,12 @@ public class SpringDataBroadcastManager extends BroadcastManager {
         }
     }
 
+    /**
+     * 接收消息的回调方法。
+     *
+     * @param message 接收到的消息。
+     * @param pattern 匹配的模式，此处未使用。
+     */
     private void onMessage(Message message, byte[] pattern) {
         processNotification(message.getBody(), config.getValueDecoder());
     }

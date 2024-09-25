@@ -9,10 +9,15 @@ import com.yat.cache.core.external.MockRemoteCacheBuilder;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
- * Created on 2016/12/2.
+ * ClassName MockRemoteCacheAutoConfiguration
+ * <p>Description 基于 mock 的远程缓存</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 22:11
+ * version 1.0
  */
 @Component
 @Conditional(MockRemoteCacheAutoConfiguration.MockRemoteCacheCondition.class)
@@ -33,8 +38,9 @@ public class MockRemoteCacheAutoConfiguration extends ExternalCacheAutoInit {
     protected void parseGeneralConfig(CacheBuilder builder, BaseCacheProperties properties) {
         super.parseGeneralConfig(builder, properties);
         MockRemoteCacheBuilder b = (MockRemoteCacheBuilder) builder;
+        // 从配置中获取limit值，如果没有设置，则使用默认的本地限制值
         Integer limit = properties.getLimit();
-        if (limit == null) {
+        if (Objects.isNull(limit)) {
             limit = DefaultCacheConstant.DEFAULT_LOCAL_LIMIT;
         }
         b.limit(limit);

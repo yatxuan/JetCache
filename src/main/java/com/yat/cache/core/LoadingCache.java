@@ -10,22 +10,44 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * Created on 2017/5/17.
+ * ClassName LoadingCache
+ * <p>Description LoadingCache类是SimpleProxyCache的扩展，它提供了一种加载缓存的机制</p>
+ * 通过使用CacheLoader，它可以在缓存未命中时动态加载数据。
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 20:31
+ * version 1.0
  */
 public class LoadingCache<K, V> extends SimpleProxyCache<K, V> {
 
+    /**
+     * 用于处理缓存事件的消费者
+     */
     protected Consumer<CacheEvent> eventConsumer;
 
+    /**
+     * 缓存配置
+     */
     protected CacheConfig<K, V> config;
 
+    /**
+     * 初始化缓存实例。
+     *
+     * @param cache 实际的缓存实例
+     */
     public LoadingCache(Cache<K, V> cache) {
         super(cache);
         this.config = config();
         eventConsumer = CacheUtil.getAbstractCache(cache)::notify;
     }
 
+    /**
+     * 获取键对应的值，如果缓存中不存在，则使用CacheLoader加载数据。
+     *
+     * @param key 缓存键
+     * @return 缓存值
+     * @throws CacheInvokeException 如果加载数据时发生错误
+     */
     @Override
     public V get(K key) throws CacheInvokeException {
         CacheLoader<K, V> loader = config.getLoader();
@@ -37,6 +59,13 @@ public class LoadingCache<K, V> extends SimpleProxyCache<K, V> {
         }
     }
 
+    /**
+     * 批量获取一组键对应的值，如果缓存中不存在，则使用CacheLoader加载数据。
+     *
+     * @param keys 缓存键集合
+     * @return 包含缓存值的映射
+     * @throws CacheInvokeException 如果加载数据时发生错误
+     */
     @Override
     public Map<K, V> getAll(Set<? extends K> keys) throws CacheInvokeException {
         CacheLoader<K, V> loader = config.getLoader();
@@ -94,9 +123,15 @@ public class LoadingCache<K, V> extends SimpleProxyCache<K, V> {
         } else {
             return cache.getAll(keys);
         }
-
     }
 
+    /**
+     * 判断加载的数据是否需要更新到缓存中。
+     *
+     * @param loadedValue 加载的数据值
+     * @param loader      CacheLoader实例
+     * @return true 如果需要更新，否则返回false
+     */
     protected boolean needUpdate(V loadedValue, CacheLoader<K, V> loader) {
         if (loadedValue == null && !config.isCacheNullValue()) {
             return false;
