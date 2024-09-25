@@ -1,9 +1,9 @@
 package com.yat.cache.core.template;
 
-import com.yat.cache.core.Cache;
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCache;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.CacheUtil;
-import com.yat.cache.core.MultiLevelCache;
+import com.yat.cache.core.MultiLevelJetCache;
 import com.yat.cache.core.support.AbstractLifecycle;
 import com.yat.cache.core.support.DefaultCacheMonitor;
 import com.yat.cache.core.support.DefaultMetricsManager;
@@ -76,17 +76,17 @@ public class MetricsMonitorInstaller extends AbstractLifecycle implements CacheM
     }
 
     @Override
-    public void addMonitors(CacheManager cacheManager, Cache cache, QuickConfig quickConfig) {
+    public void addMonitors(JetCacheManager jetCacheManager, JetCache jetCache, QuickConfig quickConfig) {
         if (metricsManager == null) {
             return;
         }
         // 尝试获取抽象缓存实例，以便于监控器的添加。
-        cache = CacheUtil.getAbstractCache(cache);
-        if (cache instanceof MultiLevelCache mc) {
+        jetCache = CacheUtil.getAbstractCache(jetCache);
+        if (jetCache instanceof MultiLevelJetCache mc) {
             // 处理多级缓存情况，目前仅支持两级缓存。
             if (mc.caches().length == 2) {
-                Cache local = mc.caches()[0];
-                Cache remote = mc.caches()[1];
+                JetCache local = mc.caches()[0];
+                JetCache remote = mc.caches()[1];
                 DefaultCacheMonitor localMonitor = new DefaultCacheMonitor(quickConfig.getName() + "_local");
                 local.config().getMonitors().add(localMonitor);
                 DefaultCacheMonitor remoteMonitor = new DefaultCacheMonitor(quickConfig.getName() + "_remote");
@@ -98,7 +98,7 @@ public class MetricsMonitorInstaller extends AbstractLifecycle implements CacheM
 
         // 为当前缓存添加一个默认的监控器。
         DefaultCacheMonitor monitor = new DefaultCacheMonitor(quickConfig.getName());
-        cache.config().getMonitors().add(monitor);
+        jetCache.config().getMonitors().add(monitor);
         // 将缓存监控器添加到MetricsManager中。
         metricsManager.add(monitor);
     }

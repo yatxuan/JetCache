@@ -18,7 +18,7 @@ import java.util.function.Consumer;
  * Date 2024/8/22 20:31
  * version 1.0
  */
-public class LoadingCache<K, V> extends SimpleProxyCache<K, V> {
+public class LoadingJetCache<K, V> extends SimpleProxyJetCache<K, V> {
 
     /**
      * 用于处理缓存事件的消费者
@@ -33,12 +33,12 @@ public class LoadingCache<K, V> extends SimpleProxyCache<K, V> {
     /**
      * 初始化缓存实例。
      *
-     * @param cache 实际的缓存实例
+     * @param jetCache 实际的缓存实例
      */
-    public LoadingCache(Cache<K, V> cache) {
-        super(cache);
+    public LoadingJetCache(JetCache<K, V> jetCache) {
+        super(jetCache);
         this.config = config();
-        eventConsumer = CacheUtil.getAbstractCache(cache)::notify;
+        eventConsumer = CacheUtil.getAbstractCache(jetCache)::notify;
     }
 
     /**
@@ -52,10 +52,10 @@ public class LoadingCache<K, V> extends SimpleProxyCache<K, V> {
     public V get(K key) throws CacheInvokeException {
         CacheLoader<K, V> loader = config.getLoader();
         if (loader != null) {
-            return AbstractCache.computeIfAbsentImpl(key, loader,
+            return AbstractJetCache.computeIfAbsentImpl(key, loader,
                     config.isCacheNullValue(), 0, null, this);
         } else {
-            return cache.get(key);
+            return jetCache.get(key);
         }
     }
 
@@ -85,7 +85,7 @@ public class LoadingCache<K, V> extends SimpleProxyCache<K, V> {
             });
             if (!config.isCachePenetrationProtect()) {
                 if (eventConsumer != null) {
-                    loader = CacheUtil.createProxyLoader(cache, loader, eventConsumer);
+                    loader = CacheUtil.createProxyLoader(jetCache, loader, eventConsumer);
                 }
                 Map<K, V> loadResult;
                 try {
@@ -107,21 +107,21 @@ public class LoadingCache<K, V> extends SimpleProxyCache<K, V> {
                 }
                 kvMap.putAll(loadResult);
             } else {
-                AbstractCache<K, V> abstractCache = CacheUtil.getAbstractCache(cache);
-                loader = CacheUtil.createProxyLoader(cache, loader, eventConsumer);
+                AbstractJetCache<K, V> abstractCache = CacheUtil.getAbstractCache(jetCache);
+                loader = CacheUtil.createProxyLoader(jetCache, loader, eventConsumer);
                 for (K key : keysNeedLoad) {
                     Consumer<V> cacheUpdater = (v) -> {
                         if (needUpdate(v, config.getLoader())) {
                             PUT(key, v);
                         }
                     };
-                    V v = AbstractCache.synchronizedLoad(config, abstractCache, key, loader, cacheUpdater);
+                    V v = AbstractJetCache.synchronizedLoad(config, abstractCache, key, loader, cacheUpdater);
                     kvMap.put(key, v);
                 }
             }
             return kvMap;
         } else {
-            return cache.getAll(keys);
+            return jetCache.getAll(keys);
         }
     }
 

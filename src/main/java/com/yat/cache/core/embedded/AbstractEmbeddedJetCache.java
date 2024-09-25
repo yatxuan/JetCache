@@ -1,6 +1,6 @@
 package com.yat.cache.core.embedded;
 
-import com.yat.cache.core.AbstractCache;
+import com.yat.cache.core.AbstractJetCache;
 import com.yat.cache.core.CacheConfig;
 import com.yat.cache.core.CacheGetResult;
 import com.yat.cache.core.CacheResult;
@@ -21,7 +21,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * ClassName AbstractEmbeddedCache
+ * ClassName AbstractEmbeddedJetCache
  * <p>Description
  * AbstractEmbeddedCache 是一个本地缓存抽象类，
  * 缓存实现提供了基础结构和一些基本的操作。
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * Date 2024/8/22 10:53
  * version 1.0
  */
-public abstract class AbstractEmbeddedCache<K, V> extends AbstractCache<K, V> {
+public abstract class AbstractEmbeddedJetCache<K, V> extends AbstractJetCache<K, V> {
 
     private final ReentrantLock lock = new ReentrantLock();
     /**
@@ -45,7 +45,7 @@ public abstract class AbstractEmbeddedCache<K, V> extends AbstractCache<K, V> {
      */
     protected InnerMap innerMap;
 
-    public AbstractEmbeddedCache(EmbeddedCacheConfig<K, V> config) {
+    public AbstractEmbeddedJetCache(EmbeddedCacheConfig<K, V> config) {
         this.config = config;
         innerMap = createAreaCache();
     }

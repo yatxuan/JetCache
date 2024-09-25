@@ -1,13 +1,13 @@
 package com.yat.cache.core.support;
 
 import com.yat.cache.anno.api.DefaultCacheConstant;
-import com.yat.cache.core.AbstractCache;
-import com.yat.cache.core.Cache;
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.AbstractJetCache;
+import com.yat.cache.core.JetCache;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.CacheMonitor;
 import com.yat.cache.core.CacheUtil;
-import com.yat.cache.core.MultiLevelCache;
-import com.yat.cache.core.embedded.AbstractEmbeddedCache;
+import com.yat.cache.core.MultiLevelJetCache;
+import com.yat.cache.core.embedded.AbstractEmbeddedJetCache;
 import com.yat.cache.core.event.CacheEvent;
 import com.yat.cache.core.event.CachePutAllEvent;
 import com.yat.cache.core.event.CachePutEvent;
@@ -49,22 +49,22 @@ public class CacheNotifyMonitor implements CacheMonitor {
     /**
      * 构造一个新的 CacheNotifyMonitor 实例，使用默认缓存区域。
      *
-     * @param cacheManager 缓存管理器。
+     * @param jetCacheManager 缓存管理器。
      * @param cacheName    缓存名称。
      */
-    public CacheNotifyMonitor(CacheManager cacheManager, String cacheName) {
-        this(cacheManager, DefaultCacheConstant.DEFAULT_AREA, cacheName);
+    public CacheNotifyMonitor(JetCacheManager jetCacheManager, String cacheName) {
+        this(jetCacheManager, DefaultCacheConstant.DEFAULT_AREA, cacheName);
     }
 
     /**
      * 构造一个新的 CacheNotifyMonitor 实例。
      *
-     * @param cacheManager 缓存管理器。
+     * @param jetCacheManager 缓存管理器。
      * @param area         缓存区域名称。
      * @param cacheName    缓存名称。
      */
-    public CacheNotifyMonitor(CacheManager cacheManager, String area, String cacheName) {
-        this.broadcastManager = cacheManager.getBroadcastManager(area);
+    public CacheNotifyMonitor(JetCacheManager jetCacheManager, String area, String cacheName) {
+        this.broadcastManager = jetCacheManager.getBroadcastManager(area);
         this.area = area;
         this.cacheName = cacheName;
         if (broadcastManager != null) {
@@ -84,11 +84,11 @@ public class CacheNotifyMonitor implements CacheMonitor {
         if (this.broadcastManager == null) {
             return;
         }
-        AbstractCache absCache = CacheUtil.getAbstractCache(event.getCache());
+        AbstractJetCache absCache = CacheUtil.getAbstractCache(event.getJetCache());
         if (absCache.isClosed()) {
             return;
         }
-        AbstractEmbeddedCache localCache = getLocalCache(absCache);
+        AbstractEmbeddedJetCache localCache = getLocalCache(absCache);
         if (localCache == null) {
             return;
         }
@@ -139,13 +139,13 @@ public class CacheNotifyMonitor implements CacheMonitor {
      * @param absCache 抽象缓存实例。
      * @return 本地缓存实例。
      */
-    private AbstractEmbeddedCache getLocalCache(AbstractCache absCache) {
-        if (!(absCache instanceof MultiLevelCache)) {
+    private AbstractEmbeddedJetCache getLocalCache(AbstractJetCache absCache) {
+        if (!(absCache instanceof MultiLevelJetCache)) {
             return null;
         }
-        for (Cache c : ((MultiLevelCache) absCache).caches()) {
-            if (c instanceof AbstractEmbeddedCache) {
-                return (AbstractEmbeddedCache) c;
+        for (JetCache c : ((MultiLevelJetCache) absCache).caches()) {
+            if (c instanceof AbstractEmbeddedJetCache) {
+                return (AbstractEmbeddedJetCache) c;
             }
         }
         return null;
@@ -158,7 +158,7 @@ public class CacheNotifyMonitor implements CacheMonitor {
      * @param localCache 本地缓存配置。
      * @return 转换后的键。
      */
-    private Object convertKey(Object key, AbstractEmbeddedCache localCache) {
+    private Object convertKey(Object key, AbstractEmbeddedJetCache localCache) {
         Function<Object, Object> keyConvertor = localCache.config().getKeyConvertor();
         if (keyConvertor == null) {
             return key;

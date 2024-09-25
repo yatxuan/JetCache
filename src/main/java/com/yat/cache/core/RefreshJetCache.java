@@ -1,9 +1,9 @@
 package com.yat.cache.core;
 
-import com.yat.cache.core.embedded.AbstractEmbeddedCache;
+import com.yat.cache.core.embedded.AbstractEmbeddedJetCache;
 import com.yat.cache.core.exception.CacheException;
 import com.yat.cache.core.exception.CacheInvokeException;
-import com.yat.cache.core.external.AbstractExternalCache;
+import com.yat.cache.core.external.AbstractExternalJetCache;
 import com.yat.cache.core.support.JetCacheExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +30,9 @@ import java.util.function.Function;
  * Date: 2024/8/22 20:39
  * version: 1.0
  */
-public class RefreshCache<K, V> extends LoadingCache<K, V> {
+public class RefreshJetCache<K, V> extends LoadingJetCache<K, V> {
 
-    private static final Logger logger = LoggerFactory.getLogger(RefreshCache.class);
+    private static final Logger logger = LoggerFactory.getLogger(RefreshJetCache.class);
 
     /**
      * 常量定义：锁后缀的字节数组形式。
@@ -52,8 +52,8 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
      */
     private final boolean multiLevelCache;
 
-    public RefreshCache(Cache cache) {
-        super(cache);
+    public RefreshJetCache(JetCache jetCache) {
+        super(jetCache);
         multiLevelCache = isMultiLevelCache();
     }
 
@@ -63,11 +63,11 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
      * @return 如果是多级缓存则返回true，否则返回false
      */
     private boolean isMultiLevelCache() {
-        Cache c = getTargetCache();
-        while (c instanceof ProxyCache) {
-            c = ((ProxyCache) c).getTargetCache();
+        JetCache c = getTargetCache();
+        while (c instanceof ProxyJetCache) {
+            c = ((ProxyJetCache) c).getTargetCache();
         }
-        return c instanceof MultiLevelCache;
+        return c instanceof MultiLevelJetCache;
     }
 
     /**
@@ -101,7 +101,7 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
      */
     @Override
     public V computeIfAbsent(K key, Function<K, V> loader, boolean cacheNullWhenLoaderReturnNull) {
-        return AbstractCache.computeIfAbsentImpl(key, loader, cacheNullWhenLoaderReturnNull,
+        return AbstractJetCache.computeIfAbsentImpl(key, loader, cacheNullWhenLoaderReturnNull,
                 0, null, this);
     }
 
@@ -118,7 +118,7 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
     @Override
     public V computeIfAbsent(K key, Function<K, V> loader, boolean cacheNullWhenLoaderReturnNull,
                              long expireAfterWrite, TimeUnit timeUnit) {
-        return AbstractCache.computeIfAbsentImpl(key, loader, cacheNullWhenLoaderReturnNull,
+        return AbstractJetCache.computeIfAbsentImpl(key, loader, cacheNullWhenLoaderReturnNull,
                 expireAfterWrite, timeUnit, this);
     }
 
@@ -182,11 +182,11 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
      * @return 任务ID
      */
     private Object getTaskId(K key) {
-        Cache c = concreteCache();
-        if (c instanceof AbstractEmbeddedCache) {
-            return ((AbstractEmbeddedCache) c).buildKey(key);
-        } else if (c instanceof AbstractExternalCache) {
-            byte[] bs = ((AbstractExternalCache) c).buildKey(key);
+        JetCache c = concreteCache();
+        if (c instanceof AbstractEmbeddedJetCache) {
+            return ((AbstractEmbeddedJetCache) c).buildKey(key);
+        } else if (c instanceof AbstractExternalJetCache) {
+            byte[] bs = ((AbstractExternalJetCache) c).buildKey(key);
             return ByteBuffer.wrap(bs);
         } else {
             logger.error("can't getTaskId from " + c.getClass());
@@ -199,16 +199,16 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
      *
      * @return 返回实际的缓存实例
      */
-    protected Cache concreteCache() {
-        Cache cache = getTargetCache();
+    protected JetCache concreteCache() {
+        JetCache jetCache = getTargetCache();
         while (true) {
-            if (cache instanceof ProxyCache) {
-                cache = ((ProxyCache) cache).getTargetCache();
-            } else if (cache instanceof MultiLevelCache) {
-                Cache[] caches = ((MultiLevelCache) cache).caches();
-                cache = caches[caches.length - 1];
+            if (jetCache instanceof ProxyJetCache) {
+                jetCache = ((ProxyJetCache) jetCache).getTargetCache();
+            } else if (jetCache instanceof MultiLevelJetCache) {
+                JetCache[] caches = ((MultiLevelJetCache) jetCache).caches();
+                jetCache = caches[caches.length - 1];
             } else {
-                return cache;
+                return jetCache;
             }
         }
     }
@@ -276,9 +276,9 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
                     }
                 }
                 logger.debug("refresh key: {}", key);
-                Cache concreteCache = concreteCache();
-                if (concreteCache instanceof AbstractExternalCache) {
-                    externalLoad(concreteCache, now);
+                JetCache concreteJetCache = concreteCache();
+                if (concreteJetCache instanceof AbstractExternalJetCache) {
+                    externalLoad(concreteJetCache, now);
                 } else {
                     load();
                 }
@@ -300,15 +300,15 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
             taskMap.remove(taskId);
         }
 
-        private void externalLoad(final Cache concreteCache, final long currentTime) {
-            byte[] newKey = ((AbstractExternalCache) concreteCache).buildKey(key);
+        private void externalLoad(final JetCache concreteJetCache, final long currentTime) {
+            byte[] newKey = ((AbstractExternalJetCache) concreteJetCache).buildKey(key);
             byte[] lockKey = combine(newKey, LOCK_KEY_SUFFIX);
-            long loadTimeOut = RefreshCache.this.config.getRefreshPolicy().getRefreshLockTimeoutMillis();
+            long loadTimeOut = RefreshJetCache.this.config.getRefreshPolicy().getRefreshLockTimeoutMillis();
             long refreshMillis = config.getRefreshPolicy().getRefreshMillis();
             byte[] timestampKey = combine(newKey, TIMESTAMP_KEY_SUFFIX);
 
             // AbstractExternalCache buildKey method will not convert byte[]
-            CacheGetResult refreshTimeResult = concreteCache.GET(timestampKey);
+            CacheGetResult refreshTimeResult = concreteJetCache.GET(timestampKey);
             boolean shouldLoad = false;
             if (refreshTimeResult.isSuccess()) {
                 shouldLoad = currentTime >= Long.parseLong(refreshTimeResult.getValue().toString()) + refreshMillis;
@@ -327,14 +327,14 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
                 try {
                     load();
                     // AbstractExternalCache buildKey method will not convert byte[]
-                    concreteCache.put(timestampKey, String.valueOf(System.currentTimeMillis()));
+                    concreteJetCache.put(timestampKey, String.valueOf(System.currentTimeMillis()));
                 } catch (Throwable e) {
                     throw new CacheException("refresh error", e);
                 }
             };
 
             // AbstractExternalCache buildKey method will not convert byte[]
-            boolean lockSuccess = concreteCache.tryLockAndRun(lockKey, loadTimeOut, TimeUnit.MILLISECONDS, r);
+            boolean lockSuccess = concreteJetCache.tryLockAndRun(lockKey, loadTimeOut, TimeUnit.MILLISECONDS, r);
             if (!lockSuccess && multiLevelCache) {
                 JetCacheExecutor.heavyIOExecutor().schedule(
                         () -> refreshUpperCaches(key), (long) (0.2 * refreshMillis), TimeUnit.MILLISECONDS);
@@ -344,17 +344,17 @@ public class RefreshCache<K, V> extends LoadingCache<K, V> {
         private void load() throws Throwable {
             CacheLoader<K, V> l = loader == null ? config.getLoader() : loader;
             if (l != null) {
-                l = CacheUtil.createProxyLoader(cache, l, eventConsumer);
+                l = CacheUtil.createProxyLoader(jetCache, l, eventConsumer);
                 V v = l.load(key);
                 if (needUpdate(v, l)) {
-                    cache.PUT(key, v);
+                    jetCache.PUT(key, v);
                 }
             }
         }
 
         private void refreshUpperCaches(K key) {
-            MultiLevelCache<K, V> targetCache = (MultiLevelCache<K, V>) getTargetCache();
-            Cache[] caches = targetCache.caches();
+            MultiLevelJetCache<K, V> targetCache = (MultiLevelJetCache<K, V>) getTargetCache();
+            JetCache[] caches = targetCache.caches();
             int len = caches.length;
 
             CacheGetResult cacheGetResult = caches[len - 1].GET(key);

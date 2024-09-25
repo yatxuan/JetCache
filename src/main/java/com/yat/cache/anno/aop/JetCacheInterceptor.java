@@ -6,7 +6,7 @@ import com.yat.cache.anno.method.CacheInvokeContext;
 import com.yat.cache.anno.support.ConfigMap;
 import com.yat.cache.anno.support.ConfigProvider;
 import com.yat.cache.anno.support.GlobalCacheConfig;
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCacheManager;
 import lombok.Setter;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -52,7 +52,7 @@ public class JetCacheInterceptor implements MethodInterceptor, ApplicationContex
     /**
      * 缓存管理器，用于实际的缓存操作
      */
-    CacheManager cacheManager;
+    JetCacheManager jetCacheManager;
 
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
@@ -80,9 +80,9 @@ public class JetCacheInterceptor implements MethodInterceptor, ApplicationContex
             return invocation.proceed();
         }
         // 初始化缓存管理器
-        if (cacheManager == null) {
-            cacheManager = applicationContext.getBean(CacheManager.class);
-            if (cacheManager == null) {
+        if (jetCacheManager == null) {
+            jetCacheManager = applicationContext.getBean(JetCacheManager.class);
+            if (jetCacheManager == null) {
                 logger.error("There is no cache manager instance in spring context");
                 return invocation.proceed();
             }
@@ -115,7 +115,7 @@ public class JetCacheInterceptor implements MethodInterceptor, ApplicationContex
         }
 
         // 创建缓存调用上下文并设置相关参数
-        CacheInvokeContext context = configProvider.newContext(cacheManager).createCacheInvokeContext(cacheConfigMap);
+        CacheInvokeContext context = configProvider.newContext(jetCacheManager).createCacheInvokeContext(cacheConfigMap);
         context.setTargetObject(invocation.getThis());
         context.setInvoker(invocation::proceed);
         context.setMethod(method);

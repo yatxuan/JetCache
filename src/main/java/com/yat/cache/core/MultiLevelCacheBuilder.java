@@ -19,7 +19,7 @@ public class MultiLevelCacheBuilder<T extends MultiLevelCacheBuilder<T>> extends
      */
     protected MultiLevelCacheBuilder() {
         // 设置 MultiLevelCache 作为缓存构建的实现
-        buildFunc(config -> new MultiLevelCache((MultiLevelCacheConfig) config));
+        buildFunc(config -> new MultiLevelJetCache((MultiLevelCacheConfig) config));
     }
 
     /**
@@ -28,8 +28,8 @@ public class MultiLevelCacheBuilder<T extends MultiLevelCacheBuilder<T>> extends
      * @param caches 要添加的缓存数组
      * @return 返回自身实例，支持链式调用
      */
-    public T addCache(Cache... caches) {
-        for (Cache c : caches) {
+    public T addCache(JetCache... caches) {
+        for (JetCache c : caches) {
             getConfig().getCaches().add(c);
         }
         return self();
@@ -91,7 +91,7 @@ public class MultiLevelCacheBuilder<T extends MultiLevelCacheBuilder<T>> extends
      *
      * @param caches 缓存列表
      */
-    public void setCaches(List<Cache> caches) {
+    public void setCaches(List<JetCache> caches) {
         getConfig().setCaches(caches);
     }
 

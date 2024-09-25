@@ -1,7 +1,7 @@
 package com.yat.cache.core.template;
 
-import com.yat.cache.core.Cache;
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCache;
+import com.yat.cache.core.JetCacheManager;
 
 /**
  * ClassName CacheMonitorInstaller
@@ -16,9 +16,9 @@ public interface CacheMonitorInstaller {
     /**
      * 添加监控器到缓存实例。
      *
-     * @param cacheManager 缓存管理器实例
-     * @param cache        缓存实例
+     * @param jetCacheManager 缓存管理器实例
+     * @param jetCache        缓存实例
      * @param quickConfig  快速配置对象
      */
-    void addMonitors(CacheManager cacheManager, Cache cache, QuickConfig quickConfig);
+    void addMonitors(JetCacheManager jetCacheManager, JetCache jetCache, QuickConfig quickConfig);
 }

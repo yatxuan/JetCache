@@ -1,6 +1,6 @@
 package com.yat.cache.core.event;
 
-import com.yat.cache.core.Cache;
+import com.yat.cache.core.JetCache;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -20,6 +20,6 @@ public class CacheEvent {
     /**
      * 缓存
      */
-    protected Cache cache;
+    protected JetCache jetCache;
 }
 

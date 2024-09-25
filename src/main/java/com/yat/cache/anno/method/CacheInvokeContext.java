@@ -1,7 +1,7 @@
 package com.yat.cache.anno.method;
 
 import com.yat.cache.anno.support.CacheAnnoConfig;
-import com.yat.cache.core.Cache;
+import com.yat.cache.core.JetCache;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -53,7 +53,7 @@ public class CacheInvokeContext {
     /**
      * 用于创建Cache实例的函数，根据当前的调用上下文和缓存注解配置来创建
      */
-    private BiFunction<CacheInvokeContext, CacheAnnoConfig, Cache> cacheFunction;
+    private BiFunction<CacheInvokeContext, CacheAnnoConfig, JetCache> cacheFunction;
     /**
      * 隐藏的包名数组，这些包中的类不会被缓存机制监控
      */

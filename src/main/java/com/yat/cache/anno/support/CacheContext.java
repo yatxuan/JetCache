@@ -3,8 +3,8 @@ package com.yat.cache.anno.support;
 import com.yat.cache.anno.api.DefaultCacheConstant;
 import com.yat.cache.anno.api.EnableJetCache;
 import com.yat.cache.anno.method.CacheInvokeContext;
-import com.yat.cache.core.Cache;
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCache;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.template.QuickConfig;
 import org.slf4j.Logger;
@@ -39,10 +39,10 @@ public class CacheContext {
     /**
      * 缓存管理器，负责缓存的创建和管理。
      */
-    private final CacheManager cacheManager;
+    private final JetCacheManager jetCacheManager;
 
-    public CacheContext(CacheManager cacheManager, ConfigProvider configProvider, GlobalCacheConfig globalCacheConfig) {
-        this.cacheManager = cacheManager;
+    public CacheContext(JetCacheManager jetCacheManager, ConfigProvider configProvider, GlobalCacheConfig globalCacheConfig) {
+        this.jetCacheManager = jetCacheManager;
         this.globalCacheConfig = globalCacheConfig;
         this.configProvider = configProvider;
     }
@@ -77,24 +77,24 @@ public class CacheContext {
      * @param configMap       配置映射，用于查找缓存的定义
      * @return 返回缓存实例，如果找不到定义则返回null
      */
-    private Cache createOrGetCache(
+    private JetCache createOrGetCache(
             CacheInvokeContext invokeContext, CacheAnnoConfig cacheAnnoConfig, ConfigMap configMap
     ) {
         // 从缓存注解配置中获取缓存实例
-        Cache cache = cacheAnnoConfig.getCache();
-        if (cache != null) {
+        JetCache jetCache = cacheAnnoConfig.getJetCache();
+        if (jetCache != null) {
             // 如果已经存在缓存实例，则直接返回
-            return cache;
+            return jetCache;
         }
 
         // 判断缓存注解配置的类型
         if (cacheAnnoConfig instanceof CachedAnnoConfig) {
             // 如果是 Cached 注解的配置，则根据 Cached 配置创建缓存实例
-            cache = createCacheByCachedConfig((CachedAnnoConfig) cacheAnnoConfig, invokeContext);
+            jetCache = createCacheByCachedConfig((CachedAnnoConfig) cacheAnnoConfig, invokeContext);
         } else if (cacheAnnoConfig instanceof CacheInvalidateAnnoConfig || cacheAnnoConfig instanceof CacheUpdateAnnoConfig) {
             // 如果是 CacheInvalidated 或 CacheUpdate 注解的配置，则从缓存管理器中获取缓存实例
-            cache = cacheManager.getCache(cacheAnnoConfig.getArea(), cacheAnnoConfig.getName());
-            if (cache == null) {
+            jetCache = jetCacheManager.getCache(cacheAnnoConfig.getArea(), cacheAnnoConfig.getName());
+            if (jetCache == null) {
                 // 如果缓存管理器中没有找到缓存，则从配置映射中查找缓存定义
                 CachedAnnoConfig cac = configMap.getByCacheName(cacheAnnoConfig.getArea(), cacheAnnoConfig.getName());
                 if (cac == null) {
@@ -107,13 +107,13 @@ public class CacheContext {
                     return null;
                 }
                 // 找到缓存定义后，根据 Cached 配置创建缓存实例
-                cache = createCacheByCachedConfig(cac, invokeContext);
+                jetCache = createCacheByCachedConfig(cac, invokeContext);
             }
         }
 
         // 将创建的缓存实例设置到缓存注解配置中，以便后续使用
-        cacheAnnoConfig.setCache(cache);
-        return cache;
+        cacheAnnoConfig.setJetCache(jetCache);
+        return jetCache;
     }
 
     /**
@@ -124,7 +124,7 @@ public class CacheContext {
      * @param invokeContext 缓存调用上下文，包含了隐藏包和方法等信息
      * @return 返回创建或获取的缓存实例
      */
-    private Cache createCacheByCachedConfig(CachedAnnoConfig ac, CacheInvokeContext invokeContext) {
+    private JetCache createCacheByCachedConfig(CachedAnnoConfig ac, CacheInvokeContext invokeContext) {
         // 获取缓存区域信息
         String area = ac.getArea();
         // 获取缓存名，检查是否定义
@@ -148,7 +148,7 @@ public class CacheContext {
      * @param cacheName 缓存名称
      * @return 配置好的缓存对象
      */
-    public Cache __createOrGetCache(CachedAnnoConfig cac, String area, String cacheName) {
+    public JetCache __createOrGetCache(CachedAnnoConfig cac, String area, String cacheName) {
         // 新建缓存配置构建器，指定缓存区域和缓存名称
         QuickConfig.Builder b = QuickConfig.newBuilder(area, cacheName);
 
@@ -202,7 +202,7 @@ public class CacheContext {
         b.refreshPolicy(cac.getRefreshPolicy());
 
         // 根据配置构建并获取缓存
-        return cacheManager.getOrCreateCache(b.build());
+        return jetCacheManager.getOrCreateCache(b.build());
     }
 
 

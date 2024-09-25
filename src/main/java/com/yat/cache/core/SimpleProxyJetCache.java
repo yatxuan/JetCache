@@ -12,30 +12,30 @@ import java.util.function.Function;
  * @param <K> 缓存键的类型
  * @param <V> 缓存值的类型
  */
-public class SimpleProxyCache<K, V> implements ProxyCache<K, V> {
+public class SimpleProxyJetCache<K, V> implements ProxyJetCache<K, V> {
 
     /**
      * 底层缓存实现
      */
-    protected Cache<K, V> cache;
+    protected JetCache<K, V> jetCache;
 
     /**
      * 初始化SimpleProxyCache。
      *
-     * @param cache 底层缓存实现
+     * @param jetCache 底层缓存实现
      */
-    public SimpleProxyCache(Cache<K, V> cache) {
-        this.cache = cache;
+    public SimpleProxyJetCache(JetCache<K, V> jetCache) {
+        this.jetCache = jetCache;
     }
 
     @Override
     public <T> T unwrap(Class<T> clazz) {
-        return cache.unwrap(clazz);
+        return jetCache.unwrap(clazz);
     }
 
     @Override
-    public Cache<K, V> getTargetCache() {
-        return cache;
+    public JetCache<K, V> getTargetCache() {
+        return jetCache;
     }
 
     /**
@@ -46,12 +46,12 @@ public class SimpleProxyCache<K, V> implements ProxyCache<K, V> {
      */
     @Override
     public V get(K key) {
-        return cache.get(key);
+        return jetCache.get(key);
     }
 
     @Override
     public CacheGetResult<V> GET(K key) {
-        return cache.GET(key);
+        return jetCache.GET(key);
     }
 
     /**
@@ -62,12 +62,12 @@ public class SimpleProxyCache<K, V> implements ProxyCache<K, V> {
      */
     @Override
     public Map<K, V> getAll(Set<? extends K> keys) {
-        return cache.getAll(keys);
+        return jetCache.getAll(keys);
     }
 
     @Override
     public MultiGetResult<K, V> GET_ALL(Set<? extends K> keys) {
-        return cache.GET_ALL(keys);
+        return jetCache.GET_ALL(keys);
     }
 
     /**
@@ -78,22 +78,22 @@ public class SimpleProxyCache<K, V> implements ProxyCache<K, V> {
      */
     @Override
     public void put(K key, V value) {
-        cache.put(key, value);
+        jetCache.put(key, value);
     }
 
     @Override
     public CacheResult PUT(K key, V value) {
-        return cache.PUT(key, value);
+        return jetCache.PUT(key, value);
     }
 
     @Override
     public CacheResult PUT(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
-        return cache.PUT(key, value, expireAfterWrite, timeUnit);
+        return jetCache.PUT(key, value, expireAfterWrite, timeUnit);
     }
 
     @Override
     public CacheConfig<K, V> config() {
-        return cache.config();
+        return jetCache.config();
     }
 
     /**
@@ -103,17 +103,17 @@ public class SimpleProxyCache<K, V> implements ProxyCache<K, V> {
      */
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
-        cache.putAll(map);
+        jetCache.putAll(map);
     }
 
     @Override
     public CacheResult PUT_ALL(Map<? extends K, ? extends V> map) {
-        return cache.PUT_ALL(map);
+        return jetCache.PUT_ALL(map);
     }
 
     @Override
     public CacheResult PUT_ALL(Map<? extends K, ? extends V> map, long expireAfterWrite, TimeUnit timeUnit) {
-        return cache.PUT_ALL(map, expireAfterWrite, timeUnit);
+        return jetCache.PUT_ALL(map, expireAfterWrite, timeUnit);
     }
 
     /**
@@ -125,12 +125,12 @@ public class SimpleProxyCache<K, V> implements ProxyCache<K, V> {
      */
     @Override
     public boolean putIfAbsent(K key, V value) {
-        return cache.putIfAbsent(key, value);
+        return jetCache.putIfAbsent(key, value);
     }
 
     @Override
     public CacheResult PUT_IF_ABSENT(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
-        return cache.PUT_IF_ABSENT(key, value, expireAfterWrite, timeUnit);
+        return jetCache.PUT_IF_ABSENT(key, value, expireAfterWrite, timeUnit);
     }
 
     /**
@@ -141,62 +141,62 @@ public class SimpleProxyCache<K, V> implements ProxyCache<K, V> {
      */
     @Override
     public boolean remove(K key) {
-        return cache.remove(key);
+        return jetCache.remove(key);
     }
 
     @Override
     public CacheResult REMOVE(K key) {
-        return cache.REMOVE(key);
+        return jetCache.REMOVE(key);
     }
 
     @Override
     public void removeAll(Set<? extends K> keys) {
-        cache.removeAll(keys);
+        jetCache.removeAll(keys);
     }
 
     @Override
     public CacheResult REMOVE_ALL(Set<? extends K> keys) {
-        return cache.REMOVE_ALL(keys);
+        return jetCache.REMOVE_ALL(keys);
     }
 
     @Override
     public void close() {
-        cache.close();
+        jetCache.close();
     }
 
     @Override
     public boolean tryLockAndRun(K key, long expire, TimeUnit timeUnit, Runnable action) {
-        return cache.tryLockAndRun(key, expire, timeUnit, action);
+        return jetCache.tryLockAndRun(key, expire, timeUnit, action);
     }
 
     @Override
     public AutoReleaseLock tryLock(K key, long expire, TimeUnit timeUnit) {
-        return cache.tryLock(key, expire, timeUnit);
+        return jetCache.tryLock(key, expire, timeUnit);
     }
 
     @Override
     public V computeIfAbsent(K key, Function<K, V> loader) {
-        return cache.computeIfAbsent(key, loader);
+        return jetCache.computeIfAbsent(key, loader);
     }
 
     @Override
     public V computeIfAbsent(K key, Function<K, V> loader, boolean cacheNullWhenLoaderReturnNull) {
-        return cache.computeIfAbsent(key, loader, cacheNullWhenLoaderReturnNull);
+        return jetCache.computeIfAbsent(key, loader, cacheNullWhenLoaderReturnNull);
     }
 
     @Override
     public V computeIfAbsent(K key, Function<K, V> loader, boolean cacheNullWhenLoaderReturnNull,
                              long expireAfterWrite, TimeUnit timeUnit) {
-        return cache.computeIfAbsent(key, loader, cacheNullWhenLoaderReturnNull, expireAfterWrite, timeUnit);
+        return jetCache.computeIfAbsent(key, loader, cacheNullWhenLoaderReturnNull, expireAfterWrite, timeUnit);
     }
 
     @Override
     public void put(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
-        cache.put(key, value, expireAfterWrite, timeUnit);
+        jetCache.put(key, value, expireAfterWrite, timeUnit);
     }
 
     @Override
     public void putAll(Map<? extends K, ? extends V> map, long expireAfterWrite, TimeUnit timeUnit) {
-        cache.putAll(map, expireAfterWrite, timeUnit);
+        jetCache.putAll(map, expireAfterWrite, timeUnit);
     }
 }

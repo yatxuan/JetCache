@@ -29,16 +29,16 @@ import java.util.function.Supplier;
  * version 1.0
  */
 @NoArgsConstructor
-public class SimpleCacheManager implements CacheManager, AutoCloseable {
+public class SimpleJetCacheManager implements JetCacheManager, AutoCloseable {
     /**
      * 是否缓存空值,默认 false
      */
     private static final boolean DEFAULT_CACHE_NULL_VALUE = false;
 
-    private static final Logger logger = LoggerFactory.getLogger(SimpleCacheManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(SimpleJetCacheManager.class);
 
     // area -> cacheName -> Cache
-    private final ConcurrentHashMap<String, ConcurrentHashMap<String, Cache>> caches = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, ConcurrentHashMap<String, JetCache>> caches = new ConcurrentHashMap<>();
 
     private final ConcurrentHashMap<String, BroadcastManager> broadcastManagers = new ConcurrentHashMap<>();
 
@@ -72,19 +72,19 @@ public class SimpleCacheManager implements CacheManager, AutoCloseable {
     }
 
     @Override
-    public Cache getCache(String area, String cacheName) {
-        ConcurrentHashMap<String, Cache> areaMap = getCachesByArea(area);
+    public JetCache getCache(String area, String cacheName) {
+        ConcurrentHashMap<String, JetCache> areaMap = getCachesByArea(area);
         return areaMap.get(cacheName);
     }
 
-    private ConcurrentHashMap<String, Cache> getCachesByArea(String area) {
+    private ConcurrentHashMap<String, JetCache> getCachesByArea(String area) {
         return caches.computeIfAbsent(area, (key) -> new ConcurrentHashMap<>());
     }
 
     @Override
-    public void putCache(String area, String cacheName, Cache cache) {
-        ConcurrentHashMap<String, Cache> areaMap = getCachesByArea(area);
-        areaMap.put(cacheName, cache);
+    public void putCache(String area, String cacheName, JetCache jetCache) {
+        ConcurrentHashMap<String, JetCache> areaMap = getCachesByArea(area);
+        areaMap.put(cacheName, jetCache);
     }
 
     /**
@@ -97,7 +97,7 @@ public class SimpleCacheManager implements CacheManager, AutoCloseable {
      * @throws IllegalStateException 如果cacheBuilderTemplate未设置，则抛出此异常，因为cacheBuilderTemplate是创建缓存对象所必需的
      */
     @Override
-    public <K, V> Cache<K, V> getOrCreateCache(QuickConfig config) {
+    public <K, V> JetCache<K, V> getOrCreateCache(QuickConfig config) {
         // 检查cacheBuilderTemplate是否已设置，这是创建缓存所必需的
         Assert.notNull(cacheBuilderTemplate, () -> new IllegalStateException("cacheBuilderTemplate not set"));
 
@@ -106,10 +106,10 @@ public class SimpleCacheManager implements CacheManager, AutoCloseable {
         Objects.requireNonNull(config.getName());
 
         // 获取或初始化由指定缓存区域的所有缓存的映射
-        ConcurrentHashMap<String, Cache> m = getCachesByArea(config.getArea());
+        ConcurrentHashMap<String, JetCache> m = getCachesByArea(config.getArea());
 
         // 尝试从缓存映射中获取缓存对象如果存在，直接返回
-        Cache c = m.get(config.getName());
+        JetCache c = m.get(config.getName());
         if (c != null) {
             return c;
         }
@@ -130,22 +130,22 @@ public class SimpleCacheManager implements CacheManager, AutoCloseable {
      * @param config 缓存的配置信息，包含缓存类型、过期时间等
      * @return 创建的缓存实例
      */
-    private <K, V> Cache<K, V> create(QuickConfig config) {
-        Cache<K, V> cache;
+    private <K, V> JetCache<K, V> create(QuickConfig config) {
+        JetCache<K, V> jetCache;
         // 当缓存类型为null或远程缓存时，构建远程缓存
         if (config.getCacheType() == null || config.getCacheType() == CacheType.REMOTE) {
-            cache = buildRemote(config);
+            jetCache = buildRemote(config);
         } else if (config.getCacheType() == CacheType.LOCAL) {
             // 当缓存类型为本地缓存时，构建本地缓存
-            cache = buildLocal(config);
+            jetCache = buildLocal(config);
         } else {
             // 当缓存类型既不是本地也不是远程时，构建多级缓存
-            Cache<K, V> local = buildLocal(config);
-            Cache<K, V> remote = buildRemote(config);
+            JetCache<K, V> local = buildLocal(config);
+            JetCache<K, V> remote = buildRemote(config);
 
             // 设置子缓存的过期策略
             boolean useExpireOfSubCache = config.getLocalExpire() != null;
-            cache = MultiLevelCacheBuilder.createMultiLevelCacheBuilder()
+            jetCache = MultiLevelCacheBuilder.createMultiLevelCacheBuilder()
                     .expireAfterWrite(remote.config().getExpireAfterWriteInMillis(), TimeUnit.MILLISECONDS)
                     .addCache(local, remote)
                     .useExpireOfSubCache(useExpireOfSubCache)
@@ -155,26 +155,26 @@ public class SimpleCacheManager implements CacheManager, AutoCloseable {
         }
         // 根据配置的刷新策略，包装缓存实例
         if (config.getRefreshPolicy() != null) {
-            cache = new RefreshCache<>(cache);
+            jetCache = new RefreshJetCache<>(jetCache);
         } else if (config.getLoader() != null) {
             // 当有加载器配置时，包装缓存实例
-            cache = new LoadingCache<>(cache);
+            jetCache = new LoadingJetCache<>(jetCache);
         }
         // 设置刷新策略和加载器配置到缓存实例
-        cache.config().setRefreshPolicy(config.getRefreshPolicy());
-        cache.config().setLoader(config.getLoader());
+        jetCache.config().setRefreshPolicy(config.getRefreshPolicy());
+        jetCache.config().setLoader(config.getLoader());
 
         // 设置穿透保护
         boolean protect = config.getPenetrationProtect() != null ? config.getPenetrationProtect()
                 : cacheBuilderTemplate.isPenetrationProtect();
-        cache.config().setCachePenetrationProtect(protect);
-        cache.config().setPenetrationProtectTimeout(config.getPenetrationProtectTimeout());
+        jetCache.config().setCachePenetrationProtect(protect);
+        jetCache.config().setPenetrationProtectTimeout(config.getPenetrationProtectTimeout());
 
         // 为缓存实例添加监控器
         for (CacheMonitorInstaller i : cacheBuilderTemplate.getCacheMonitorInstallers()) {
-            i.addMonitors(this, cache, config);
+            i.addMonitors(this, jetCache, config);
         }
-        return cache;
+        return jetCache;
     }
 
     /**
@@ -186,7 +186,7 @@ public class SimpleCacheManager implements CacheManager, AutoCloseable {
      * @return 返回根据指定配置构建的缓存实例
      * @throws CacheConfigException 当找不到合适的缓存构建器时抛出此异常
      */
-    private Cache buildRemote(QuickConfig config) {
+    private JetCache buildRemote(QuickConfig config) {
         // 根据配置中的区域信息获取对应的外部缓存构建器
         ExternalCacheBuilder cacheBuilder = (ExternalCacheBuilder) cacheBuilderTemplate
                 .getCacheBuilder(1, config.getArea());
@@ -243,7 +243,7 @@ public class SimpleCacheManager implements CacheManager, AutoCloseable {
      * @return 返回构建的本地缓存实例
      * @throws CacheConfigException 如果找不到本地缓存构建器，则抛出此异常
      */
-    private <K, V> Cache<K, V> buildLocal(QuickConfig config) {
+    private <K, V> JetCache<K, V> buildLocal(QuickConfig config) {
         // 根据配置的区域获取缓存构建器模板
         EmbeddedCacheBuilder cacheBuilder = (EmbeddedCacheBuilder) cacheBuilderTemplate.getCacheBuilder(
                 0, config.getArea()

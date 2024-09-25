@@ -1,11 +1,11 @@
 package com.yat.cache.core.template;
 
-import com.yat.cache.core.Cache;
+import com.yat.cache.core.JetCache;
 import com.yat.cache.core.CacheBuilder;
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.CacheMonitor;
 import com.yat.cache.core.CacheUtil;
-import com.yat.cache.core.MultiLevelCache;
+import com.yat.cache.core.MultiLevelJetCache;
 import com.yat.cache.core.external.ExternalCacheBuilder;
 import com.yat.cache.core.support.BroadcastManager;
 import com.yat.cache.core.support.CacheNotifyMonitor;
@@ -39,18 +39,18 @@ public class NotifyMonitorInstaller implements CacheMonitorInstaller {
     /**
      * 添加监控器到缓存管理器和缓存实例中
      *
-     * @param cacheManager 缓存管理器
-     * @param cache        缓存实例
+     * @param jetCacheManager 缓存管理器
+     * @param jetCache        缓存实例
      * @param quickConfig  快速配置对象，包含缓存的配置信息
      */
     @Override
-    public void addMonitors(CacheManager cacheManager, Cache cache, QuickConfig quickConfig) {
+    public void addMonitors(JetCacheManager jetCacheManager, JetCache jetCache, QuickConfig quickConfig) {
         // 如果未配置同步本地缓存或同步本地缓存设置为false，则直接返回
         if (quickConfig.getSyncLocal() == null || !quickConfig.getSyncLocal()) {
             return;
         }
         // 如果缓存不是多级缓存实例，则直接返回
-        if (!(CacheUtil.getAbstractCache(cache) instanceof MultiLevelCache)) {
+        if (!(CacheUtil.getAbstractCache(jetCache) instanceof MultiLevelJetCache)) {
             return;
         }
 
@@ -64,16 +64,16 @@ public class NotifyMonitorInstaller implements CacheMonitorInstaller {
         }
 
         // 如果缓存管理器中没有对应的广播管理器，则创建并启动订阅
-        if (cacheManager.getBroadcastManager(area) == null) {
-            BroadcastManager cm = cacheBuilder.createBroadcastManager(cacheManager);
+        if (jetCacheManager.getBroadcastManager(area) == null) {
+            BroadcastManager cm = cacheBuilder.createBroadcastManager(jetCacheManager);
             if (cm != null) {
                 cm.startSubscribe();
-                cacheManager.putBroadcastManager(area, cm);
+                jetCacheManager.putBroadcastManager(area, cm);
             }
         }
 
         // 创建缓存通知监控器实例并添加到缓存配置的监控器列表中
-        CacheMonitor monitor = new CacheNotifyMonitor(cacheManager, area, quickConfig.getName());
-        cache.config().getMonitors().add(monitor);
+        CacheMonitor monitor = new CacheNotifyMonitor(jetCacheManager, area, quickConfig.getName());
+        jetCache.config().getMonitors().add(monitor);
     }
 }

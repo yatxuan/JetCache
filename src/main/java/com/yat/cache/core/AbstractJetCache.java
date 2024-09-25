@@ -1,6 +1,6 @@
 package com.yat.cache.core;
 
-import com.yat.cache.core.embedded.AbstractEmbeddedCache;
+import com.yat.cache.core.embedded.AbstractEmbeddedJetCache;
 import com.yat.cache.core.event.CacheEvent;
 import com.yat.cache.core.event.CacheGetAllEvent;
 import com.yat.cache.core.event.CacheGetEvent;
@@ -9,7 +9,7 @@ import com.yat.cache.core.event.CachePutEvent;
 import com.yat.cache.core.event.CacheRemoveAllEvent;
 import com.yat.cache.core.event.CacheRemoveEvent;
 import com.yat.cache.core.exception.CacheException;
-import com.yat.cache.core.external.AbstractExternalCache;
+import com.yat.cache.core.external.AbstractExternalJetCache;
 import com.yat.cache.core.support.SquashedLogger;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -28,16 +28,16 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * ClassName AbstractCache
+ * ClassName AbstractJetCache
  * <p>Description 抽象缓存</p>
  *
  * @author Yat
  * Date 2024/8/22 11:12
  * version 1.0
  */
-public abstract class AbstractCache<K, V> implements Cache<K, V> {
+public abstract class AbstractJetCache<K, V> implements JetCache<K, V> {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractCache.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractJetCache.class);
     private static final ReentrantLock reentrantLock = new ReentrantLock();
     /**
      * 存储加载器锁对象
@@ -335,22 +335,22 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
      * @param cacheNullWhenLoaderReturnNull 当加载器返回null时是否缓存null
      * @param expireAfterWrite              写入后过期时间
      * @param timeUnit                      时间单位
-     * @param cache                         缓存实例
+     * @param jetCache                         缓存实例
      * @return 缓存值
      */
     static <K, V> V computeIfAbsentImpl(K key, Function<K, V> loader, boolean cacheNullWhenLoaderReturnNull,
-                                        long expireAfterWrite, TimeUnit timeUnit, Cache<K, V> cache) {
+                                        long expireAfterWrite, TimeUnit timeUnit, JetCache<K, V> jetCache) {
         // 将缓存转换为抽象缓存对象，以便统一操作
-        AbstractCache<K, V> abstractCache = CacheUtil.getAbstractCache(cache);
+        AbstractJetCache<K, V> abstractCache = CacheUtil.getAbstractCache(jetCache);
         // 创建一个代理加载器，用于在加载数据后通知缓存
-        CacheLoader<K, V> newLoader = CacheUtil.createProxyLoader(cache, loader, abstractCache::notify);
+        CacheLoader<K, V> newLoader = CacheUtil.createProxyLoader(jetCache, loader, abstractCache::notify);
         CacheGetResult<V> r;
         // 如果缓存支持刷新，则使用刷新缓存逻辑
-        if (cache instanceof RefreshCache<K, V> refreshCache) {
+        if (jetCache instanceof RefreshJetCache<K, V> refreshCache) {
             r = refreshCache.GET(key);
             refreshCache.addOrUpdateRefreshTask(key, newLoader);
         } else {
-            r = cache.GET(key);
+            r = jetCache.GET(key);
         }
         // 如果成功获取到值，则直接返回
         if (r.isSuccess()) {
@@ -360,17 +360,17 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
             Consumer<V> cacheUpdater = (loadedValue) -> {
                 if (needUpdate(loadedValue, cacheNullWhenLoaderReturnNull, newLoader)) {
                     if (timeUnit != null) {
-                        cache.PUT(key, loadedValue, expireAfterWrite, timeUnit).waitForResult();
+                        jetCache.PUT(key, loadedValue, expireAfterWrite, timeUnit).waitForResult();
                     } else {
-                        cache.PUT(key, loadedValue).waitForResult();
+                        jetCache.PUT(key, loadedValue).waitForResult();
                     }
                 }
             };
 
             V loadedValue;
             // 如果配置了缓存穿透保护，则使用同步加载逻辑
-            if (cache.config().isCachePenetrationProtect()) {
-                loadedValue = synchronizedLoad(cache.config(), abstractCache, key, newLoader, cacheUpdater);
+            if (jetCache.config().isCachePenetrationProtect()) {
+                loadedValue = synchronizedLoad(jetCache.config(), abstractCache, key, newLoader, cacheUpdater);
             } else {
                 loadedValue = newLoader.apply(key);
                 cacheUpdater.accept(loadedValue);
@@ -392,7 +392,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
      * @return 加载的值
      */
     static <K, V> V synchronizedLoad(
-            CacheConfig config, AbstractCache<K, V> abstractCache,
+            CacheConfig config, AbstractJetCache<K, V> abstractCache,
             K key, Function<K, V> newLoader, Consumer<V> cacheUpdater
     ) {
         // 初始化或获取加载器映射表
@@ -472,17 +472,17 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
      * @param key 键
      * @return 加载锁键
      */
-    private static Object buildLoaderLockKey(Cache c, Object key) {
-        if (c instanceof AbstractEmbeddedCache) {
-            return ((AbstractEmbeddedCache) c).buildKey(key);
-        } else if (c instanceof AbstractExternalCache) {
-            byte[] bytes = ((AbstractExternalCache) c).buildKey(key);
+    private static Object buildLoaderLockKey(JetCache c, Object key) {
+        if (c instanceof AbstractEmbeddedJetCache) {
+            return ((AbstractEmbeddedJetCache) c).buildKey(key);
+        } else if (c instanceof AbstractExternalJetCache) {
+            byte[] bytes = ((AbstractExternalJetCache) c).buildKey(key);
             return ByteBuffer.wrap(bytes);
-        } else if (c instanceof MultiLevelCache) {
-            c = ((MultiLevelCache) c).caches()[0];
+        } else if (c instanceof MultiLevelJetCache) {
+            c = ((MultiLevelJetCache) c).caches()[0];
             return buildLoaderLockKey(c, key);
-        } else if (c instanceof ProxyCache) {
-            c = ((ProxyCache) c).getTargetCache();
+        } else if (c instanceof ProxyJetCache) {
+            c = ((ProxyJetCache) c).getTargetCache();
             return buildLoaderLockKey(c, key);
         } else {
             throw new CacheException("impossible");

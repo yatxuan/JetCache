@@ -22,11 +22,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Date 2024/8/22 11:09
  * version 1.0
  */
-public class LinkedHashMapCache<K, V> extends AbstractEmbeddedCache<K, V> {
+public class LinkedHashMapJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> {
 
-    private static final Logger logger = LoggerFactory.getLogger(LinkedHashMapCache.class);
+    private static final Logger logger = LoggerFactory.getLogger(LinkedHashMapJetCache.class);
 
-    public LinkedHashMapCache(EmbeddedCacheConfig<K, V> config) {
+    public LinkedHashMapJetCache(EmbeddedCacheConfig<K, V> config) {
         super(config);
         addToCleaner();
     }

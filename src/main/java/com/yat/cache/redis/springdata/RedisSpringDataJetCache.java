@@ -6,7 +6,7 @@ import com.yat.cache.core.CacheResultCode;
 import com.yat.cache.core.CacheValueHolder;
 import com.yat.cache.core.MultiGetResult;
 import com.yat.cache.core.exception.CacheConfigException;
-import com.yat.cache.core.external.AbstractExternalCache;
+import com.yat.cache.core.external.AbstractExternalJetCache;
 import com.yat.cache.core.lang.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +32,9 @@ import java.util.function.Function;
  * Date 2024/8/22 22:12
  * version 1.0
  */
-public class RedisSpringDataCache<K, V> extends AbstractExternalCache<K, V> {
+public class RedisSpringDataJetCache<K, V> extends AbstractExternalJetCache<K, V> {
 
-    private final Logger logger = LoggerFactory.getLogger(RedisSpringDataCache.class);
+    private final Logger logger = LoggerFactory.getLogger(RedisSpringDataJetCache.class);
 
     private final RedisConnectionFactory connectionFactory;
     private final RedisSpringDataCacheConfig<K, V> config;
@@ -42,7 +42,7 @@ public class RedisSpringDataCache<K, V> extends AbstractExternalCache<K, V> {
     private final Function<Object, byte[]> valueEncoder;
     private final Function<byte[], Object> valueDecoder;
 
-    public RedisSpringDataCache(RedisSpringDataCacheConfig<K, V> config) {
+    public RedisSpringDataJetCache(RedisSpringDataCacheConfig<K, V> config) {
         super(config);
         this.connectionFactory = config.getConnectionFactory();
         Assert.notNull(connectionFactory, () -> new CacheConfigException("connectionFactory is required"));

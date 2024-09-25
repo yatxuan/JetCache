@@ -22,7 +22,7 @@ class Cleaner {
     /**
      * 使用弱引用保存缓存实例的链表
      */
-    static LinkedList<WeakReference<LinkedHashMapCache>> linkedHashMapCaches = new LinkedList<>();
+    static LinkedList<WeakReference<LinkedHashMapJetCache>> linkedHashMapCaches = new LinkedList<>();
 
     private static final ReentrantLock reentrantLock = new ReentrantLock();
 
@@ -42,7 +42,7 @@ class Cleaner {
      *
      * @param cache 缓存实例
      */
-    static void add(LinkedHashMapCache cache) {
+    static void add(LinkedHashMapJetCache cache) {
         reentrantLock.lock();
         try {
             linkedHashMapCaches.add(new WeakReference<>(cache));
@@ -59,10 +59,10 @@ class Cleaner {
     static void run() {
         reentrantLock.lock();
         try {
-            Iterator<WeakReference<LinkedHashMapCache>> it = linkedHashMapCaches.iterator();
+            Iterator<WeakReference<LinkedHashMapJetCache>> it = linkedHashMapCaches.iterator();
             while (it.hasNext()) {
-                WeakReference<LinkedHashMapCache> ref = it.next();
-                LinkedHashMapCache c = ref.get();
+                WeakReference<LinkedHashMapJetCache> ref = it.next();
+                LinkedHashMapJetCache c = ref.get();
                 if (c == null) {
                     it.remove();
                 } else {

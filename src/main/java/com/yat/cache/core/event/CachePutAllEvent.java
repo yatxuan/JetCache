@@ -1,6 +1,6 @@
 package com.yat.cache.core.event;
 
-import com.yat.cache.core.Cache;
+import com.yat.cache.core.JetCache;
 import com.yat.cache.core.CacheResult;
 import lombok.Getter;
 
@@ -29,8 +29,8 @@ public class CachePutAllEvent extends CacheEvent {
      */
     private final CacheResult result;
 
-    public CachePutAllEvent(Cache cache, long millis, Map map, CacheResult result) {
-        super(cache);
+    public CachePutAllEvent(JetCache jetCache, long millis, Map map, CacheResult result) {
+        super(jetCache);
         this.millis = millis;
         this.map = map;
         this.result = result;

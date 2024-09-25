@@ -2,7 +2,7 @@ package com.yat.cache.anno.method;
 
 import com.yat.cache.anno.support.ConfigMap;
 import com.yat.cache.anno.support.ConfigProvider;
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCacheManager;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -24,17 +24,17 @@ public class ProxyUtil {
      *
      * @param target         目标对象，即需要为其创建代理的对象
      * @param configProvider 配置提供者，用于获取缓存配置上下文
-     * @param cacheManager   缓存管理器，用于管理缓存实例和缓存逻辑
+     * @param jetCacheManager   缓存管理器，用于管理缓存实例和缓存逻辑
      * @param <T>            目标对象的泛型类型
      * @return 目标对象的代理对象，能够处理缓存逻辑
      */
-    public static <T> T getProxyByAnnotation(T target, ConfigProvider configProvider, CacheManager cacheManager) {
+    public static <T> T getProxyByAnnotation(T target, ConfigProvider configProvider, JetCacheManager jetCacheManager) {
         final ConfigMap configMap = new ConfigMap();
         processType(configMap, target.getClass());
         Class<?>[] its = ClassUtil.getAllInterfaces(target);
         CacheHandler h = new CacheHandler(
                 target, configMap,
-                () -> configProvider.newContext(cacheManager).createCacheInvokeContext(configMap),
+                () -> configProvider.newContext(jetCacheManager).createCacheInvokeContext(configMap),
                 configProvider.getGlobalCacheConfig().getHiddenPackages()
         );
         Object o = Proxy.newProxyInstance(target.getClass().getClassLoader(), its, h);

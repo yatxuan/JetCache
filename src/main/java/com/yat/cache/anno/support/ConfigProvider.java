@@ -1,7 +1,7 @@
 package com.yat.cache.anno.support;
 
 import com.yat.cache.core.CacheBuilder;
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.embedded.EmbeddedCacheBuilder;
 import com.yat.cache.core.external.ExternalCacheBuilder;
 import com.yat.cache.core.support.AbstractLifecycle;
@@ -200,8 +200,8 @@ public class ConfigProvider extends AbstractLifecycle {
         return new DefaultCacheNameGenerator(hiddenPackages);
     }
 
-    public CacheContext newContext(CacheManager cacheManager) {
-        return new CacheContext(cacheManager, this, globalCacheConfig);
+    public CacheContext newContext(JetCacheManager jetCacheManager) {
+        return new CacheContext(jetCacheManager, this, globalCacheConfig);
     }
 
 }

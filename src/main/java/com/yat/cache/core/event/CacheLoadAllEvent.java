@@ -1,6 +1,6 @@
 package com.yat.cache.core.event;
 
-import com.yat.cache.core.Cache;
+import com.yat.cache.core.JetCache;
 import lombok.Getter;
 
 import java.util.Map;
@@ -34,8 +34,8 @@ public class CacheLoadAllEvent extends CacheEvent {
      */
     private final boolean success;
 
-    public CacheLoadAllEvent(Cache cache, long millis, Set keys, Map loadedValue, boolean success) {
-        super(cache);
+    public CacheLoadAllEvent(JetCache jetCache, long millis, Set keys, Map loadedValue, boolean success) {
+        super(jetCache);
         this.millis = millis;
         this.keys = keys;
         this.loadedValue = loadedValue;

@@ -1,8 +1,8 @@
 package com.yat.cache.core.external;
 
 import com.yat.cache.anno.api.KeyConvertor;
-import com.yat.cache.core.AbstractCache;
-import com.yat.cache.core.RefreshCache;
+import com.yat.cache.core.AbstractJetCache;
+import com.yat.cache.core.RefreshJetCache;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.exception.CacheException;
 import com.yat.cache.core.lang.Assert;
@@ -10,18 +10,18 @@ import com.yat.cache.core.lang.Assert;
 import java.io.IOException;
 
 /**
- * ClassName AbstractExternalCache
+ * ClassName AbstractExternalJetCache
  * <p>Description 抽象远程缓存:提供外部缓存的基本功能，包括配置验证和键构建逻辑</p>
  *
  * @author Yat
  * Date 2024/8/22 13:31
  * version 1.0
  */
-public abstract class AbstractExternalCache<K, V> extends AbstractCache<K, V> {
+public abstract class AbstractExternalJetCache<K, V> extends AbstractJetCache<K, V> {
 
     private final ExternalCacheConfig<K, V> config;
 
-    public AbstractExternalCache(ExternalCacheConfig<K, V> config) {
+    public AbstractExternalJetCache(ExternalCacheConfig<K, V> config) {
         this.config = config;
         checkConfig();
     }
@@ -82,8 +82,8 @@ public abstract class AbstractExternalCache<K, V> extends AbstractCache<K, V> {
 
     private boolean isPreservedKey(Object key) {
         if (key instanceof byte[] keyBytes) {
-            return endWith(keyBytes, RefreshCache.LOCK_KEY_SUFFIX) ||
-                    endWith(keyBytes, RefreshCache.TIMESTAMP_KEY_SUFFIX);
+            return endWith(keyBytes, RefreshJetCache.LOCK_KEY_SUFFIX) ||
+                    endWith(keyBytes, RefreshJetCache.TIMESTAMP_KEY_SUFFIX);
         }
         return false;
     }

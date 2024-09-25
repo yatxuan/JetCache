@@ -5,10 +5,10 @@ import com.yat.cache.anno.support.CacheInvalidateAnnoConfig;
 import com.yat.cache.anno.support.CacheUpdateAnnoConfig;
 import com.yat.cache.anno.support.CachedAnnoConfig;
 import com.yat.cache.anno.support.ConfigMap;
-import com.yat.cache.core.AbstractCache;
-import com.yat.cache.core.Cache;
+import com.yat.cache.core.AbstractJetCache;
+import com.yat.cache.core.JetCache;
 import com.yat.cache.core.CacheLoader;
-import com.yat.cache.core.ProxyCache;
+import com.yat.cache.core.ProxyJetCache;
 import com.yat.cache.core.event.CacheLoadEvent;
 import com.yat.cache.core.exception.CacheInvokeException;
 import org.slf4j.Logger;
@@ -131,19 +131,19 @@ public class CacheHandler implements InvocationHandler {
             throws Throwable {
         CacheInvokeConfig cic = context.getCacheInvokeConfig();
         CachedAnnoConfig cac = cic.getCachedAnnoConfig();
-        Cache cache = context.getCacheFunction().apply(context, cac);
-        if (cache == null) {
+        JetCache jetCache = context.getCacheFunction().apply(context, cac);
+        if (jetCache == null) {
             logger.error("no cache with name: {}", context.getMethod());
             return invokeOrigin(context);
         }
 
         Object key = ExpressionUtil.evalKey(context, cic.getCachedAnnoConfig());
         if (key == null) {
-            return loadAndCount(context, cache, null);
+            return loadAndCount(context, jetCache, null);
         }
 
         if (!ExpressionUtil.evalCondition(context, cic.getCachedAnnoConfig())) {
-            return loadAndCount(context, cache, key);
+            return loadAndCount(context, jetCache, key);
         }
 
         try {
@@ -160,7 +160,7 @@ public class CacheHandler implements InvocationHandler {
                     return !ExpressionUtil.evalPostCondition(context, cic.getCachedAnnoConfig());
                 }
             };
-            return cache.computeIfAbsent(key, loader);
+            return jetCache.computeIfAbsent(key, loader);
         } catch (CacheInvokeException e) {
             throw e.getCause();
         }
@@ -207,12 +207,12 @@ public class CacheHandler implements InvocationHandler {
      * 该方法执行缓存调用，记录执行时间，并触发缓存加载事件
      *
      * @param context 缓存调用上下文
-     * @param cache   缓存实例
+     * @param jetCache   缓存实例
      * @param key     缓存键
      * @return 缓存调用的结果
      * @throws Throwable 如果调用过程中发生错误
      */
-    private static Object loadAndCount(CacheInvokeContext context, Cache cache, Object key) throws Throwable {
+    private static Object loadAndCount(CacheInvokeContext context, JetCache jetCache, Object key) throws Throwable {
         long t = System.currentTimeMillis();
         Object v = null;
         boolean success = false;
@@ -221,12 +221,12 @@ public class CacheHandler implements InvocationHandler {
             success = true;
         } finally {
             t = System.currentTimeMillis() - t;
-            CacheLoadEvent event = new CacheLoadEvent(cache, t, key, v, success);
-            while (cache instanceof ProxyCache) {
-                cache = ((ProxyCache) cache).getTargetCache();
+            CacheLoadEvent event = new CacheLoadEvent(jetCache, t, key, v, success);
+            while (jetCache instanceof ProxyJetCache) {
+                jetCache = ((ProxyJetCache) jetCache).getTargetCache();
             }
-            if (cache instanceof AbstractCache) {
-                ((AbstractCache) cache).notify(event);
+            if (jetCache instanceof AbstractJetCache) {
+                ((AbstractJetCache) jetCache).notify(event);
             }
         }
         return v;
@@ -240,9 +240,9 @@ public class CacheHandler implements InvocationHandler {
      */
     private static void doUpdate(CacheInvokeContext context, CacheUpdateAnnoConfig updateAnnoConfig) {
         // 根据上下文和更新配置获取缓存实例
-        Cache cache = context.getCacheFunction().apply(context, updateAnnoConfig);
+        JetCache jetCache = context.getCacheFunction().apply(context, updateAnnoConfig);
         // 如果缓存为null，则直接返回
-        if (cache == null) {
+        if (jetCache == null) {
             return;
         }
         // 评估更新缓存的条件
@@ -305,11 +305,11 @@ public class CacheHandler implements InvocationHandler {
                     m.put(keyList.get(i), valueList.get(i));
                 }
                 // 将所有键值对批量更新到缓存中
-                cache.putAll(m);
+                jetCache.putAll(m);
             }
         } else {
             // 对于非批量更新，直接将键值对更新到缓存中
-            cache.put(key, value);
+            jetCache.put(key, value);
         }
     }
 
@@ -359,8 +359,8 @@ public class CacheHandler implements InvocationHandler {
      * @param annoConfig 无效配置
      */
     private static void doInvalidate(CacheInvokeContext context, CacheInvalidateAnnoConfig annoConfig) {
-        Cache cache = context.getCacheFunction().apply(context, annoConfig);
-        if (cache == null) {
+        JetCache jetCache = context.getCacheFunction().apply(context, annoConfig);
+        if (jetCache == null) {
             return;
         }
         boolean condition = ExpressionUtil.evalCondition(context, annoConfig);
@@ -380,9 +380,9 @@ public class CacheHandler implements InvocationHandler {
             }
             Set keys = new HashSet<>();
             it.forEach(keys::add);
-            cache.removeAll(keys);
+            jetCache.removeAll(keys);
         } else {
-            cache.remove(key);
+            jetCache.remove(key);
         }
     }
 

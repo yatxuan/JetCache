@@ -11,7 +11,7 @@ package com.yat.cache.core.embedded;
 public class CaffeineCacheBuilder<T extends EmbeddedCacheBuilder<T>> extends EmbeddedCacheBuilder<T> {
 
     protected CaffeineCacheBuilder() {
-        buildFunc((c) -> new CaffeineCache((EmbeddedCacheConfig) c));
+        buildFunc((c) -> new CaffeineJetCache((EmbeddedCacheConfig) c));
     }
 
     /**

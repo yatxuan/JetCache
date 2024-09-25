@@ -8,7 +8,7 @@ import com.yat.cache.core.CacheValueHolder;
 import com.yat.cache.core.MultiGetResult;
 import com.yat.cache.core.ResultData;
 import com.yat.cache.core.exception.CacheConfigException;
-import com.yat.cache.core.external.AbstractExternalCache;
+import com.yat.cache.core.external.AbstractExternalJetCache;
 import com.yat.cache.core.support.JetCacheExecutor;
 import io.lettuce.core.AbstractRedisClient;
 import io.lettuce.core.KeyValue;
@@ -42,7 +42,7 @@ import java.util.function.Function;
  * version 1.0
  */
 @SuppressWarnings("unchecked")
-public class RedisLettuceCache<K, V> extends AbstractExternalCache<K, V> {
+public class RedisLettuceJetCache<K, V> extends AbstractExternalJetCache<K, V> {
 
     private final RedisLettuceCacheConfig<K, V> config;
 
@@ -55,7 +55,7 @@ public class RedisLettuceCache<K, V> extends AbstractExternalCache<K, V> {
     private final RedisStringAsyncCommands<byte[], byte[]> stringAsyncCommands;
     private final RedisKeyAsyncCommands<byte[], byte[]> keyAsyncCommands;
 
-    public RedisLettuceCache(RedisLettuceCacheConfig<K, V> config) {
+    public RedisLettuceJetCache(RedisLettuceCacheConfig<K, V> config) {
         super(config);
         this.config = config;
         this.valueEncoder = config.getValueEncoder();

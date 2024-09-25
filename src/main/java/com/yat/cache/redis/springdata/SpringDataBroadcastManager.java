@@ -1,6 +1,6 @@
 package com.yat.cache.redis.springdata;
 
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.support.BroadcastManager;
@@ -41,11 +41,11 @@ public class SpringDataBroadcastManager extends BroadcastManager {
     /**
      * 初始化广播管理器。
      *
-     * @param cacheManager 缓存管理器，用于管理不同的缓存。
+     * @param jetCacheManager 缓存管理器，用于管理不同的缓存。
      * @param config       配置信息，包含Redis连接工厂等必要设置。
      */
-    public SpringDataBroadcastManager(CacheManager cacheManager, RedisSpringDataCacheConfig<Object, byte[]> config) {
-        super(cacheManager);
+    public SpringDataBroadcastManager(JetCacheManager jetCacheManager, RedisSpringDataCacheConfig<Object, byte[]> config) {
+        super(jetCacheManager);
         this.config = config;
         checkConfig(config);
         if (config.getConnectionFactory() == null) {

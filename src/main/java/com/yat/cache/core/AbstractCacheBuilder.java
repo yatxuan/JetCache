@@ -21,7 +21,7 @@ public abstract class AbstractCacheBuilder<T extends AbstractCacheBuilder<T>> im
     /**
      * 构建函数，用于根据配置创建具体的缓存实例。
      */
-    private Function<CacheConfig, Cache> buildFunc;
+    private Function<CacheConfig, JetCache> buildFunc;
     /**
      * 缓存配置对象，用于存储缓存的各种配置信息。
      */
@@ -31,7 +31,7 @@ public abstract class AbstractCacheBuilder<T extends AbstractCacheBuilder<T>> im
      * 设置构建函数，用于创建缓存实例
      */
     @SuppressWarnings("UnusedReturnValue")
-    public T buildFunc(Function<CacheConfig, Cache> buildFunc) {
+    public T buildFunc(Function<CacheConfig, JetCache> buildFunc) {
         this.buildFunc = buildFunc;
         return self();
     }
@@ -54,7 +54,7 @@ public abstract class AbstractCacheBuilder<T extends AbstractCacheBuilder<T>> im
      * @throws CacheConfigException 如果buildFunc未设置，则抛出此异常
      */
     @Override
-    public final <K, V> Cache<K, V> buildCache() {
+    public final <K, V> JetCache<K, V> buildCache() {
         // 检查构建函数是否已设置，如果未设置则抛出异常
         if (buildFunc == null) {
             throw new CacheConfigException("no buildFunc");
@@ -64,19 +64,19 @@ public abstract class AbstractCacheBuilder<T extends AbstractCacheBuilder<T>> im
         // 克隆当前缓存配置
         CacheConfig c = getConfig().clone();
         // 根据配置和构建函数创建基础缓存实例
-        Cache<K, V> cache = buildFunc.apply(c);
+        JetCache<K, V> jetCache = buildFunc.apply(c);
         // 根据加载器和刷新策略对缓存进行包装，以提供额外功能
         if (c.getLoader() != null) {
             if (c.getRefreshPolicy() == null) {
                 // 如果没有刷新策略，则包装为加载缓存
-                cache = new LoadingCache<>(cache);
+                jetCache = new LoadingJetCache<>(jetCache);
             } else {
                 // 如果有刷新策略，则包装为刷新缓存
-                cache = new RefreshCache<>(cache);
+                jetCache = new RefreshJetCache<>(jetCache);
             }
         }
         // 返回最终的缓存实例
-        return cache;
+        return jetCache;
     }
 
     /**

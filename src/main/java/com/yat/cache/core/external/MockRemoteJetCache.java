@@ -1,6 +1,6 @@
 package com.yat.cache.core.external;
 
-import com.yat.cache.core.Cache;
+import com.yat.cache.core.JetCache;
 import com.yat.cache.core.CacheConfig;
 import com.yat.cache.core.CacheGetResult;
 import com.yat.cache.core.CacheResult;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * Date 2024/8/22 13:43
  * version 1.0
  */
-public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
+public class MockRemoteJetCache<K, V> extends AbstractExternalJetCache<K, V> {
     private static final Method getHolder;
 
     static {
@@ -41,13 +41,13 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
         }
     }
 
-    private final Cache<ByteBuffer, byte[]> cache;
+    private final JetCache<ByteBuffer, byte[]> jetCache;
     private final ExternalCacheConfig<K, V> config;
 
-    public MockRemoteCache(MockRemoteCacheConfig<K, V> config) {
+    public MockRemoteJetCache(MockRemoteCacheConfig<K, V> config) {
         super(config);
         this.config = config;
-        cache = LinkedHashMapCacheBuilder.createLinkedHashMapCacheBuilder()
+        jetCache = LinkedHashMapCacheBuilder.createLinkedHashMapCacheBuilder()
                 .limit(config.getLimit())
                 .expireAfterWrite(config.getExpireAfterWriteInMillis(), TimeUnit.MILLISECONDS)
                 .buildCache();
@@ -62,7 +62,7 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
 
     @Override
     public <T> T unwrap(Class<T> clazz) {
-        return cache.unwrap(clazz);
+        return jetCache.unwrap(clazz);
     }
 
     /**
@@ -88,7 +88,7 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
      */
     @Override
     protected CacheGetResult<V> do_GET(K key) {
-        CacheGetResult r = cache.GET(genKey(key));
+        CacheGetResult r = jetCache.GET(genKey(key));
         if (r.isSuccess()) {
             r = convertCacheGetResult(r);
         }
@@ -149,7 +149,7 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
             keyList.add(k);
             newKeyList.add(newKey);
         });
-        MultiGetResult<ByteBuffer, byte[]> result = cache.GET_ALL(new HashSet(newKeyList));
+        MultiGetResult<ByteBuffer, byte[]> result = jetCache.GET_ALL(new HashSet(newKeyList));
         Map<ByteBuffer, CacheGetResult<byte[]>> resultMap = result.getValues();
         if (resultMap != null) {
             Map<K, CacheGetResult<V>> returnMap = new HashMap<>();
@@ -169,28 +169,28 @@ public class MockRemoteCache<K, V> extends AbstractExternalCache<K, V> {
 
     @Override
     protected CacheResult do_PUT(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
-        return cache.PUT(genKey(key), config.getValueEncoder().apply(value), expireAfterWrite, timeUnit);
+        return jetCache.PUT(genKey(key), config.getValueEncoder().apply(value), expireAfterWrite, timeUnit);
     }
 
     @Override
     protected CacheResult do_PUT_ALL(Map<? extends K, ? extends V> map, long expireAfterWrite, TimeUnit timeUnit) {
         Map<ByteBuffer, byte[]> newMap = new HashMap<>();
         map.forEach((key, value) -> newMap.put(genKey(key), config.getValueEncoder().apply(value)));
-        return cache.PUT_ALL(newMap, expireAfterWrite, timeUnit);
+        return jetCache.PUT_ALL(newMap, expireAfterWrite, timeUnit);
     }
 
     @Override
     protected CacheResult do_REMOVE(K key) {
-        return cache.REMOVE(genKey(key));
+        return jetCache.REMOVE(genKey(key));
     }
 
     @Override
     protected CacheResult do_REMOVE_ALL(Set<? extends K> keys) {
-        return cache.REMOVE_ALL(keys.stream().map(this::genKey).collect(Collectors.toSet()));
+        return jetCache.REMOVE_ALL(keys.stream().map(this::genKey).collect(Collectors.toSet()));
     }
 
     @Override
     protected CacheResult do_PUT_IF_ABSENT(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
-        return cache.PUT_IF_ABSENT(genKey(key), config.getValueEncoder().apply(value), expireAfterWrite, timeUnit);
+        return jetCache.PUT_IF_ABSENT(genKey(key), config.getValueEncoder().apply(value), expireAfterWrite, timeUnit);
     }
 }

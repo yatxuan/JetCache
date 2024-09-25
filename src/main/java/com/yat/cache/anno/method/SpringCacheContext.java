@@ -3,7 +3,7 @@ package com.yat.cache.anno.method;
 import com.yat.cache.anno.support.CacheContext;
 import com.yat.cache.anno.support.GlobalCacheConfig;
 import com.yat.cache.anno.support.SpringConfigProvider;
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCacheManager;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -24,16 +24,16 @@ public class SpringCacheContext extends CacheContext {
     /**
      * 初始化SpringCacheContext
      *
-     * @param cacheManager       缓存管理器，负责缓存的创建、维护和销毁
+     * @param jetCacheManager       缓存管理器，负责缓存的创建、维护和销毁
      * @param configProvider     配置提供者，用于从配置属性文件中读取缓存配置
      * @param globalCacheConfig  全局缓存配置，用于存储全局缓存设置
      * @param applicationContext Spring应用上下文，提供Spring环境下的依赖注入功能
      */
     public SpringCacheContext(
-            CacheManager cacheManager, SpringConfigProvider configProvider,
+            JetCacheManager jetCacheManager, SpringConfigProvider configProvider,
             GlobalCacheConfig globalCacheConfig, ApplicationContext applicationContext
     ) {
-        super(cacheManager, configProvider, globalCacheConfig);
+        super(jetCacheManager, configProvider, globalCacheConfig);
         this.applicationContext = applicationContext;
     }
 

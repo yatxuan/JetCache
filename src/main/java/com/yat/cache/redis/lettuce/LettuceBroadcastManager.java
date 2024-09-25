@@ -1,6 +1,6 @@
 package com.yat.cache.redis.lettuce;
 
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.CacheResultCode;
 import com.yat.cache.core.ResultData;
@@ -62,12 +62,12 @@ public class LettuceBroadcastManager extends BroadcastManager {
     /**
      * 构造函数，初始化广播管理器。
      *
-     * @param cacheManager 缓存管理器
+     * @param jetCacheManager 缓存管理器
      * @param config       Redis缓存配置
      * @throws CacheConfigException 如果PubSub连接未设置，抛出此异常
      */
-    public LettuceBroadcastManager(CacheManager cacheManager, RedisLettuceCacheConfig<Object, Object> config) {
-        super(cacheManager);
+    public LettuceBroadcastManager(JetCacheManager jetCacheManager, RedisLettuceCacheConfig<Object, Object> config) {
+        super(jetCacheManager);
         checkConfig(config);
         if (config.getPubSubConnection() == null) {
             throw new CacheConfigException("PubSubConnection not set");

@@ -22,7 +22,7 @@ public class CacheUtil {
      * 创建一个ProxyLoader用于加载缓存数据。该方法适用于传入的加载器已经是ProxyLoader的情况，
      * 或者需要创建一个新的ProxyLoader实例。
      *
-     * @param cache         缓存实例，用于存储和加载数据。
+     * @param jetCache         缓存实例，用于存储和加载数据。
      * @param loader        缓存加载器，用于加载数据。
      * @param eventConsumer 事件消费者，用于处理缓存加载事件。
      * @param <K>           缓存键的类型。
@@ -30,13 +30,13 @@ public class CacheUtil {
      * @return 返回一个ProxyLoader实例。
      */
     public static <K, V> ProxyLoader<K, V> createProxyLoader(
-            Cache<K, V> cache, Function<K, V> loader, Consumer<CacheEvent> eventConsumer
+            JetCache<K, V> jetCache, Function<K, V> loader, Consumer<CacheEvent> eventConsumer
     ) {
         if (loader instanceof ProxyLoader) {
             return (ProxyLoader<K, V>) loader;
         }
         if (loader instanceof CacheLoader) {
-            return createProxyLoader(cache, (CacheLoader) loader, eventConsumer);
+            return createProxyLoader(jetCache, (CacheLoader) loader, eventConsumer);
         }
         return k -> {
             long t = System.currentTimeMillis();
@@ -47,7 +47,7 @@ public class CacheUtil {
                 success = true;
             } finally {
                 t = System.currentTimeMillis() - t;
-                CacheLoadEvent event = new CacheLoadEvent(cache, t, k, v, success);
+                CacheLoadEvent event = new CacheLoadEvent(jetCache, t, k, v, success);
                 eventConsumer.accept(event);
             }
             return v;
@@ -58,7 +58,7 @@ public class CacheUtil {
      * 创建一个ProxyLoader用于加载缓存数据。该方法适用于传入的加载器是一个Function的情况，
      * 或者需要根据Function创建一个新的ProxyLoader实例。
      *
-     * @param cache         缓存实例，用于存储和加载数据。
+     * @param jetCache         缓存实例，用于存储和加载数据。
      * @param loader        用于加载数据的函数。
      * @param eventConsumer 事件消费者，用于处理缓存加载事件。
      * @param <K>           缓存键的类型。
@@ -66,7 +66,7 @@ public class CacheUtil {
      * @return 返回一个ProxyLoader实例。
      */
     public static <K, V> ProxyLoader<K, V> createProxyLoader(
-            Cache<K, V> cache, CacheLoader<K, V> loader, Consumer<CacheEvent> eventConsumer
+            JetCache<K, V> jetCache, CacheLoader<K, V> loader, Consumer<CacheEvent> eventConsumer
     ) {
         if (loader instanceof ProxyLoader) {
             return (ProxyLoader<K, V>) loader;
@@ -82,7 +82,7 @@ public class CacheUtil {
                     success = true;
                 } finally {
                     t = System.currentTimeMillis() - t;
-                    CacheLoadAllEvent event = new CacheLoadAllEvent(cache, t, keys, kvMap, success);
+                    CacheLoadAllEvent event = new CacheLoadAllEvent(jetCache, t, keys, kvMap, success);
                     eventConsumer.accept(event);
                 }
                 return kvMap;
@@ -105,7 +105,7 @@ public class CacheUtil {
                     success = true;
                 } finally {
                     t = System.currentTimeMillis() - t;
-                    CacheLoadEvent event = new CacheLoadEvent(cache, t, key, v, success);
+                    CacheLoadEvent event = new CacheLoadEvent(jetCache, t, key, v, success);
                     eventConsumer.accept(event);
                 }
                 return v;
@@ -126,11 +126,11 @@ public class CacheUtil {
      * @param <V> 缓存值的类型。
      * @return 返回抽象缓存实例。
      */
-    public static <K, V> AbstractCache<K, V> getAbstractCache(Cache<K, V> c) {
-        while (c instanceof ProxyCache) {
-            c = ((ProxyCache) c).getTargetCache();
+    public static <K, V> AbstractJetCache<K, V> getAbstractCache(JetCache<K, V> c) {
+        while (c instanceof ProxyJetCache) {
+            c = ((ProxyJetCache) c).getTargetCache();
         }
-        return (AbstractCache) c;
+        return (AbstractJetCache) c;
     }
 
     /**

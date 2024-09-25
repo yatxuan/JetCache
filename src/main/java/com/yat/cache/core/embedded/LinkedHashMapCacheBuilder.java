@@ -11,7 +11,7 @@ package com.yat.cache.core.embedded;
 public class LinkedHashMapCacheBuilder<T extends EmbeddedCacheBuilder<T>> extends EmbeddedCacheBuilder<T> {
 
     protected LinkedHashMapCacheBuilder() {
-        buildFunc((c) -> new LinkedHashMapCache<>((EmbeddedCacheConfig) c));
+        buildFunc((c) -> new LinkedHashMapJetCache<>((EmbeddedCacheConfig) c));
     }
 
     public static LinkedHashMapCacheBuilderImpl createLinkedHashMapCacheBuilder() {

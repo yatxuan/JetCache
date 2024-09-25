@@ -1,6 +1,6 @@
 package com.yat.cache.anno.support;
 
-import com.yat.cache.core.Cache;
+import com.yat.cache.core.JetCache;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -53,7 +53,7 @@ public class CacheAnnoConfig {
     /**
      * 缓存实例
      */
-    private Cache<?, ?> cache;
+    private JetCache<?, ?> jetCache;
     /**
      * 定义该缓存配置的方法对象，用于内部调试或处理
      */

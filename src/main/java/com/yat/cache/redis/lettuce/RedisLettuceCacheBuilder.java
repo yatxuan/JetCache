@@ -1,6 +1,6 @@
 package com.yat.cache.redis.lettuce;
 
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.external.ExternalCacheBuilder;
 import com.yat.cache.core.support.BroadcastManager;
 import io.lettuce.core.AbstractRedisClient;
@@ -18,7 +18,7 @@ import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 public class RedisLettuceCacheBuilder<T extends ExternalCacheBuilder<T>> extends ExternalCacheBuilder<T> {
 
     protected RedisLettuceCacheBuilder() {
-        buildFunc(config -> new RedisLettuceCache((RedisLettuceCacheConfig) config));
+        buildFunc(config -> new RedisLettuceJetCache((RedisLettuceCacheConfig) config));
     }
 
     @Override
@@ -27,9 +27,9 @@ public class RedisLettuceCacheBuilder<T extends ExternalCacheBuilder<T>> extends
     }
 
     @Override
-    public BroadcastManager createBroadcastManager(CacheManager cacheManager) {
+    public BroadcastManager createBroadcastManager(JetCacheManager jetCacheManager) {
         RedisLettuceCacheConfig c = (RedisLettuceCacheConfig) getConfig().clone();
-        return new LettuceBroadcastManager(cacheManager, c);
+        return new LettuceBroadcastManager(jetCacheManager, c);
     }
 
     @Override

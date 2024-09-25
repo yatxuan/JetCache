@@ -12,16 +12,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
- * ClassName Cache
+ * ClassName JetCache
  * <p>Description 缓存接口，支持空值</p>
  *
  * @author Yat
  * Date 2024/8/22 10:38
  * version 1.0
  */
-public interface Cache<K, V> extends Closeable {
+public interface JetCache<K, V> extends Closeable {
 
-    Logger logger = LoggerFactory.getLogger(Cache.class);
+    Logger logger = LoggerFactory.getLogger(JetCache.class);
 
     //-----------------------------JSR 107 style API------------------------------------------------
 
@@ -182,7 +182,7 @@ public interface Cache<K, V> extends Closeable {
     /**
      * 如果指定的键尚未与值相关联，则原子性地将该键与给定的值相关联。
      * <p>如果在缓存访问期间发生错误，此方法不会抛出异常。</p>
-     * <p>{@link MultiLevelCache}不支持此方法。</p>
+     * <p>{@link MultiLevelJetCache}不支持此方法。</p>
      *
      * @param key   要与指定值相关联的键
      * @param value 要与指定键相关联的值
@@ -276,7 +276,7 @@ public interface Cache<K, V> extends Closeable {
 
     /**
      * 使用此缓存尝试独占地运行一个操作。
-     * <p>{@link MultiLevelCache} 将使用最后一级缓存来支持此操作。</p>
+     * <p>{@link MultiLevelJetCache} 将使用最后一级缓存来支持此操作。</p>
      * 示例：
      * <pre>
      * cache.tryLock("MyKey", 100, TimeUnit.SECONDS), () -&gt; {
@@ -313,7 +313,7 @@ public interface Cache<K, V> extends Closeable {
      *   }
      * </pre>
      * <p>
-     * 注意: {@link MultiLevelCache} 使用最后一级缓存来支持此操作。
+     * 注意: {@link MultiLevelJetCache} 使用最后一级缓存来支持此操作。
      *
      * @param key      锁的键，不能为空。
      * @param expire   锁的过期时间。
@@ -360,9 +360,9 @@ public interface Cache<K, V> extends Closeable {
         };
 
         int lockCount = 0;
-        Cache cache = this;
+        JetCache jetCache = this;
         while (lockCount++ < config.getTryLockLockCount()) {
-            CacheResult lockResult = cache.PUT_IF_ABSENT(key, uuid, expire, timeUnit);
+            CacheResult lockResult = jetCache.PUT_IF_ABSENT(key, uuid, expire, timeUnit);
             if (lockResult.isSuccess()) {
                 logger.debug("[tryLock] [{} of {}] [{}] successfully get a lock. Key={}",
                         lockCount, config.getTryLockLockCount(), uuid, key);
@@ -375,7 +375,7 @@ public interface Cache<K, V> extends Closeable {
                         lockResult.getMessage());
                 int inquiryCount = 0;
                 while (inquiryCount++ < config.getTryLockInquiryCount()) {
-                    CacheGetResult inquiryResult = cache.GET(key);
+                    CacheGetResult inquiryResult = jetCache.GET(key);
                     if (inquiryResult.isSuccess()) {
                         if (uuid.equals(inquiryResult.getValue())) {
                             logger.debug(

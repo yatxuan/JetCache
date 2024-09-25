@@ -1,6 +1,6 @@
 package com.yat.cache.core.external;
 
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.support.BroadcastManager;
 import com.yat.cache.core.support.CacheMessage;
@@ -37,7 +37,7 @@ public class MockRemoteCacheBuilder<T extends ExternalCacheBuilder<T>> extends E
         // 设置默认键前缀
         this.setKeyPrefix("DEFAULT_PREFIX");
         // 设置构建函数
-        buildFunc((c) -> new MockRemoteCache((MockRemoteCacheConfig) c));
+        buildFunc((c) -> new MockRemoteJetCache((MockRemoteCacheConfig) c));
     }
 
     /**
@@ -74,12 +74,12 @@ public class MockRemoteCacheBuilder<T extends ExternalCacheBuilder<T>> extends E
     /**
      * 创建广播管理器。
      *
-     * @param cacheManager 缓存管理器
+     * @param jetCacheManager 缓存管理器
      * @return 广播管理器
      */
     @Override
-    public BroadcastManager createBroadcastManager(CacheManager cacheManager) {
-        return new BroadcastManager(cacheManager) {
+    public BroadcastManager createBroadcastManager(JetCacheManager jetCacheManager) {
+        return new BroadcastManager(jetCacheManager) {
             /**
              * 发布缓存消息。
              *

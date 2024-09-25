@@ -1,6 +1,6 @@
 package com.yat.cache.redis.springdata;
 
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.external.ExternalCacheBuilder;
 import com.yat.cache.core.support.BroadcastManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -26,7 +26,7 @@ public class RedisSpringDataCacheBuilder<T extends ExternalCacheBuilder<T>> exte
      * 通过调用父类的设置创建缓存实例的工厂方法。
      */
     protected RedisSpringDataCacheBuilder() {
-        buildFunc(config -> new RedisSpringDataCache((RedisSpringDataCacheConfig) config));
+        buildFunc(config -> new RedisSpringDataJetCache((RedisSpringDataCacheConfig) config));
     }
 
     /**
@@ -43,13 +43,13 @@ public class RedisSpringDataCacheBuilder<T extends ExternalCacheBuilder<T>> exte
      * 创建一个 SpringDataBroadcastManager 实例作为广播管理器。
      * 广播管理器用于在缓存数据变动时通知其他监听器。
      *
-     * @param cacheManager 缓存管理器实例，用于管理缓存
+     * @param jetCacheManager 缓存管理器实例，用于管理缓存
      * @return 新创建的 SpringDataBroadcastManager 实例
      */
     @Override
-    public BroadcastManager createBroadcastManager(CacheManager cacheManager) {
+    public BroadcastManager createBroadcastManager(JetCacheManager jetCacheManager) {
         RedisSpringDataCacheConfig c = (RedisSpringDataCacheConfig) getConfig().clone();
-        return new SpringDataBroadcastManager(cacheManager, c);
+        return new SpringDataBroadcastManager(jetCacheManager, c);
     }
 
     /**

@@ -21,7 +21,7 @@ public class MultiLevelCacheConfig<K, V> extends CacheConfig<K, V> {
     /**
      * 子缓存列表。
      */
-    private List<Cache<K, V>> caches = new ArrayList<>();
+    private List<JetCache<K, V>> caches = new ArrayList<>();
 
     /**
      * 是否使用子缓存的过期时间

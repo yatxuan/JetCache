@@ -13,7 +13,7 @@ import com.yat.cache.core.template.QuickConfig;
  * <p>
  * version 1.0
  */
-public interface CacheManager {
+public interface JetCacheManager {
 
     /**
      * 根据指定的区域获取广播管理器。
@@ -31,7 +31,7 @@ public interface CacheManager {
      * @param cacheName 缓存的名称
      * @return 缓存实例
      */
-    default <K, V> Cache<K, V> getCache(String cacheName) {
+    default <K, V> JetCache<K, V> getCache(String cacheName) {
         return getCache(DefaultCacheConstant.DEFAULT_AREA, cacheName);
     }
 
@@ -44,16 +44,16 @@ public interface CacheManager {
      * @param cacheName 缓存的名称
      * @return 缓存实例
      */
-    <K, V> Cache<K, V> getCache(String area, String cacheName);
+    <K, V> JetCache<K, V> getCache(String area, String cacheName);
 
     /**
      * 放置一个缓存实例，默认区域为 DEFAULT_AREA。
      *
      * @param cacheName 缓存的名称
-     * @param cache     缓存实例
+     * @param jetCache     缓存实例
      */
-    default void putCache(String cacheName, Cache cache) {
-        putCache(DefaultCacheConstant.DEFAULT_AREA, cacheName, cache);
+    default void putCache(String cacheName, JetCache jetCache) {
+        putCache(DefaultCacheConstant.DEFAULT_AREA, cacheName, jetCache);
     }
 
     /**
@@ -61,9 +61,9 @@ public interface CacheManager {
      *
      * @param area      缓存所在的区域
      * @param cacheName 缓存的名称
-     * @param cache     缓存实例
+     * @param jetCache     缓存实例
      */
-    void putCache(String area, String cacheName, Cache cache);
+    void putCache(String area, String cacheName, JetCache jetCache);
 
     /**
      * 获取或创建缓存实例。
@@ -74,7 +74,7 @@ public interface CacheManager {
      * @return 缓存实例
      * @see QuickConfig#newBuilder(String)
      */
-    <K, V> Cache<K, V> getOrCreateCache(QuickConfig config);
+    <K, V> JetCache<K, V> getOrCreateCache(QuickConfig config);
 
     /**
      * 放置一个广播管理器，默认区域为 DEFAULT_AREA。

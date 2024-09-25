@@ -8,7 +8,7 @@ package com.yat.cache.core;
  * Date 2024/9/24 19:54
  * version 1.0
  */
-public interface ProxyCache<K, V> extends Cache<K, V> {
+public interface ProxyJetCache<K, V> extends JetCache<K, V> {
     /**
      * 获取目标缓存实例中指定类型的实例
      *
@@ -26,6 +26,6 @@ public interface ProxyCache<K, V> extends Cache<K, V> {
      *
      * @return 返回目标缓存实例
      */
-    Cache<K, V> getTargetCache();
+    JetCache<K, V> getTargetCache();
 
 }

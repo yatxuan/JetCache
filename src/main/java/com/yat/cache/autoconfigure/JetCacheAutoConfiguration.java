@@ -12,7 +12,7 @@ import com.yat.cache.autoconfigure.init.external.MockRemoteCacheAutoConfiguratio
 import com.yat.cache.autoconfigure.init.external.RedisLettuceAutoConfiguration;
 import com.yat.cache.autoconfigure.init.external.RedisSpringDataAutoConfiguration;
 import com.yat.cache.autoconfigure.properties.JetCacheProperties;
-import com.yat.cache.core.SimpleCacheManager;
+import com.yat.cache.core.SimpleJetCacheManager;
 import com.yat.cache.core.support.StatInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -61,8 +61,8 @@ public class JetCacheAutoConfiguration {
 
     @Bean(name = BeanNameConstant.JC_CACHE_MANAGER_NAME, destroyMethod = "close")
     @ConditionalOnMissingBean
-    public SimpleCacheManager cacheManager(@Autowired SpringConfigProvider springConfigProvider) {
-        SimpleCacheManager cacheManager = new SimpleCacheManager();
+    public SimpleJetCacheManager cacheManager(@Autowired SpringConfigProvider springConfigProvider) {
+        SimpleJetCacheManager cacheManager = new SimpleJetCacheManager();
         cacheManager.setCacheBuilderTemplate(springConfigProvider.getCacheBuilderTemplate());
         return cacheManager;
     }

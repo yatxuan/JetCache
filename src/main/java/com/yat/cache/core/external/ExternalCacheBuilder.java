@@ -1,7 +1,7 @@
 package com.yat.cache.core.external;
 
 import com.yat.cache.core.AbstractCacheBuilder;
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.support.BroadcastManager;
 
 import java.util.function.Function;
@@ -31,10 +31,10 @@ public abstract class ExternalCacheBuilder<T extends ExternalCacheBuilder<T>> ex
     /**
      * 创建广播管理器。
      *
-     * @param cacheManager 缓存管理器。
+     * @param jetCacheManager 缓存管理器。
      * @return 广播管理器实例。
      */
-    public BroadcastManager createBroadcastManager(CacheManager cacheManager) {
+    public BroadcastManager createBroadcastManager(JetCacheManager jetCacheManager) {
         return null;
     }
 

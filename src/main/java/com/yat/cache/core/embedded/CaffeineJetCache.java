@@ -11,20 +11,20 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * ClassName CaffeineCache
+ * ClassName CaffeineJetCache
  * <p>Description Caffeine 缓存实现类，继承自 AbstractEmbeddedCache 并使用 Caffeine 作为底层缓存存储。</p>
  *
  * @author Yat
  * Date 2024/8/22 10:35
  * version 1.0
  */
-public class CaffeineCache<K, V> extends AbstractEmbeddedCache<K, V> {
+public class CaffeineJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> {
 
-    private static final Logger logger = LoggerFactory.getLogger(CaffeineCache.class);
+    private static final Logger logger = LoggerFactory.getLogger(CaffeineJetCache.class);
 
     private com.github.benmanes.caffeine.cache.Cache cache;
 
-    public CaffeineCache(EmbeddedCacheConfig<K, V> config) {
+    public CaffeineJetCache(EmbeddedCacheConfig<K, V> config) {
         super(config);
     }
 

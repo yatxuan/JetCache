@@ -19,15 +19,15 @@ import java.util.concurrent.TimeUnit;
  * Date 2024/9/25 10:01
  * version 1.0
  */
-public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
+public class MultiLevelJetCache<K, V> extends AbstractJetCache<K, V> {
 
-    private final Cache<K, CacheValueHolder<V>>[] caches;
+    private final JetCache<K, CacheValueHolder<V>>[] caches;
 
     private final MultiLevelCacheConfig<K, V> config;
 
-    public MultiLevelCache(MultiLevelCacheConfig<K, V> cacheConfig) throws CacheConfigException {
+    public MultiLevelJetCache(MultiLevelCacheConfig<K, V> cacheConfig) throws CacheConfigException {
         this.config = cacheConfig;
-        this.caches = cacheConfig.getCaches().toArray(new Cache[]{});
+        this.caches = cacheConfig.getCaches().toArray(new JetCache[]{});
         checkCaches();
     }
 
@@ -35,7 +35,7 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
         if (caches == null || caches.length == 0) {
             throw new IllegalArgumentException();
         }
-        for (Cache c : caches) {
+        for (JetCache c : caches) {
             if (c.config().getLoader() != null) {
                 throw new CacheConfigException("Loader on sub cache is not allowed, set the loader into " +
                         "MultiLevelCache.");
@@ -43,15 +43,15 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
         }
     }
 
-    public Cache[] caches() {
+    public JetCache[] caches() {
         return caches;
     }
 
     @Override
     protected CacheGetResult<V> do_GET(K key) {
         for (int i = 0; i < caches.length; i++) {
-            Cache cache = caches[i];
-            CacheGetResult result = cache.GET(key);
+            JetCache jetCache = caches[i];
+            CacheGetResult result = jetCache.GET(key);
             if (result.isSuccess()) {
                 CacheValueHolder<V> holder = unwrapHolder(result.getHolder());
                 checkResultAndFillUpperCache(key, i, holder);
@@ -95,12 +95,12 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
     private CacheResult PUT_caches(int lastIndex, K key, V value, long expire, TimeUnit timeUnit) {
         CompletableFuture<ResultData> future = CompletableFuture.completedFuture(null);
         for (int i = 0; i < lastIndex; i++) {
-            Cache cache = caches[i];
+            JetCache jetCache = caches[i];
             CacheResult r;
             if (timeUnit == null) {
-                r = cache.PUT(key, value);
+                r = jetCache.PUT(key, value);
             } else {
-                r = cache.PUT(key, value, expire, timeUnit);
+                r = jetCache.PUT(key, value, expire, timeUnit);
             }
             future = combine(future, r);
         }
@@ -127,7 +127,7 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
             if (restKeys.isEmpty()) {
                 break;
             }
-            Cache<K, CacheValueHolder<V>> c = caches[i];
+            JetCache<K, CacheValueHolder<V>> c = caches[i];
             MultiGetResult<K, CacheValueHolder<V>> allResult = c.GET_ALL(restKeys);
             if (allResult.isSuccess() && allResult.getValues() != null) {
                 for (Map.Entry<K, CacheGetResult<CacheValueHolder<V>>> en : allResult.getValues().entrySet()) {
@@ -156,7 +156,7 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
     @Override
     protected CacheResult do_PUT_ALL(Map<? extends K, ? extends V> map, long expireAfterWrite, TimeUnit timeUnit) {
         CompletableFuture<ResultData> future = CompletableFuture.completedFuture(null);
-        for (Cache c : caches) {
+        for (JetCache c : caches) {
             CacheResult r;
             if (timeUnit == null) {
                 r = c.PUT_ALL(map);
@@ -171,8 +171,8 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
     @Override
     protected CacheResult do_REMOVE(K key) {
         CompletableFuture<ResultData> future = CompletableFuture.completedFuture(null);
-        for (Cache cache : caches) {
-            CacheResult r = cache.REMOVE(key);
+        for (JetCache jetCache : caches) {
+            CacheResult r = jetCache.REMOVE(key);
             future = combine(future, r);
         }
         return new CacheResult(future);
@@ -181,7 +181,7 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
     @Override
     public void close() {
         super.close();
-        for (Cache c : caches) {
+        for (JetCache c : caches) {
             c.close();
         }
     }
@@ -189,8 +189,8 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
     @Override
     protected CacheResult do_REMOVE_ALL(Set<? extends K> keys) {
         CompletableFuture<ResultData> future = CompletableFuture.completedFuture(null);
-        for (Cache cache : caches) {
-            CacheResult r = cache.REMOVE_ALL(keys);
+        for (JetCache jetCache : caches) {
+            CacheResult r = jetCache.REMOVE_ALL(keys);
             future = combine(future, r);
         }
         return new CacheResult(future);
@@ -232,9 +232,9 @@ public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
     @Override
     public <T> T unwrap(Class<T> clazz) {
         Objects.requireNonNull(clazz);
-        for (Cache cache : caches) {
+        for (JetCache jetCache : caches) {
             try {
-                T obj = (T) cache.unwrap(clazz);
+                T obj = (T) jetCache.unwrap(clazz);
                 if (obj != null) {
                     return obj;
                 }

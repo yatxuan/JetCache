@@ -1,6 +1,6 @@
 package com.yat.cache.core.event;
 
-import com.yat.cache.core.Cache;
+import com.yat.cache.core.JetCache;
 import com.yat.cache.core.MultiGetResult;
 import lombok.Getter;
 
@@ -34,13 +34,13 @@ public class CacheGetAllEvent extends CacheEvent {
     /**
      * 构造方法。
      *
-     * @param cache  触发此事件的缓存实例。
+     * @param jetCache  触发此事件的缓存实例。
      * @param millis 事件发生的时间戳（毫秒）。
      * @param keys   请求获取的所有键的集合。
      * @param result 从缓存中获取的结果。
      */
-    public CacheGetAllEvent(Cache cache, long millis, Set keys, MultiGetResult result) {
-        super(cache);
+    public CacheGetAllEvent(JetCache jetCache, long millis, Set keys, MultiGetResult result) {
+        super(jetCache);
         this.millis = millis;
         this.keys = keys;
         this.result = result;

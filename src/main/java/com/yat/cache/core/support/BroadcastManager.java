@@ -1,11 +1,11 @@
 package com.yat.cache.core.support;
 
-import com.yat.cache.core.Cache;
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCache;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.CacheUtil;
-import com.yat.cache.core.MultiLevelCache;
-import com.yat.cache.core.embedded.AbstractEmbeddedCache;
+import com.yat.cache.core.MultiLevelJetCache;
+import com.yat.cache.core.embedded.AbstractEmbeddedJetCache;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.external.ExternalCacheConfig;
 import com.yat.cache.core.lang.Assert;
@@ -39,15 +39,15 @@ public abstract class BroadcastManager implements AutoCloseable {
     /**
      * 缓存管理器
      */
-    private final CacheManager cacheManager;
+    private final JetCacheManager jetCacheManager;
 
     /**
      * 初始化缓存管理器。
      *
-     * @param cacheManager 缓存管理器实例
+     * @param jetCacheManager 缓存管理器实例
      */
-    public BroadcastManager(CacheManager cacheManager) {
-        this.cacheManager = cacheManager;
+    public BroadcastManager(JetCacheManager jetCacheManager) {
+        this.jetCacheManager = jetCacheManager;
     }
 
     /**
@@ -118,23 +118,23 @@ public abstract class BroadcastManager implements AutoCloseable {
         if (sourceId.equals(cacheMessage.getSourceId())) {
             return;
         }
-        Cache cache = cacheManager.getCache(cacheMessage.getArea(), cacheMessage.getCacheName());
-        if (cache == null) {
+        JetCache jetCache = jetCacheManager.getCache(cacheMessage.getArea(), cacheMessage.getCacheName());
+        if (jetCache == null) {
             logger.warn("Cache instance not exists: {},{}", cacheMessage.getArea(), cacheMessage.getCacheName());
             return;
         }
-        Cache absCache = CacheUtil.getAbstractCache(cache);
-        if (!(absCache instanceof MultiLevelCache)) {
+        JetCache absJetCache = CacheUtil.getAbstractCache(jetCache);
+        if (!(absJetCache instanceof MultiLevelJetCache)) {
             logger.warn("Cache instance is not MultiLevelCache: {},{}", cacheMessage.getArea(),
                     cacheMessage.getCacheName());
             return;
         }
-        Cache[] caches = ((MultiLevelCache) absCache).caches();
+        JetCache[] caches = ((MultiLevelJetCache) absJetCache).caches();
         Set<Object> keys = Stream.of(cacheMessage.getKeys()).collect(Collectors.toSet());
-        for (Cache c : caches) {
-            Cache localCache = CacheUtil.getAbstractCache(c);
-            if (localCache instanceof AbstractEmbeddedCache) {
-                ((AbstractEmbeddedCache) localCache).__removeAll(keys);
+        for (JetCache c : caches) {
+            JetCache localJetCache = CacheUtil.getAbstractCache(c);
+            if (localJetCache instanceof AbstractEmbeddedJetCache) {
+                ((AbstractEmbeddedJetCache) localJetCache).__removeAll(keys);
             } else {
                 break;
             }

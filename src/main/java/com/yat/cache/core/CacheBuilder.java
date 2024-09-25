@@ -10,5 +10,5 @@ package com.yat.cache.core;
  */
 public interface CacheBuilder {
 
-    <K, V> Cache<K, V> buildCache();
+    <K, V> JetCache<K, V> buildCache();
 }

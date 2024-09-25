@@ -1,7 +1,7 @@
 package com.yat.cache.anno.support;
 
 import com.yat.cache.anno.method.SpringCacheContext;
-import com.yat.cache.core.CacheManager;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.support.StatInfo;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,12 +56,12 @@ public class SpringConfigProvider extends ConfigProvider implements ApplicationC
     /**
      * 创建新的缓存上下文
      *
-     * @param cacheManager 缓存管理器
+     * @param jetCacheManager 缓存管理器
      * @return 返回Spring环境下的缓存上下文实例
      */
     @Override
-    public CacheContext newContext(CacheManager cacheManager) {
-        return new SpringCacheContext(cacheManager, this, globalCacheConfig, applicationContext);
+    public CacheContext newContext(JetCacheManager jetCacheManager) {
+        return new SpringCacheContext(jetCacheManager, this, globalCacheConfig, applicationContext);
     }
 
     /**
