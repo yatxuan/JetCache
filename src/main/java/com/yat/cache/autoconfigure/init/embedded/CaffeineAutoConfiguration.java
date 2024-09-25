@@ -1,10 +1,9 @@
 package com.yat.cache.autoconfigure.init.embedded;
 
 import com.yat.cache.autoconfigure.JetCacheCondition;
-import com.yat.cache.autoconfigure.properties.LocalCacheProperties;
 import com.yat.cache.autoconfigure.properties.enums.LocalCacheTypeEnum;
-import com.yat.cache.core.CacheBuilder;
 import com.yat.cache.core.embedded.CaffeineCacheBuilder;
+import com.yat.cache.core.embedded.EmbeddedCacheBuilder;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
@@ -25,10 +24,8 @@ public class CaffeineAutoConfiguration extends EmbeddedCacheAutoInit {
     }
 
     @Override
-    protected CacheBuilder initEmbeddedCache(LocalCacheProperties cacheProperties, String cacheAreaWithPrefix) {
-        CaffeineCacheBuilder<?> builder = CaffeineCacheBuilder.createCaffeineCacheBuilder();
-        parseEmbeddedGeneralConfig(builder, cacheProperties);
-        return builder;
+    protected EmbeddedCacheBuilder<?> createEmbeddedCacheBuilder() {
+        return CaffeineCacheBuilder.createCaffeineCacheBuilder();
     }
 
     public static class CaffeineCondition extends JetCacheCondition {

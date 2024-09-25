@@ -1,9 +1,8 @@
 package com.yat.cache.autoconfigure.init.embedded;
 
 import com.yat.cache.autoconfigure.JetCacheCondition;
-import com.yat.cache.autoconfigure.properties.LocalCacheProperties;
 import com.yat.cache.autoconfigure.properties.enums.LocalCacheTypeEnum;
-import com.yat.cache.core.CacheBuilder;
+import com.yat.cache.core.embedded.EmbeddedCacheBuilder;
 import com.yat.cache.core.embedded.LinkedHashMapCacheBuilder;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
@@ -25,10 +24,8 @@ public class LinkedHashMapAutoConfiguration extends EmbeddedCacheAutoInit {
     }
 
     @Override
-    protected CacheBuilder initEmbeddedCache(LocalCacheProperties cacheProperties, String cacheAreaWithPrefix) {
-        LinkedHashMapCacheBuilder<?> builder = LinkedHashMapCacheBuilder.createLinkedHashMapCacheBuilder();
-        parseEmbeddedGeneralConfig(builder, cacheProperties);
-        return builder;
+    protected EmbeddedCacheBuilder<?> createEmbeddedCacheBuilder() {
+        return LinkedHashMapCacheBuilder.createLinkedHashMapCacheBuilder();
     }
 
     /**
