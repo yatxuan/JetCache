@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * ClassName EmbeddedCacheBuilder
- * <p>Description 缓存构建器:用于构建缓存配置</p>
+ * <p>Description 缓存构建器:用于本地构建缓存配置</p>
  *
  * @author Yat
  * Date 2024/8/22 11:39
