@@ -8,10 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created on 2016/11/16.
+ * ConfigSelector类用于根据AdviceMode选择合适的配置导入
+ * 它扩展了AdviceModeImportSelector，并针对EnableMethodCache注解进行了配置
+ * 该类的主要作用是决定使用代理模式还是切面模式，并返回相应的配置类
+ *
+ * @author Yat
+ * Date 2024/8/22 21:13
+ * version 1.0
  */
 public class ConfigSelector extends AdviceModeImportSelector<EnableMethodCache> {
 
+    /**
+     * 根据AdviceMode选择并返回需要导入的配置类
+     *
+     * @param adviceMode 缓存顾问模式，决定了使用哪种缓存实现方式
+     * @return String[] 包含所需配置类的字符串数组
+     */
     @Override
     public String[] selectImports(AdviceMode adviceMode) {
         switch (adviceMode) {
@@ -25,14 +37,18 @@ public class ConfigSelector extends AdviceModeImportSelector<EnableMethodCache> 
     }
 
     /**
-     * Return the imports to use if the {@link AdviceMode} is set to {@link AdviceMode#PROXY}.
-     * <p>Take care of adding the necessary JSR-107 import if it is available.
+     * 当AdviceMode设置为PROXY时返回所需的配置导入
+     * <p>
+     * 注意：如果可用，添加必要的JSR-107导入
+     * </p>
+     *
+     * @return String[] 包含代理模式所需配置类的字符串数组
      */
     private String[] getProxyImports() {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         result.add(AutoProxyRegistrar.class.getName());
         result.add(JetCacheProxyConfiguration.class.getName());
-        return result.toArray(new String[result.size()]);
+        return result.toArray(new String[0]);
     }
 
     /**

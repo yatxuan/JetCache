@@ -11,9 +11,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created on 16/9/13.
+ * ClassName MultiLevelCache
+ * <p>MultiLevelCache 是一个缓存类，它支持 '多级缓存机制'，允许使用多个缓存层来优化数据存储和访问。
+ * 它扩展了AbstractCache类，提供了对多个缓存层级的支持和管理。</p>
  *
- * @author yat
+ * @author Yat
+ * Date 2024/9/25 10:01
+ * version 1.0
  */
 public class MultiLevelCache<K, V> extends AbstractCache<K, V> {
 

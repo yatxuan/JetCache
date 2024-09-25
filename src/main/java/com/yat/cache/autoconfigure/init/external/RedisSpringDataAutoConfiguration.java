@@ -7,6 +7,7 @@ import com.yat.cache.autoconfigure.properties.enums.RemoteCacheTypeEnum;
 import com.yat.cache.core.CacheBuilder;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.external.ExternalCacheBuilder;
+import com.yat.cache.core.lang.Assert;
 import com.yat.cache.redis.springdata.RedisSpringDataCacheBuilder;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -53,7 +54,8 @@ public class RedisSpringDataAutoConfiguration {
         @Override
         protected CacheBuilder initCache(BaseCacheProperties cacheProperties, String cacheAreaWithPrefix) {
             Map<String, RedisConnectionFactory> beans = applicationContext.getBeansOfType(RedisConnectionFactory.class);
-            if (beans == null || beans.isEmpty()) {
+            Assert.notNull(beans, () -> new CacheConfigException("no RedisConnectionFactory in spring context"));
+            if (beans.isEmpty()) {
                 throw new CacheConfigException("no RedisConnectionFactory in spring context");
             }
             RedisConnectionFactory factory = beans.values().iterator().next();

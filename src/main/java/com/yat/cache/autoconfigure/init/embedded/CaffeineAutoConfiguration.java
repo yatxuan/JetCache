@@ -9,13 +9,17 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 /**
- * Created on 2016/12/2.
+ * ClassName CaffeineAutoConfiguration
+ * <p>Description caffeine 本地缓存</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 22:09
+ * version 1.0
  */
 @Component
 @Conditional(CaffeineAutoConfiguration.CaffeineCondition.class)
 public class CaffeineAutoConfiguration extends EmbeddedCacheAutoInit {
+
     public CaffeineAutoConfiguration() {
         super(LocalCacheTypeEnum.CAFFEINE.getUpperName());
     }
@@ -29,7 +33,7 @@ public class CaffeineAutoConfiguration extends EmbeddedCacheAutoInit {
 
     public static class CaffeineCondition extends JetCacheCondition {
         public CaffeineCondition() {
-            super("caffeine");
+            super(LocalCacheTypeEnum.CAFFEINE.getUpperName());
         }
     }
 }

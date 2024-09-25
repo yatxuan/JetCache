@@ -48,7 +48,7 @@ public class MockRemoteCacheAutoConfiguration extends ExternalCacheAutoInit {
 
     public static class MockRemoteCacheCondition extends JetCacheCondition {
         public MockRemoteCacheCondition() {
-            super("mock");
+            super(RemoteCacheTypeEnum.MOCK.getUpperName());
         }
     }
 }

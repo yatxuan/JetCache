@@ -11,7 +11,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created on 2016/11/16.
+ * 启用方法缓存的注解，用于在类级别开启缓存支持。
+ * 通过此注解，可以配置缓存的一般行为，如代理模式、执行顺序等。
+ *
+ * @author Yat
+ * Date 2024/8/22 21:14
+ * version 1.0
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -20,30 +25,26 @@ import java.lang.annotation.Target;
 public @interface EnableMethodCache {
 
     /**
-     * Indicate whether subclass-based (CGLIB) proxies are to be created as opposed
-     * to standard Java interface-based proxies. The default is {@code false}. <strong>
-     * Applicable only if {@link #mode()} is set to {@link AdviceMode#PROXY}</strong>.
-     * <p>Note that setting this attribute to {@code true} will affect <em>all</em>
-     * Spring-managed beans requiring proxying, not just those marked with {@code @Cacheable}.
-     * For example, other beans marked with Spring's {@code @Transactional} annotation will
-     * be upgraded to subclass proxying at the same time. This approach has no negative
-     * impact in practice unless one is explicitly expecting one type of proxy vs another,
-     * e.g. in tests.
+     * 指定是否创建子类（CGLIB）代理而不是标准Java接口基于代理。
+     * 默认值为false。仅当#mode()设置为AdviceMode.PROXY时适用。
+     * <p>
+     * 注意：将此属性设置为true会影响所有需要代理的Spring管理的bean，
+     * 而不仅仅是那些标记为@Cacheable的bean。例如，标记为Spring的@Transactional注解的其他bean
+     * 也将同时升级到子类代理。这种方法在实践中没有负面影响，除非明确期望某种类型的代理而不是另一种，
+     * 例如在测试中。
      */
     boolean proxyTargetClass() default false;
 
     /**
-     * Indicate how caching advice should be applied. The default is
-     * {@link AdviceMode#PROXY}.
+     * 指定缓存通知应如何应用。默认值是{@link AdviceMode#PROXY}.
      *
      * @see AdviceMode
      */
     AdviceMode mode() default AdviceMode.PROXY;
 
     /**
-     * Indicate the ordering of the execution of the caching advisor
-     * when multiple advices are applied at a specific joinpoint.
-     * The default is {@link Ordered#LOWEST_PRECEDENCE}.
+     * 指定在多个通知应用于特定连接点时缓存通知的执行顺序.
+     * 默认值是 {@link Ordered#LOWEST_PRECEDENCE}.
      */
     int order() default Ordered.LOWEST_PRECEDENCE;
 

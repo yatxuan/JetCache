@@ -13,6 +13,7 @@ import com.yat.cache.core.event.CacheEvent;
  */
 @FunctionalInterface
 public interface CacheMonitor {
+
     /**
      * Description: 在缓存操作完成后调用此方法
      * <p>

@@ -1,6 +1,3 @@
-/**
- * Created on 2019/6/7.
- */
 package com.yat.cache.anno.support;
 
 import org.springframework.beans.BeansException;

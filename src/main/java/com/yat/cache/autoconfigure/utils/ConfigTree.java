@@ -11,11 +11,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Created on 2017/11/20.
+ * ClassName ConfigTree
+ * <p>Description ConfigTree</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/9/25 09:56
+ * version 1.0
  */
 public class ConfigTree {
+
     private ConfigurableEnvironment environment;
     private String prefix;
 

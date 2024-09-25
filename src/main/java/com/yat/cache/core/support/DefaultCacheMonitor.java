@@ -13,6 +13,7 @@ import com.yat.cache.core.event.CachePutAllEvent;
 import com.yat.cache.core.event.CachePutEvent;
 import com.yat.cache.core.event.CacheRemoveAllEvent;
 import com.yat.cache.core.event.CacheRemoveEvent;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,16 +22,23 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created on 2016/10/27.
+ * ClassName DefaultCacheMonitor
+ * <p>Description 默认的监控缓存操作的统计信息</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 11:56
+ * version 1.0
  */
 public class DefaultCacheMonitor implements CacheMonitor {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultCacheMonitor.class);
 
     private final ReentrantLock reentrantLock = new ReentrantLock();
-    private String cacheName;
+    /**
+     * 缓存的名称
+     */
+    @Getter
+    private final String cacheName;
     protected CacheStat cacheStat;
 
     public DefaultCacheMonitor(String cacheName) {
@@ -50,10 +58,6 @@ public class DefaultCacheMonitor implements CacheMonitor {
         } finally {
             reentrantLock.unlock();
         }
-    }
-
-    public String getCacheName() {
-        return cacheName;
     }
 
     public CacheStat getCacheStat() {
@@ -100,7 +104,15 @@ public class DefaultCacheMonitor implements CacheMonitor {
             reentrantLock.unlock();
         }
     }
-
+    /**
+     * Description: 处理单个获取操作
+     * <p>
+     * Date: 2024/8/22 12:30
+     *
+     * @param millis 耗时
+     * @param key    键
+     * @param result 结果
+     */
     private void afterGet(long millis, Object key, CacheGetResult result) {
         cacheStat.minGetTime = Math.min(cacheStat.minGetTime, millis);
         cacheStat.maxGetTime = Math.max(cacheStat.maxGetTime, millis);
@@ -108,7 +120,16 @@ public class DefaultCacheMonitor implements CacheMonitor {
         cacheStat.getCount++;
         parseSingleGet(result);
     }
-
+    /**
+     * Description: 处理单个放入操作
+     * <p>
+     * Date: 2024/8/22 12:31
+     *
+     * @param millis 耗时
+     * @param key    键
+     * @param value  值
+     * @param result 结果
+     */
     private void afterPut(long millis, Object key, Object value, CacheResult result) {
         cacheStat.minPutTime = Math.min(cacheStat.minPutTime, millis);
         cacheStat.maxPutTime = Math.max(cacheStat.maxPutTime, millis);
@@ -128,7 +149,15 @@ public class DefaultCacheMonitor implements CacheMonitor {
                 logger.warn("JetCache PUT return unexpected code: {}", result.getResultCode());
         }
     }
-
+    /**
+     * Description:  处理单个移除操作
+     * <p>
+     * Date: 2024/8/22 12:31
+     *
+     * @param millis 耗时
+     * @param key    键
+     * @param result 结果
+     */
     private void afterRemove(long millis, Object key, CacheResult result) {
         cacheStat.minRemoveTime = Math.min(cacheStat.minRemoveTime, millis);
         cacheStat.maxRemoveTime = Math.max(cacheStat.maxRemoveTime, millis);
@@ -147,7 +176,16 @@ public class DefaultCacheMonitor implements CacheMonitor {
                 logger.warn("JetCache REMOVE return unexpected code: {}", result.getResultCode());
         }
     }
-
+    /**
+     * Description: 处理单个加载操作
+     * <p>
+     * Date: 2024/8/22 12:32
+     *
+     * @param millis      耗时
+     * @param key         键
+     * @param loadedValue 加载的值
+     * @param success     是否成功
+     */
     private void afterLoad(long millis, Object key, Object loadedValue, boolean success) {
         cacheStat.minLoadTime = Math.min(cacheStat.minLoadTime, millis);
         cacheStat.maxLoadTime = Math.max(cacheStat.maxLoadTime, millis);
@@ -159,7 +197,15 @@ public class DefaultCacheMonitor implements CacheMonitor {
             cacheStat.loadFailCount++;
         }
     }
-
+    /**
+     * Description: 处理批量获取操作
+     * <p>
+     * Date: 2024/8/22 12:33
+     *
+     * @param millis 耗时
+     * @param keys   键
+     * @param result 结果
+     */
     private void afterGetAll(long millis, Set keys, MultiGetResult result) {
         if (keys == null) {
             return;
@@ -179,7 +225,16 @@ public class DefaultCacheMonitor implements CacheMonitor {
             }
         }
     }
-
+    /**
+     * Description: 处理批量加载操作
+     * <p>
+     * Date: 2024/8/22 12:33
+     *
+     * @param millis      耗时
+     * @param keys        键
+     * @param loadedValue 加载的值
+     * @param success     是否成功
+     */
     private void afterLoadAll(long millis, Set keys, Map loadedValue, boolean success) {
         if (keys == null) {
             return;
@@ -195,7 +250,15 @@ public class DefaultCacheMonitor implements CacheMonitor {
             cacheStat.loadFailCount += count;
         }
     }
-
+    /**
+     * Description: 处理批量放入操作
+     * <p>
+     * Date: 2024/8/22 12:34
+     *
+     * @param millis 耗时
+     * @param map    键
+     * @param result 结果
+     */
     private void afterPutAll(long millis, Map map, CacheResult result) {
         if (map == null) {
             return;
@@ -211,7 +274,15 @@ public class DefaultCacheMonitor implements CacheMonitor {
             cacheStat.putFailCount += keyCount;
         }
     }
-
+    /**
+     * Description: 处理批量移除操作
+     * <p>
+     * Date: 2024/8/22 12:33
+     *
+     * @param millis 耗时
+     * @param keys   键
+     * @param result 结果
+     */
     private void afterRemoveAll(long millis, Set keys, CacheResult result) {
         if (keys == null) {
             return;
@@ -227,7 +298,13 @@ public class DefaultCacheMonitor implements CacheMonitor {
             cacheStat.removeFailCount += keyCount;
         }
     }
-
+    /**
+     * Description: 解析单个获取的结果
+     * <p>
+     * Date: 2024/8/22 12:30
+     *
+     * @param result 结果
+     */
     private void parseSingleGet(CacheGetResult<?> result) {
         switch (result.getResultCode()) {
             case SUCCESS:

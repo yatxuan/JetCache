@@ -9,13 +9,26 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 /**
- * Created on 2016/10/4.
+ * ClassName JavaValueEncoder
+ * <p>Description Java 值编码器</p>
+ * <p>
+ * 此类实现了将 Java 对象序列化为字节数组的功能。
+ * </p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/8/22 13:07
+ * version 1.0
  */
 public class JavaValueEncoder extends AbstractValueEncoder {
 
+
+    /**
+     * 初始化缓冲区大小。
+     */
     private static final int INIT_BUF_SIZE = 2048;
+    /**
+     * 字节数组输出流对象池。
+     */
     static ObjectPool<ByteArrayOutputStream> bosPool = new ObjectPool<>(16,
             new ObjectPool.ObjectFactory<>() {
                 @Override

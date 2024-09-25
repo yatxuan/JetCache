@@ -1,6 +1,3 @@
-/**
- * Created on 2018/1/22.
- */
 package com.yat.cache.anno.support;
 
 import lombok.Getter;

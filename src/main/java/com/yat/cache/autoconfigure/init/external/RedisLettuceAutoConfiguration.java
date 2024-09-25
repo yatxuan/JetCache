@@ -39,13 +39,17 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Created on 2017/5/10.
+ * ClassName RedisLettuceAutoConfiguration
+ * <p>Description RedisLettuce自动装配</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/9/25 09:54
+ * version 1.0
  */
 @Configuration
 @Conditional(RedisLettuceAutoConfiguration.RedisLettuceCondition.class)
 public class RedisLettuceAutoConfiguration {
+
     public static final String AUTO_INIT_BEAN_NAME = "redisLettuceAutoInit";
 
     @Bean(name = {AUTO_INIT_BEAN_NAME})

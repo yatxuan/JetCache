@@ -17,18 +17,52 @@ import com.yat.cache.core.event.CacheRemoveEvent;
 import java.util.function.Function;
 
 /**
- * @author huangli
+ * ClassName CacheNotifyMonitor
+ * <p>Description 监听缓存操作事件并广播事件</p>
+ *
+ * @author Yat
+ * Date 2024/8/22 12:57
+ * version 1.0
  */
 public class CacheNotifyMonitor implements CacheMonitor {
+
+    /**
+     * 广播管理器。
+     */
     private final BroadcastManager broadcastManager;
+
+    /**
+     * 缓存区域名称。
+     */
     private final String area;
+
+    /**
+     * 缓存名称。
+     */
     private final String cacheName;
+
+    /**
+     * 广播源标识。
+     */
     private final String sourceId;
 
+    /**
+     * 构造一个新的 CacheNotifyMonitor 实例，使用默认缓存区域。
+     *
+     * @param cacheManager 缓存管理器。
+     * @param cacheName    缓存名称。
+     */
     public CacheNotifyMonitor(CacheManager cacheManager, String cacheName) {
         this(cacheManager, DefaultCacheConstant.DEFAULT_AREA, cacheName);
     }
 
+    /**
+     * 构造一个新的 CacheNotifyMonitor 实例。
+     *
+     * @param cacheManager 缓存管理器。
+     * @param area         缓存区域名称。
+     * @param cacheName    缓存名称。
+     */
     public CacheNotifyMonitor(CacheManager cacheManager, String area, String cacheName) {
         this.broadcastManager = cacheManager.getBroadcastManager(area);
         this.area = area;
@@ -40,6 +74,11 @@ public class CacheNotifyMonitor implements CacheMonitor {
         }
     }
 
+    /**
+     * 在缓存操作后执行。
+     *
+     * @param event 缓存事件。
+     */
     @Override
     public void afterOperation(CacheEvent event) {
         if (this.broadcastManager == null) {
@@ -53,6 +92,8 @@ public class CacheNotifyMonitor implements CacheMonitor {
         if (localCache == null) {
             return;
         }
+
+        // 根据不同的事件类型创建 CacheMessage 并广播
         if (event instanceof CachePutEvent) {
             CacheMessage m = new CacheMessage();
             m.setArea(area);
@@ -96,6 +137,12 @@ public class CacheNotifyMonitor implements CacheMonitor {
         }
     }
 
+    /**
+     * 获取本地缓存实例。
+     *
+     * @param absCache 抽象缓存实例。
+     * @return 本地缓存实例。
+     */
     private AbstractEmbeddedCache getLocalCache(AbstractCache absCache) {
         if (!(absCache instanceof MultiLevelCache)) {
             return null;
@@ -108,8 +155,15 @@ public class CacheNotifyMonitor implements CacheMonitor {
         return null;
     }
 
+    /**
+     * 转换缓存键。
+     *
+     * @param key        键。
+     * @param localCache 本地缓存配置。
+     * @return 转换后的键。
+     */
     private Object convertKey(Object key, AbstractEmbeddedCache localCache) {
-        Function keyConvertor = localCache.config().getKeyConvertor();
+        Function<Object, Object> keyConvertor = localCache.config().getKeyConvertor();
         if (keyConvertor == null) {
             return key;
         } else {

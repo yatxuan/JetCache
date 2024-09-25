@@ -8,11 +8,15 @@ import io.lettuce.core.api.StatefulConnection;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 
 /**
- * Created on 2017/4/28.
+ * ClassName RedisLettuceCacheBuilder
+ * <p>Description 基于 RedisLettuce 的缓存构建器</p>
  *
- * @author huangli
+ * @author Yat
+ * Date 2024/9/25 09:44
+ * version 1.0
  */
 public class RedisLettuceCacheBuilder<T extends ExternalCacheBuilder<T>> extends ExternalCacheBuilder<T> {
+
     protected RedisLettuceCacheBuilder() {
         buildFunc(config -> new RedisLettuceCache((RedisLettuceCacheConfig) config));
     }

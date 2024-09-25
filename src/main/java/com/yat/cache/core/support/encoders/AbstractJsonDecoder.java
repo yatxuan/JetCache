@@ -6,14 +6,31 @@ import com.yat.cache.core.support.CacheMessage;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @author huangli
+ * ClassName AbstractJsonDecoder
+ * <p>Description 抽象 JSON 解码器类，用于从字节数组中解码出缓存值</p>
+ *
+ * @author Yat
+ * Date 2024/8/22 17:40
+ * version 1.0
  */
 public abstract class AbstractJsonDecoder extends AbstractValueDecoder {
 
-    public AbstractJsonDecoder(boolean useIdentityNumber) {
+    /**
+     * 初始化是否使用标识号。
+     *
+     * @param useIdentityNumber 是否使用标识号
+     */
+    public AbstractJsonDecoder(Boolean useIdentityNumber) {
         super(useIdentityNumber);
     }
 
+    /**
+     * 应用解码逻辑到给定的字节数组。
+     *
+     * @param buffer 待解码的字节数组
+     * @return 解码后的对象
+     * @throws Exception 如果解码过程中发生错误
+     */
     @Override
     protected Object doApply(byte[] buffer) throws Exception {
         int[] indexHolder = new int[1];
@@ -45,13 +62,26 @@ public abstract class AbstractJsonDecoder extends AbstractValueDecoder {
             return obj;
         }
     }
-
+    /**
+     * 从字节数组中读取短整型。
+     *
+     * @param buf   字节数组
+     * @param index 开始读取的位置
+     * @return 短整型值
+     */
     private short readShort(byte[] buf, int index) {
         int x = buf[index] & 0xFF;
         x = (x << 8) | (buf[index + 1] & 0xFF);
         return (short) x;
     }
-
+    /**
+     * 从字节数组中读取对象。
+     *
+     * @param buf         字节数组
+     * @param indexHolder 当前读取位置的索引持有者
+     * @return 读取的对象
+     * @throws Exception 如果读取过程中发生错误
+     */
     private Object readObject(byte[] buf, int[] indexHolder) throws Exception {
         int index = indexHolder[0];
         short classNameLen = readShort(buf, index);
@@ -71,7 +101,13 @@ public abstract class AbstractJsonDecoder extends AbstractValueDecoder {
             return obj;
         }
     }
-
+    /**
+     * 从字节数组中读取整数。
+     *
+     * @param buf   字节数组
+     * @param index 开始读取的位置
+     * @return 整数
+     */
     private int readInt(byte[] buf, int index) {
         int x = buf[index] & 0xFF;
         x = (x << 8) | (buf[index + 1] & 0xFF);
@@ -79,6 +115,14 @@ public abstract class AbstractJsonDecoder extends AbstractValueDecoder {
         x = (x << 8) | (buf[index + 3] & 0xFF);
         return x;
     }
-
+    /**
+     * 解析字节数组中的对象。
+     *
+     * @param buffer 字节数组
+     * @param index  开始解析的位置
+     * @param len    对象的长度
+     * @param clazz  对象的类
+     * @return 解析后的对象
+     */
     protected abstract Object parseObject(byte[] buffer, int index, int len, Class<?> clazz);
 }
