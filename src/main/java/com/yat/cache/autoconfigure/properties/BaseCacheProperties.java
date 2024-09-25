@@ -18,7 +18,7 @@ import java.time.Duration;
 public abstract class BaseCacheProperties {
 
     /**
-     * key转换器的全局配置 todo KeyConvertor
+     * key转换器的全局配置
      */
     private KeyConvertorEnum keyConvertor = KeyConvertorEnum.NONE;
 

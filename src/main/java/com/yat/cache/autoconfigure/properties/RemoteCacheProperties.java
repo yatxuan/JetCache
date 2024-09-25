@@ -32,7 +32,7 @@ public class RemoteCacheProperties extends BaseCacheProperties {
      */
     private String keyPrefix;
     /**
-     * 序列化器的全局配置 todo SerialPolicy
+     * 序列化器的全局配置
      */
     private SerialPolicyTypeEnum valueEncoder;
     private SerialPolicyTypeEnum valueDecoder;
