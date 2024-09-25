@@ -2,7 +2,6 @@ package com.yat.cache.autoconfigure.init.external;
 
 import com.yat.cache.anno.api.DefaultCacheConstant;
 import com.yat.cache.autoconfigure.JetCacheCondition;
-import com.yat.cache.autoconfigure.properties.BaseCacheProperties;
 import com.yat.cache.autoconfigure.properties.RemoteCacheProperties;
 import com.yat.cache.autoconfigure.properties.enums.ReadFromEnum;
 import com.yat.cache.autoconfigure.properties.enums.RedisModeEnum;
@@ -71,36 +70,35 @@ public class RedisLettuceAutoConfiguration {
         }
 
         @Override
-        protected CacheBuilder initCache(BaseCacheProperties cacheProperties, String cacheAreaWithPrefix) {
+        protected CacheBuilder initExternalCache(RemoteCacheProperties cacheProperties, String cacheAreaWithPrefix) {
 
-            RemoteCacheProperties remoteCacheProperties = (RemoteCacheProperties) cacheProperties;
-            RedisModeEnum mode = remoteCacheProperties.getLettuce().getMode();
-            boolean enablePubSub = parseBroadcastChannel(remoteCacheProperties) != null;
+            RedisModeEnum mode = cacheProperties.getLettuce().getMode();
+            boolean enablePubSub = parseBroadcastChannel(cacheProperties) != null;
 
-            Long asyncResultTimeoutInMillis = remoteCacheProperties.getLettuce().getAsyncResultTimeoutInMillis();
+            Long asyncResultTimeoutInMillis = cacheProperties.getLettuce().getAsyncResultTimeoutInMillis();
             if (asyncResultTimeoutInMillis == null) {
                 asyncResultTimeoutInMillis = DefaultCacheConstant.ASYNC_RESULT_TIMEOUT.toMillis();
             }
 
-            ExternalCacheBuilder externalCacheBuilder;
+            ExternalCacheBuilder<?> externalCacheBuilder;
 
             if (Objects.requireNonNull(mode) == RedisModeEnum.CLUSTER) {
                 externalCacheBuilder = createCluster(
-                        remoteCacheProperties, enablePubSub, asyncResultTimeoutInMillis
+                        cacheProperties, enablePubSub, asyncResultTimeoutInMillis
                 );
             } else if (mode == RedisModeEnum.SENTINEL) {
                 externalCacheBuilder = createSentinel(
-                        remoteCacheProperties, enablePubSub, asyncResultTimeoutInMillis
+                        cacheProperties, enablePubSub, asyncResultTimeoutInMillis
                 );
             } else if (mode == RedisModeEnum.SINGLETON) {
                 externalCacheBuilder = createStandalone(
-                        remoteCacheProperties.getLettuce().getSingleton(), enablePubSub, asyncResultTimeoutInMillis
+                        cacheProperties.getLettuce().getSingleton(), enablePubSub, asyncResultTimeoutInMillis
                 );
             } else {
                 throw new IllegalArgumentException("unknown mode:" + mode);
             }
 
-            parseGeneralConfig(externalCacheBuilder, cacheProperties);
+            parseExternalGeneralConfig(externalCacheBuilder, cacheProperties);
 
             RedisLettuceCacheConfig config = (RedisLettuceCacheConfig) externalCacheBuilder.getConfig();
             AbstractRedisClient client = config.getRedisClient();

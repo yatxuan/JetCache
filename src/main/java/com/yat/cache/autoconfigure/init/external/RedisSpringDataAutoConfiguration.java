@@ -1,7 +1,6 @@
 package com.yat.cache.autoconfigure.init.external;
 
 import com.yat.cache.autoconfigure.JetCacheCondition;
-import com.yat.cache.autoconfigure.properties.BaseCacheProperties;
 import com.yat.cache.autoconfigure.properties.RemoteCacheProperties;
 import com.yat.cache.autoconfigure.properties.enums.RemoteCacheTypeEnum;
 import com.yat.cache.core.CacheBuilder;
@@ -52,7 +51,7 @@ public class RedisSpringDataAutoConfiguration {
         }
 
         @Override
-        protected CacheBuilder initCache(BaseCacheProperties cacheProperties, String cacheAreaWithPrefix) {
+        protected CacheBuilder initExternalCache(RemoteCacheProperties cacheProperties, String cacheAreaWithPrefix) {
             Map<String, RedisConnectionFactory> beans = applicationContext.getBeansOfType(RedisConnectionFactory.class);
             Assert.notNull(beans, () -> new CacheConfigException("no RedisConnectionFactory in spring context"));
             if (beans.isEmpty()) {
@@ -60,16 +59,17 @@ public class RedisSpringDataAutoConfiguration {
             }
             RedisConnectionFactory factory = beans.values().iterator().next();
             if (beans.size() > 1) {
-                String connectionFactoryName = getConnectionFactoryName((RemoteCacheProperties) cacheProperties, beans);
+                String connectionFactoryName = getConnectionFactoryName(cacheProperties, beans);
                 factory = beans.get(connectionFactoryName);
             }
-            ExternalCacheBuilder builder = RedisSpringDataCacheBuilder.createBuilder().connectionFactory(factory);
-            parseGeneralConfig(builder, cacheProperties);
+            ExternalCacheBuilder<?> builder = RedisSpringDataCacheBuilder.createBuilder().connectionFactory(factory);
+            parseExternalGeneralConfig(builder, cacheProperties);
             return builder;
         }
 
-        private static String getConnectionFactoryName(RemoteCacheProperties remoteCacheProperties, Map<String,
-                RedisConnectionFactory> beans) {
+        private static String getConnectionFactoryName(
+                RemoteCacheProperties remoteCacheProperties, Map<String, RedisConnectionFactory> beans
+        ) {
             String connectionFactoryName = remoteCacheProperties.getRedisData().getConnectionFactory();
 
             if (connectionFactoryName == null) {

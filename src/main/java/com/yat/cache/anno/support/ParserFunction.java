@@ -1,6 +1,6 @@
 package com.yat.cache.anno.support;
 
-import com.yat.cache.anno.api.KeyConvertor;
+import java.util.function.Function;
 
 /**
  * ClassName ParserFunction
@@ -10,7 +10,7 @@ import com.yat.cache.anno.api.KeyConvertor;
  * Date 2024/9/23 15:46
  * version 1.0
  */
-public record ParserFunction(String value) implements KeyConvertor {
+public record ParserFunction(String value) implements Function {
 
     @Override
     public Object apply(Object t) {
