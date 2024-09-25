@@ -9,7 +9,6 @@ import com.yat.cache.autoconfigure.properties.enums.RemoteCacheTypeEnum;
 import com.yat.cache.autoconfigure.properties.redis.RedisPropertiesConfig;
 import com.yat.cache.autoconfigure.properties.redis.lettuce.ClusterPropertiesConfig;
 import com.yat.cache.autoconfigure.properties.redis.lettuce.SentinelPropertiesConfig;
-import com.yat.cache.core.CacheBuilder;
 import com.yat.cache.core.external.ExternalCacheBuilder;
 import com.yat.cache.redis.lettuce.JetCacheCodec;
 import com.yat.cache.redis.lettuce.LettuceConnectionManager;
@@ -31,6 +30,7 @@ import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.ObjectUtils;
 
 import java.time.Duration;
 import java.util.List;
@@ -46,6 +46,7 @@ import java.util.Objects;
  * version 1.0
  */
 @Configuration
+@SuppressWarnings({"unchecked", "rawtypes"})
 @Conditional(RedisLettuceAutoConfiguration.RedisLettuceCondition.class)
 public class RedisLettuceAutoConfiguration {
 
@@ -70,8 +71,9 @@ public class RedisLettuceAutoConfiguration {
         }
 
         @Override
-        protected CacheBuilder initExternalCache(RemoteCacheProperties cacheProperties, String cacheAreaWithPrefix) {
-
+        protected ExternalCacheBuilder<?> createExternalCacheBuilder(
+                RemoteCacheProperties cacheProperties, String cacheAreaWithPrefix
+        ) {
             RedisModeEnum mode = cacheProperties.getLettuce().getMode();
             boolean enablePubSub = parseBroadcastChannel(cacheProperties) != null;
 
@@ -97,25 +99,48 @@ public class RedisLettuceAutoConfiguration {
             } else {
                 throw new IllegalArgumentException("unknown mode:" + mode);
             }
-
-            parseExternalGeneralConfig(externalCacheBuilder, cacheProperties);
-
-            RedisLettuceCacheConfig config = (RedisLettuceCacheConfig) externalCacheBuilder.getConfig();
-            AbstractRedisClient client = config.getRedisClient();
-            StatefulConnection<byte[], byte[]> connection = config.getConnection();
-            // eg: "remote.default.client"
-            Map<String, Object> customContainer = autoConfigureBeans.getCustomContainer();
-            customContainer.put(cacheAreaWithPrefix + ".client", client);
-            LettuceConnectionManager m = LettuceConnectionManager.defaultManager();
-            m.init(client, connection);
-            customContainer.put(cacheAreaWithPrefix + ".connection", m.connection(client));
-            customContainer.put(cacheAreaWithPrefix + ".commands", m.commands(client));
-            customContainer.put(cacheAreaWithPrefix + ".asyncCommands", m.asyncCommands(client));
-            customContainer.put(cacheAreaWithPrefix + ".reactiveCommands", m.reactiveCommands(client));
             return externalCacheBuilder;
         }
 
-        private ExternalCacheBuilder createCluster(
+        @Override
+        protected void afterExternalCacheInit(
+                ExternalCacheBuilder<?> builder, RemoteCacheProperties cacheProperties, String cacheAreaWithPrefix
+        ) {
+            setCustomContainer(cacheAreaWithPrefix, builder);
+        }
+
+        /**
+         * 为自定义缓存容器设置Redis客户端和连接等信息
+         *
+         * @param cacheAreaWithPrefix  缓存区域的前缀，用于在自定义容器中标识不同的缓存配置
+         * @param externalCacheBuilder 外部缓存构建器，用于获取Redis配置信息
+         */
+        private void setCustomContainer(String cacheAreaWithPrefix, ExternalCacheBuilder<?> externalCacheBuilder) {
+            // 获取Redis缓存配置
+            RedisLettuceCacheConfig config = (RedisLettuceCacheConfig) externalCacheBuilder.getConfig();
+            // 获取Redis客户端
+            AbstractRedisClient client = config.getRedisClient();
+            // 获取Redis连接
+            StatefulConnection<byte[], byte[]> connection = config.getConnection();
+            // 获取Spring Boot自动配置的自定义容器
+            Map<String, Object> customContainer = autoConfigureBeans.getCustomContainer();
+
+            // 向自定义容器中添加Redis客户端
+            customContainer.put(cacheAreaWithPrefix + ".client", client);
+            // 创建并初始化连接管理器
+            LettuceConnectionManager m = LettuceConnectionManager.defaultManager();
+            m.init(client, connection);
+            // 向自定义容器中添加Redis连接
+            customContainer.put(cacheAreaWithPrefix + ".connection", m.connection(client));
+            // 向自定义容器中添加Redis命令
+            customContainer.put(cacheAreaWithPrefix + ".commands", m.commands(client));
+            // 向自定义容器中添加异步Redis命令
+            customContainer.put(cacheAreaWithPrefix + ".asyncCommands", m.asyncCommands(client));
+            // 向自定义容器中添加响应式Redis命令
+            customContainer.put(cacheAreaWithPrefix + ".reactiveCommands", m.reactiveCommands(client));
+        }
+
+        private ExternalCacheBuilder<?> createCluster(
                 RemoteCacheProperties remoteCacheProperties, boolean enablePubSub, Long asyncResultTimeoutInMillis
         ) {
             StatefulRedisPubSubConnection<byte[], byte[]> pubSubConnection = null;
@@ -147,7 +172,7 @@ public class RedisLettuceAutoConfiguration {
                     .asyncResultTimeoutInMillis(asyncResultTimeoutInMillis);
         }
 
-        private ExternalCacheBuilder createSentinel(
+        private ExternalCacheBuilder<?> createSentinel(
                 RemoteCacheProperties remoteCacheProperties, boolean enablePubSub, Long asyncResultTimeoutInMillis
         ) {
             SentinelPropertiesConfig sentinel = remoteCacheProperties.getLettuce().getSentinel();
@@ -195,7 +220,7 @@ public class RedisLettuceAutoConfiguration {
             return redisLettuceCacheBuilder;
         }
 
-        private ExternalCacheBuilder createStandalone(
+        private ExternalCacheBuilder<?> createStandalone(
                 RedisPropertiesConfig singleton, boolean enablePubSub, Long asyncResultTimeoutInMillis
         ) {
             StatefulRedisPubSubConnection<byte[], byte[]> pubSubConnection = null;
@@ -252,8 +277,8 @@ public class RedisLettuceAutoConfiguration {
          * @return 返回建立的连接实例
          */
         private StatefulConnection<byte[], byte[]> clusterConnection(
-                RemoteCacheProperties remoteCacheProperties, ReadFrom readFrom, RedisClusterClient client,
-                boolean pubsub
+                RemoteCacheProperties remoteCacheProperties, ReadFrom readFrom,
+                RedisClusterClient client, boolean pubsub
         ) {
             // 获取周期性刷新使能的间隔时间，默认为60秒
             Integer enablePeriodicRefresh = remoteCacheProperties.getLettuce().getEnablePeriodicRefresh();
@@ -261,8 +286,9 @@ public class RedisLettuceAutoConfiguration {
                 enablePeriodicRefresh = 60;
             }
             // 获取是否启用所有自适应刷新触发器的标志，默认为true
-            Boolean enableAllAdaptiveRefreshTriggers = remoteCacheProperties.getLettuce().getEnableAllAdaptiveRefreshTriggers();
-            if (Objects.isNull(enablePeriodicRefresh)) {
+            Boolean enableAllAdaptiveRefreshTriggers =
+                    remoteCacheProperties.getLettuce().getEnableAllAdaptiveRefreshTriggers();
+            if (ObjectUtils.isEmpty(enablePeriodicRefresh)) {
                 enableAllAdaptiveRefreshTriggers = true;
             }
 
@@ -298,5 +324,6 @@ public class RedisLettuceAutoConfiguration {
                 return c;
             }
         }
+
     }
 }

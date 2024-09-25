@@ -27,23 +27,37 @@ public abstract class ExternalCacheAutoInit extends AbstractCacheAutoInit {
 
     @Override
     protected CacheBuilder initCache(BaseCacheProperties cacheProperties, String cacheAreaWithPrefix) {
-        return initExternalCache((RemoteCacheProperties) cacheProperties, cacheAreaWithPrefix);
+        RemoteCacheProperties remoteCacheProperties = (RemoteCacheProperties) cacheProperties;
+
+        // 获取缓存构建器
+        ExternalCacheBuilder<?> builder = createExternalCacheBuilder(
+                remoteCacheProperties, cacheAreaWithPrefix
+        );
+        // 解析通用配置
+        parseExternalGeneralConfig(builder, remoteCacheProperties);
+        // 后置逻辑
+        afterExternalCacheInit(builder, remoteCacheProperties, cacheAreaWithPrefix);
+        return builder;
     }
 
     /**
-     * 初始化 远程 缓存的抽象方法
+     * 创建一个嵌入式缓存构建器
      *
-     * @param cacheProperties     缓存属性，用于配置缓存的行为和特性
-     * @param cacheAreaWithPrefix 带前缀的缓存区域，用于区分和组织不同的缓存空间
-     * @return 返回一个初始化后的缓存构建器，用于进一步设置或操作缓存
-     * <p>
-     * 此方法为抽象方法，必须在子类中实现具体逻辑它提供了缓存系统初始化时的重要配置和定制选项，
-     * 允许根据不同的缓存区域和属性灵活地设置缓存策略不同的缓存实现类可以根据给定的属性和区域，
-     * 初始化最适合的缓存实例这个方法的存在使得缓存系统具有高度的 可配置性和灵活性，能够适应多种
-     * 多样的缓存需求和场景
+     * @return 返回一个嵌入式缓存构建器实例，具体类型视实现而定
      */
-    protected abstract CacheBuilder initExternalCache(RemoteCacheProperties cacheProperties, String cacheAreaWithPrefix);
+    protected abstract ExternalCacheBuilder<?> createExternalCacheBuilder(
+            RemoteCacheProperties cacheProperties, String cacheAreaWithPrefix
+    );
 
+    /**
+     * Description: 解析远程缓存通用配置
+     * <p>
+     * Date: 2024/9/25 15:59
+     *
+     * @param builder    缓存构建器
+     * @param properties 缓存配置
+     */
+    @SuppressWarnings({"unchecked"})
     protected void parseExternalGeneralConfig(ExternalCacheBuilder<?> builder, RemoteCacheProperties properties) {
         // 调用父类的同名方法处理通用配置
         super.parseGeneralConfig(builder, properties);
@@ -70,6 +84,19 @@ public abstract class ExternalCacheAutoInit extends AbstractCacheAutoInit {
         // 创建一个解析函数，用于根据序列化策略解析数据
         builder.setValueEncoder(new ParserFunction(valueEncoder));
         builder.setValueDecoder(new ParserFunction(valueDecoder));
+    }
+
+    /**
+     * Description: 缓存初始化后，执行一些后置逻辑
+     * <p>
+     * Date: 2024/9/25 15:52
+     *
+     * @param builder         缓存构建器
+     * @param cacheProperties 缓存配置
+     */
+    protected void afterExternalCacheInit(
+            ExternalCacheBuilder<?> builder, RemoteCacheProperties cacheProperties, String cacheAreaWithPrefix
+    ) {
     }
 
     protected String parseBroadcastChannel(RemoteCacheProperties cacheProperties) {

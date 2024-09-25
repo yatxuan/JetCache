@@ -4,7 +4,6 @@ import com.yat.cache.anno.api.DefaultCacheConstant;
 import com.yat.cache.autoconfigure.JetCacheCondition;
 import com.yat.cache.autoconfigure.properties.RemoteCacheProperties;
 import com.yat.cache.autoconfigure.properties.enums.RemoteCacheTypeEnum;
-import com.yat.cache.core.CacheBuilder;
 import com.yat.cache.core.external.ExternalCacheBuilder;
 import com.yat.cache.core.external.MockRemoteCacheBuilder;
 import org.springframework.context.annotation.Conditional;
@@ -29,6 +28,13 @@ public class MockRemoteCacheAutoConfiguration extends ExternalCacheAutoInit {
     }
 
     @Override
+    protected ExternalCacheBuilder<?> createExternalCacheBuilder(
+            RemoteCacheProperties cacheProperties, String cacheAreaWithPrefix
+    ) {
+        return MockRemoteCacheBuilder.createMockRemoteCacheBuilder();
+    }
+
+    @Override
     protected void parseExternalGeneralConfig(ExternalCacheBuilder<?> builder, RemoteCacheProperties properties) {
         super.parseGeneralConfig(builder, properties);
         MockRemoteCacheBuilder<?> b = (MockRemoteCacheBuilder<?>) builder;
@@ -38,13 +44,6 @@ public class MockRemoteCacheAutoConfiguration extends ExternalCacheAutoInit {
             limit = DefaultCacheConstant.DEFAULT_LOCAL_LIMIT;
         }
         b.limit(limit);
-    }
-
-    @Override
-    protected CacheBuilder initExternalCache(RemoteCacheProperties cacheProperties, String cacheAreaWithPrefix) {
-        MockRemoteCacheBuilder<?> builder = MockRemoteCacheBuilder.createMockRemoteCacheBuilder();
-        parseGeneralConfig(builder, cacheProperties);
-        return builder;
     }
 
     public static class MockRemoteCacheCondition extends JetCacheCondition {

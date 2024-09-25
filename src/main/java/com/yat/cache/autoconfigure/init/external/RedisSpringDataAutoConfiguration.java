@@ -3,7 +3,6 @@ package com.yat.cache.autoconfigure.init.external;
 import com.yat.cache.autoconfigure.JetCacheCondition;
 import com.yat.cache.autoconfigure.properties.RemoteCacheProperties;
 import com.yat.cache.autoconfigure.properties.enums.RemoteCacheTypeEnum;
-import com.yat.cache.core.CacheBuilder;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.external.ExternalCacheBuilder;
 import com.yat.cache.core.lang.Assert;
@@ -51,7 +50,9 @@ public class RedisSpringDataAutoConfiguration {
         }
 
         @Override
-        protected CacheBuilder initExternalCache(RemoteCacheProperties cacheProperties, String cacheAreaWithPrefix) {
+        protected ExternalCacheBuilder<?> createExternalCacheBuilder(
+                RemoteCacheProperties cacheProperties, String cacheAreaWithPrefix
+        ) {
             Map<String, RedisConnectionFactory> beans = applicationContext.getBeansOfType(RedisConnectionFactory.class);
             Assert.notNull(beans, () -> new CacheConfigException("no RedisConnectionFactory in spring context"));
             if (beans.isEmpty()) {
@@ -62,9 +63,8 @@ public class RedisSpringDataAutoConfiguration {
                 String connectionFactoryName = getConnectionFactoryName(cacheProperties, beans);
                 factory = beans.get(connectionFactoryName);
             }
-            ExternalCacheBuilder<?> builder = RedisSpringDataCacheBuilder.createBuilder().connectionFactory(factory);
-            parseExternalGeneralConfig(builder, cacheProperties);
-            return builder;
+            return RedisSpringDataCacheBuilder.createBuilder().connectionFactory(factory);
+
         }
 
         private static String getConnectionFactoryName(

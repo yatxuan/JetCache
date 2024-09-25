@@ -30,6 +30,7 @@ import java.util.function.Function;
  * Date: 2024/8/22 20:39
  * version: 1.0
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class RefreshJetCache<K, V> extends LoadingJetCache<K, V> {
 
     private static final Logger logger = LoggerFactory.getLogger(RefreshJetCache.class);
@@ -182,15 +183,16 @@ public class RefreshJetCache<K, V> extends LoadingJetCache<K, V> {
      * @return 任务ID
      */
     private Object getTaskId(K key) {
-        JetCache c = concreteCache();
-        if (c instanceof AbstractEmbeddedJetCache) {
-            return ((AbstractEmbeddedJetCache) c).buildKey(key);
-        } else if (c instanceof AbstractExternalJetCache) {
-            byte[] bs = ((AbstractExternalJetCache) c).buildKey(key);
-            return ByteBuffer.wrap(bs);
-        } else {
-            logger.error("can't getTaskId from " + c.getClass());
-            return null;
+        try (JetCache c = concreteCache()) {
+            if (c instanceof AbstractEmbeddedJetCache) {
+                return ((AbstractEmbeddedJetCache) c).buildKey(key);
+            } else if (c instanceof AbstractExternalJetCache) {
+                byte[] bs = ((AbstractExternalJetCache) c).buildKey(key);
+                return ByteBuffer.wrap(bs);
+            } else {
+                logger.error("can't getTaskId from {}", c.getClass());
+                return null;
+            }
         }
     }
 
@@ -283,7 +285,7 @@ public class RefreshJetCache<K, V> extends LoadingJetCache<K, V> {
                     load();
                 }
             } catch (Throwable e) {
-                logger.error("refresh error: key=" + key, e);
+                logger.error("refresh error: key={}", key, e);
             }
         }
 

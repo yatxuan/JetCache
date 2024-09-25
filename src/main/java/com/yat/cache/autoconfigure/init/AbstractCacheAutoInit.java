@@ -152,18 +152,17 @@ public abstract class AbstractCacheAutoInit implements InitializingBean {
      * @param builder         缓存构建器实例
      * @param cacheProperties 缓存属性配置
      */
-    protected void parseGeneralConfig(CacheBuilder builder, BaseCacheProperties cacheProperties) {
-        AbstractCacheBuilder<?> acb = (AbstractCacheBuilder) builder;
-
-        acb.keyConvertor(new ParserFunction(getKeyConvertor(cacheProperties.getKeyConvertor())));
+    @SuppressWarnings({"unchecked"})
+    protected void parseGeneralConfig(AbstractCacheBuilder<?> builder, BaseCacheProperties cacheProperties) {
+        builder.keyConvertor(new ParserFunction(getKeyConvertor(cacheProperties.getKeyConvertor())));
 
         Long expireAfterWriteInMillis = cacheProperties.getExpireAfterWriteInMillis();
         if (expireAfterWriteInMillis != null) {
-            acb.setExpireAfterWriteInMillis(expireAfterWriteInMillis);
+            builder.setExpireAfterWriteInMillis(expireAfterWriteInMillis);
         }
         Long expireAfterAccessInMillis = cacheProperties.getExpireAfterAccessInMillis();
         if (expireAfterAccessInMillis != null) {
-            acb.setExpireAfterAccessInMillis(expireAfterAccessInMillis);
+            builder.setExpireAfterAccessInMillis(expireAfterAccessInMillis);
         }
     }
 
