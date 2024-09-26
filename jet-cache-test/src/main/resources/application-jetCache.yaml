@@ -1,0 +1,37 @@
+jet-cache:
+  stat-interval-minutes: 0
+  area-in-cache-name: false
+  local-cache:
+    default:
+      type: linked_hash_map
+      key-convertor: jackson
+    testA:
+      type: caffeine
+      key-convertor: bean_key_custom
+  remote-cache:
+    default:
+      type: redis_spring_data
+      key-convertor: jackson
+      broadcast-channel: projectA
+      key-prefix: "projectA:"
+      value-encoder: kryo5
+      value-decoder: kryo5
+      expire-after-write-in-millis: 5000
+    testA:
+      type: redis_lettuce
+      key-prefix: "projectB:"
+      key-convertor: jackson
+      expire-after-write-in-millis: 5000
+      value-encoder: kryo5
+      value-decoder: kryo5
+      lettuce:
+        mode: singleton
+        read-from: replica
+        singleton:
+          database: 15
+          host: 127.0.0.1
+          port: 6379
+          password: 123456
+
+
+

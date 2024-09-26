@@ -1,9 +1,0 @@
-spring:
-  profiles:
-    active: jetCache
-  data:
-    redis:
-      host: 114.132.187.3
-      port: 6379
-      password: gm_dev2022
-      database: 15
