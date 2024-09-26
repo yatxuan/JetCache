@@ -64,7 +64,6 @@ public class RedisSpringDataAutoConfiguration {
                 factory = beans.get(connectionFactoryName);
             }
             return RedisSpringDataCacheBuilder.createBuilder().connectionFactory(factory);
-
         }
 
         private static String getConnectionFactoryName(

@@ -1,5 +1,8 @@
 package com.yat.cache.anno.config;
 
+import com.yat.cache.anno.api.JetCacheRefresh;
+import com.yat.cache.anno.api.JetCacheUpdate;
+import com.yat.cache.anno.api.JetCached;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
@@ -52,9 +55,9 @@ public @interface EnableJetMethodCache {
      * 基础包名数组，指定需要扫描的包路径
      * <ul>
      *     <li>支持通配符，如：com.yat.*</li>
-     *     <li>默认为空，表示扫描所有包</li>
+     *     <li>只有配置包路径下的缓存注解 {@link JetCached}、{@link JetCacheUpdate}、{@link JetCacheRefresh}... 才会生效 </li>
      * </ul>
      */
-    String[] basePackages() default {};
+    String[] basePackages();
 
 }
