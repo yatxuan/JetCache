@@ -1,7 +1,6 @@
 package com.yat;
 
 import com.google.gson.Gson;
-import com.yat.cache.anno.config.EnableJetMethodCache;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -14,7 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * version 1.0
  */
 @SpringBootApplication
-@EnableJetMethodCache(basePackages = "com.yat")
+// @EnableJetMethodCache(basePackages = "com.*")
 public class JetCacheApplication {
 
     public static void main(String[] args) {

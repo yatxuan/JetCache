@@ -3,8 +3,10 @@ jet-cache:
   area-in-cache-name: false
   local-cache:
     default:
-      type: linked_hash_map
+      type: caffeine
       key-convertor: jackson
+    testA1:
+      type: caffeine
   remote-cache:
     default:
       type: redis_spring_data
