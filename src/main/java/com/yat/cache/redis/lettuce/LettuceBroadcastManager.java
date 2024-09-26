@@ -1,8 +1,8 @@
 package com.yat.cache.redis.lettuce;
 
-import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.CacheResultCode;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.ResultData;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.support.BroadcastManager;
@@ -121,7 +121,10 @@ public class LettuceBroadcastManager extends BroadcastManager {
             this.pubSubAdapter = new RedisPubSubAdapter<>() {
                 @Override
                 public void message(byte[] channel, byte[] message) {
-                    processNotification(message, config.getValueDecoder());
+                    JetCacheExecutor.defaultExecutor().execute(
+                            () -> processNotification(message, config.getValueDecoder())
+                    );
+
                 }
             };
             config.getPubSubConnection().addListener(this.pubSubAdapter);

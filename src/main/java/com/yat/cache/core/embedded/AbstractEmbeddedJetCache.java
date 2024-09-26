@@ -7,21 +7,19 @@ import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.CacheResultCode;
 import com.yat.cache.core.CacheValueHolder;
 import com.yat.cache.core.MultiGetResult;
-import com.yat.cache.core.ResultData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * ClassName AbstractEmbeddedJetCache
+ * ClassName AbstractEmbeddedCache
  * <p>Description
  * AbstractEmbeddedCache 是一个本地缓存抽象类，
  * 缓存实现提供了基础结构和一些基本的操作。
@@ -168,16 +166,7 @@ public abstract class AbstractEmbeddedJetCache<K, V> extends AbstractJetCache<K,
             newKeyMap.put(buildKey(en.getKey()), cacheObject);
         }
         innerMap.putAllValues(newKeyMap);
-
-        final HashMap<K, CacheResultCode> resultMap = new HashMap<>();
-        map.keySet().forEach((key) -> resultMap.put(key, CacheResultCode.SUCCESS));
-
-        return new CacheResult(
-                CompletableFuture.completedFuture(new ResultData(
-                                CacheResultCode.SUCCESS, null, resultMap
-                        )
-                )
-        );
+        return CacheResult.SUCCESS_WITHOUT_MSG;
     }
 
     @Override

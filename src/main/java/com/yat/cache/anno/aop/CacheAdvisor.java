@@ -1,6 +1,7 @@
 package com.yat.cache.anno.aop;
 
 import com.yat.cache.anno.support.ConfigMap;
+import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractBeanFactoryPointcutAdvisor;
@@ -36,7 +37,7 @@ public class CacheAdvisor extends AbstractBeanFactoryPointcutAdvisor {
      * @return 匹配缓存操作的切点对象
      */
     @Override
-    public Pointcut getPointcut() {
+    public @NonNull Pointcut getPointcut() {
         CachePointcut pointcut = new CachePointcut(basePackages);
         pointcut.setCacheConfigMap(cacheConfigMap);
         return pointcut;

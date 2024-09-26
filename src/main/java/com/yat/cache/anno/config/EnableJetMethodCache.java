@@ -48,6 +48,13 @@ public @interface EnableJetMethodCache {
      */
     int order() default Ordered.LOWEST_PRECEDENCE;
 
-    String[] basePackages();
+    /**
+     * 基础包名数组，指定需要扫描的包路径
+     * <ul>
+     *     <li>支持通配符，如：com.yat.*</li>
+     *     <li>默认为空，表示扫描所有包</li>
+     * </ul>
+     */
+    String[] basePackages() default {};
 
 }

@@ -1,10 +1,10 @@
 package com.yat.cache.core.template;
 
-import com.yat.cache.core.JetCache;
 import com.yat.cache.core.CacheBuilder;
-import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.CacheMonitor;
 import com.yat.cache.core.CacheUtil;
+import com.yat.cache.core.JetCache;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.MultiLevelJetCache;
 import com.yat.cache.core.external.ExternalCacheBuilder;
 import com.yat.cache.core.support.BroadcastManager;
@@ -73,7 +73,13 @@ public class NotifyMonitorInstaller implements CacheMonitorInstaller {
         }
 
         // 创建缓存通知监控器实例并添加到缓存配置的监控器列表中
-        CacheMonitor monitor = new CacheNotifyMonitor(jetCacheManager, area, quickConfig.getName());
+        CacheMonitor monitor = createMonitor(jetCacheManager, quickConfig, area);
+
         jetCache.config().getMonitors().add(monitor);
     }
+
+    protected CacheMonitor createMonitor(JetCacheManager cacheManager, QuickConfig quickConfig, String area) {
+        return new CacheNotifyMonitor(cacheManager, area, quickConfig.getName());
+    }
+
 }

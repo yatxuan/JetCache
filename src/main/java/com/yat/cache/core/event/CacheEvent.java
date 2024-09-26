@@ -1,7 +1,7 @@
 package com.yat.cache.core.event;
 
 import com.yat.cache.core.JetCache;
-import lombok.AllArgsConstructor;
+import com.yat.cache.core.support.Epoch;
 import lombok.Getter;
 
 /**
@@ -14,12 +14,18 @@ import lombok.Getter;
  * version 1.0
  */
 @Getter
-@AllArgsConstructor
 public class CacheEvent {
+
+    private final long epoch = Epoch.get();
 
     /**
      * 缓存
      */
     protected JetCache jetCache;
+
+    public CacheEvent(JetCache cache) {
+        this.jetCache = cache;
+    }
+
 }
 

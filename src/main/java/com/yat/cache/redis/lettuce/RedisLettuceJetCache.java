@@ -104,9 +104,9 @@ public class RedisLettuceJetCache<K, V> extends AbstractExternalJetCache<K, V> {
         try {
             byte[] newKey = buildKey(key);
             RedisFuture<byte[]> future = stringAsyncCommands.get(newKey);
-            CacheGetResult<V> result = new CacheGetResult<>(future.handle((valueBytes, ex) -> {
+            CacheGetResult<V> result = new CacheGetResult<>(future.handleAsync((valueBytes, ex) -> {
                 if (ex != null) {
-                    JetCacheExecutor.defaultExecutor().execute(() -> logError("GET", key, ex));
+                    logError("GET", key, ex);
                     return new ResultData(ex);
                 } else {
                     try {
@@ -125,7 +125,7 @@ public class RedisLettuceJetCache<K, V> extends AbstractExternalJetCache<K, V> {
                         return new ResultData(exception);
                     }
                 }
-            }));
+            }, JetCacheExecutor.defaultExecutor()));
             setTimeout(result);
             return result;
         } catch (Exception ex) {
@@ -145,11 +145,9 @@ public class RedisLettuceJetCache<K, V> extends AbstractExternalJetCache<K, V> {
                 return new MultiGetResult<>(CacheResultCode.SUCCESS, null, resultMap);
             }
             RedisFuture<List<KeyValue<byte[], byte[]>>> mGetResults = stringAsyncCommands.mget(newKeys);
-            MultiGetResult<K, V> result = new MultiGetResult<>(mGetResults.handle((list, ex) -> {
+            MultiGetResult<K, V> result = new MultiGetResult<>(mGetResults.handleAsync((list, ex) -> {
                 if (ex != null) {
-                    JetCacheExecutor.defaultExecutor().execute(
-                            () -> logError("GET_ALL", "keys(" + keys.size() + ")", ex)
-                    );
+                    logError("GET_ALL", "keys(" + keys.size() + ")", ex);
                     return new ResultData(ex);
                 } else {
                     try {
@@ -174,7 +172,7 @@ public class RedisLettuceJetCache<K, V> extends AbstractExternalJetCache<K, V> {
                         return new ResultData(exception);
                     }
                 }
-            }));
+            }, JetCacheExecutor.defaultExecutor()));
             setTimeout(result);
             return result;
         } catch (Exception ex) {

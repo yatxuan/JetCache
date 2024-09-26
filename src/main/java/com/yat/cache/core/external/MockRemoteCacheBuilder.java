@@ -1,7 +1,7 @@
 package com.yat.cache.core.external;
 
-import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.CacheResult;
+import com.yat.cache.core.JetCacheManager;
 import com.yat.cache.core.support.BroadcastManager;
 import com.yat.cache.core.support.CacheMessage;
 import lombok.Getter;
@@ -23,12 +23,12 @@ public class MockRemoteCacheBuilder<T extends ExternalCacheBuilder<T>> extends E
      * 标记是否已开始订阅广播。
      */
     @Getter
-    private static boolean subscribeStart;
+    private static volatile boolean subscribeStart;
     /**
      * 上次发布的缓存消息。
      */
     @Getter
-    private static CacheMessage lastPublishMessage;
+    private static volatile CacheMessage lastPublishMessage;
 
     /**
      * 构造一个新的模拟远程缓存构建器实例。

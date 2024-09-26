@@ -15,10 +15,12 @@ import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * ClassName CachePointcut
- * <p>Description CachePointcut</p>
+ * <p>Description 缓存 PointCut</p>
  *
  * @author Yat
  * Date 2024/9/23 12:01
@@ -27,6 +29,9 @@ import java.lang.reflect.Modifier;
 public class CachePointcut extends StaticMethodMatcherPointcut implements ClassFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(CachePointcut.class);
+    /**
+     * 扫描缓存的包名
+     */
     private final String[] basePackages;
     /**
      * 设置缓存配置映射
@@ -55,7 +60,6 @@ public class CachePointcut extends StaticMethodMatcherPointcut implements ClassF
         // 返回匹配结果
         return b;
     }
-
 
     /**
      * 核心匹配逻辑
@@ -129,7 +133,7 @@ public class CachePointcut extends StaticMethodMatcherPointcut implements ClassF
             // 遍历基础包列表
             for (String p : basePackages) {
                 // 如果名称以基础包开始
-                if (name.startsWith(p)) {
+                if (matchesWildcard(p, name)) {
                     // 则认为该名称在配置范围内，返回true
                     return Boolean.TRUE;
                 }
@@ -247,7 +251,6 @@ public class CachePointcut extends StaticMethodMatcherPointcut implements ClassF
         }
     }
 
-
     /**
      * 根据目标类解析配置
      * 该方法递归地在目标类及其超类和接口中解析配置
@@ -306,6 +309,64 @@ public class CachePointcut extends StaticMethodMatcherPointcut implements ClassF
     }
 
     /**
+     * 使用通配符模式匹配文本字符串
+     *
+     * @param pattern 通配符模式
+     * @param text    待匹配的文本字符串
+     * @return 如果文本字符串匹配通配符模式，则返回true；否则返回false
+     * <p>
+     * 说明：
+     * 该方法首先将通配符模式转换为正则表达式，然后利用Java的Pattern和Matcher类
+     * 进行匹配。这种方法允许模式匹配具有很大的灵活性，几乎支持shell通配符的任意组合。
+     * <p>
+     * 步骤：
+     * 1. 调用convertWildcardToRegex方法将通配符模式转换为正则表达式
+     * 2. 编译正则表达式为Pattern对象
+     * 3. 创建Matcher对象，并将文本字符串作为匹配目标
+     * 4. 使用Matcher的matches方法进行全局匹配，如果整个文本字符串与模式匹配，则返回true
+     */
+    private boolean matchesWildcard(String pattern, String text) {
+        // 将通配符模式转换为正则表达式
+        String regex = convertWildcardToRegex(pattern);
+
+        // 编译正则表达式为Pattern对象
+        Pattern compiledPattern = Pattern.compile(regex);
+
+        // 创建Matcher对象，并将文本字符串作为匹配目标
+        Matcher matcher = compiledPattern.matcher(text);
+
+        // 使用Matcher的matches方法进行全局匹配，如果整个文本字符串与模式匹配，则返回true
+        return matcher.matches();
+    }
+
+    private String convertWildcardToRegex(String wildcard) {
+        StringBuilder sb = new StringBuilder(wildcard.length());
+        sb.append('^'); // 开始符号
+        for (int i = 0; i < wildcard.length(); i++) {
+            char c = wildcard.charAt(i);
+            switch (c) {
+                case '*':
+                    // 匹配任意数量的字符
+                    sb.append(".*");
+                    break;
+                case '?':
+                    // 匹配任意单个字符
+                    sb.append('.');
+                    break;
+                case '.':
+                    // 转义点号
+                    sb.append("\\.");
+                    break;
+                default:
+                    // 其他字符直接添加
+                    sb.append(c);
+            }
+        }
+        sb.append('$'); // 结束符号
+        return sb.toString();
+    }
+
+    /**
      * 根据方法和目标类生成唯一键
      * 该方法用于根据方法和目标类的信息生成一个唯一的键值这个键值可以用于
      * 在缓存机制中唯一标识一个方法在特定类上的执行它通过拼接方法所属的类名、
@@ -333,5 +394,4 @@ public class CachePointcut extends StaticMethodMatcherPointcut implements ClassF
         // 返回拼接好的唯一键值字符串
         return sb.toString();
     }
-
 }

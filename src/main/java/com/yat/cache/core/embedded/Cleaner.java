@@ -4,10 +4,9 @@ import com.yat.cache.core.support.JetCacheExecutor;
 
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * ClassName Cleaner
@@ -22,9 +21,11 @@ class Cleaner {
     /**
      * 使用弱引用保存缓存实例的链表
      */
-    static LinkedList<WeakReference<LinkedHashMapJetCache>> linkedHashMapCaches = new LinkedList<>();
+    // static LinkedList<WeakReference<LinkedHashMapJetCache>> linkedHashMapCaches = new LinkedList<>();
+    //
+    // private static final ReentrantLock reentrantLock = new ReentrantLock();
 
-    private static final ReentrantLock reentrantLock = new ReentrantLock();
+    static ConcurrentLinkedQueue<WeakReference<LinkedHashMapJetCache>> linkedHashMapCaches = new ConcurrentLinkedQueue<>();
 
     /*
       静态初始化块，启动定时任务
@@ -43,12 +44,7 @@ class Cleaner {
      * @param cache 缓存实例
      */
     static void add(LinkedHashMapJetCache cache) {
-        reentrantLock.lock();
-        try {
-            linkedHashMapCaches.add(new WeakReference<>(cache));
-        } finally {
-            reentrantLock.unlock();
-        }
+        linkedHashMapCaches.add(new WeakReference<>(cache));
     }
 
     /**
@@ -57,20 +53,15 @@ class Cleaner {
      * Date: 2024/8/22 13:21
      */
     static void run() {
-        reentrantLock.lock();
-        try {
-            Iterator<WeakReference<LinkedHashMapJetCache>> it = linkedHashMapCaches.iterator();
-            while (it.hasNext()) {
-                WeakReference<LinkedHashMapJetCache> ref = it.next();
-                LinkedHashMapJetCache c = ref.get();
-                if (c == null) {
-                    it.remove();
-                } else {
-                    c.cleanExpiredEntry();
-                }
+        Iterator<WeakReference<LinkedHashMapJetCache>> it = linkedHashMapCaches.iterator();
+        while (it.hasNext()) {
+            WeakReference<LinkedHashMapJetCache> ref = it.next();
+            LinkedHashMapJetCache c = ref.get();
+            if (c == null) {
+                it.remove();
+            } else {
+                c.cleanExpiredEntry();
             }
-        } finally {
-            reentrantLock.unlock();
         }
     }
 

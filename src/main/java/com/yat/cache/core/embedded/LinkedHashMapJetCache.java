@@ -11,8 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * ClassName LinkedHashMapCache
@@ -55,8 +54,7 @@ public class LinkedHashMapJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> 
     final class LRUMap extends LinkedHashMap implements InnerMap {
 
         private final int max;
-        //        private final Object lockObj;
-        private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+        private final ReentrantLock lock = new ReentrantLock();
 
         public LRUMap(int max) {
             super((int) (max * 1.4f), 0.75f, true);
@@ -70,8 +68,7 @@ public class LinkedHashMapJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> 
         }
 
         void cleanExpiredEntry() {
-            Lock lock = readWriteLock.writeLock();
-            lock.lock();
+             lock.lock();
             try {
                 for (Iterator it = entrySet().iterator(); it.hasNext(); ) {
                     Map.Entry en = (Map.Entry) it.next();
@@ -83,9 +80,9 @@ public class LinkedHashMapJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> 
                     } else {
                         // assert false
                         if (value == null) {
-                            logger.error("key " + en.getKey() + " is null");
+                            logger.error("key {} is null", en.getKey());
                         } else {
-                            logger.error("value of key " + en.getKey() + " is not a CacheValueHolder. type=" + value.getClass());
+                            logger.error("value of key {} is not a CacheValueHolder. type={}", en.getKey(), value.getClass());
                         }
                     }
                 }
@@ -96,7 +93,6 @@ public class LinkedHashMapJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> 
 
         @Override
         public Object getValue(Object key) {
-            Lock lock = readWriteLock.readLock();
             lock.lock();
             try {
                 return get(key);
@@ -107,7 +103,6 @@ public class LinkedHashMapJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> 
 
         @Override
         public Map getAllValues(Collection keys) {
-            Lock lock = readWriteLock.readLock();
             lock.lock();
             Map values = new HashMap<>();
             try {
@@ -125,7 +120,6 @@ public class LinkedHashMapJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> 
 
         @Override
         public void putValue(Object key, Object value) {
-            Lock lock = readWriteLock.writeLock();
             lock.lock();
             try {
                 put(key, value);
@@ -136,7 +130,6 @@ public class LinkedHashMapJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> 
 
         @Override
         public void putAllValues(Map map) {
-            Lock lock = readWriteLock.writeLock();
             lock.lock();
             try {
                 Set<Map.Entry> set = map.entrySet();
@@ -150,7 +143,6 @@ public class LinkedHashMapJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> 
 
         @Override
         public boolean removeValue(Object key) {
-            Lock lock = readWriteLock.writeLock();
             lock.lock();
             try {
                 return remove(key) != null;
@@ -162,7 +154,6 @@ public class LinkedHashMapJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> 
         @Override
         @SuppressWarnings("unchecked")
         public boolean putIfAbsentValue(Object key, Object value) {
-            Lock lock = readWriteLock.writeLock();
             lock.lock();
             try {
                 CacheValueHolder h = (CacheValueHolder) get(key);
@@ -179,7 +170,6 @@ public class LinkedHashMapJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> 
 
         @Override
         public void removeAllValues(Collection keys) {
-            Lock lock = readWriteLock.writeLock();
             lock.lock();
             try {
                 for (Object k : keys) {

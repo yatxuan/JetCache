@@ -10,6 +10,7 @@ import com.yat.cache.core.event.CacheRemoveAllEvent;
 import com.yat.cache.core.event.CacheRemoveEvent;
 import com.yat.cache.core.exception.CacheException;
 import com.yat.cache.core.external.AbstractExternalJetCache;
+import com.yat.cache.core.support.JetCacheExecutor;
 import com.yat.cache.core.support.SquashedLogger;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -107,10 +109,9 @@ public abstract class AbstractJetCache<K, V> implements JetCache<K, V> {
         } else {
             result = do_GET(key);
         }
-        result.future().thenRun(() -> {
-            CacheGetEvent event = new CacheGetEvent(this, System.currentTimeMillis() - t, key, result);
-            notify(event);
-        });
+
+        CacheGetEvent event = new CacheGetEvent(this, System.currentTimeMillis() - t, key, result);
+        notify(result, event);
         return result;
     }
 
@@ -123,10 +124,9 @@ public abstract class AbstractJetCache<K, V> implements JetCache<K, V> {
         } else {
             result = do_GET_ALL(keys);
         }
-        result.future().thenRun(() -> {
-            CacheGetAllEvent event = new CacheGetAllEvent(this, System.currentTimeMillis() - t, keys, result);
-            notify(event);
-        });
+
+        CacheGetAllEvent event = new CacheGetAllEvent(this, System.currentTimeMillis() - t, keys, result);
+        notify(result, event);
         return result;
     }
 
@@ -138,12 +138,16 @@ public abstract class AbstractJetCache<K, V> implements JetCache<K, V> {
      */
     protected abstract MultiGetResult<K, V> do_GET_ALL(Set<? extends K> keys);
 
-    /**
-     * 通知缓存事件
-     *
-     * @param e 缓存事件
-     */
-    public void notify(CacheEvent e) {
+    private void notify(CacheResult r, CacheEvent e) {
+        CompletionStage<?> f = r.future();
+        if (f.toCompletableFuture().isDone()) {
+            notify0(e);
+        } else {
+            f.thenRunAsync(() -> notify0(e), JetCacheExecutor.defaultExecutor());
+        }
+    }
+
+    private void notify0(CacheEvent e) {
         List<CacheMonitor> monitors = config().getMonitors();
         for (CacheMonitor m : monitors) {
             m.afterOperation(e);
@@ -159,10 +163,9 @@ public abstract class AbstractJetCache<K, V> implements JetCache<K, V> {
         } else {
             result = do_PUT(key, value, expireAfterWrite, timeUnit);
         }
-        result.future().thenRun(() -> {
-            CachePutEvent event = new CachePutEvent(this, System.currentTimeMillis() - t, key, value, result);
-            notify(event);
-        });
+
+        CachePutEvent event = new CachePutEvent(this, System.currentTimeMillis() - t, key, value, result);
+        notify(result, event);
         return result;
     }
 
@@ -186,10 +189,9 @@ public abstract class AbstractJetCache<K, V> implements JetCache<K, V> {
         } else {
             result = do_PUT_ALL(map, expireAfterWrite, timeUnit);
         }
-        result.future().thenRun(() -> {
-            CachePutAllEvent event = new CachePutAllEvent(this, System.currentTimeMillis() - t, map, result);
-            notify(event);
-        });
+
+        CachePutAllEvent event = new CachePutAllEvent(this, System.currentTimeMillis() - t, map, result);
+        notify(result, event);
         return result;
     }
 
@@ -214,10 +216,9 @@ public abstract class AbstractJetCache<K, V> implements JetCache<K, V> {
         } else {
             result = do_PUT_IF_ABSENT(key, value, expireAfterWrite, timeUnit);
         }
-        result.future().thenRun(() -> {
-            CachePutEvent event = new CachePutEvent(this, System.currentTimeMillis() - t, key, value, result);
-            notify(event);
-        });
+
+        CachePutEvent event = new CachePutEvent(this, System.currentTimeMillis() - t, key, value, result);
+        notify(result, event);
         return result;
     }
 
@@ -230,10 +231,9 @@ public abstract class AbstractJetCache<K, V> implements JetCache<K, V> {
         } else {
             result = do_REMOVE(key);
         }
-        result.future().thenRun(() -> {
-            CacheRemoveEvent event = new CacheRemoveEvent(this, System.currentTimeMillis() - t, key, result);
-            notify(event);
-        });
+
+        CacheRemoveEvent event = new CacheRemoveEvent(this, System.currentTimeMillis() - t, key, result);
+        notify(result, event);
         return result;
     }
 
@@ -272,12 +272,8 @@ public abstract class AbstractJetCache<K, V> implements JetCache<K, V> {
             result = do_REMOVE_ALL(keys);
         }
         // 在异步任务完成后执行
-        result.future().thenRun(() -> {
-            // 根据操作结果和耗时生成事件
-            CacheRemoveAllEvent event = new CacheRemoveAllEvent(this, System.currentTimeMillis() - t, keys, result);
-            // 通知事件
-            notify(event);
-        });
+        CacheRemoveAllEvent event = new CacheRemoveAllEvent(this, System.currentTimeMillis() - t, keys, result);
+        notify(result, event);
         return result;
     }
 
@@ -308,6 +304,15 @@ public abstract class AbstractJetCache<K, V> implements JetCache<K, V> {
     protected abstract CacheResult do_PUT_IF_ABSENT(K key, V value, long expireAfterWrite, TimeUnit timeUnit);
 
     /**
+     * 通知缓存事件
+     *
+     * @param e 缓存事件
+     */
+    public void notify(CacheEvent e) {
+        notify0(e);
+    }
+
+    /**
      * 判断是否需要更新缓存
      *
      * @param loadedValue                   加载的值
@@ -335,7 +340,7 @@ public abstract class AbstractJetCache<K, V> implements JetCache<K, V> {
      * @param cacheNullWhenLoaderReturnNull 当加载器返回null时是否缓存null
      * @param expireAfterWrite              写入后过期时间
      * @param timeUnit                      时间单位
-     * @param jetCache                         缓存实例
+     * @param jetCache                      缓存实例
      * @return 缓存值
      */
     static <K, V> V computeIfAbsentImpl(K key, Function<K, V> loader, boolean cacheNullWhenLoaderReturnNull,
@@ -379,7 +384,6 @@ public abstract class AbstractJetCache<K, V> implements JetCache<K, V> {
             return loadedValue;
         }
     }
-
 
     /**
      * 同步加载数据
