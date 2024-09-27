@@ -16,7 +16,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>common-jet-cache</module>
+        <module>jet-cache</module>
         <module>jet-cache-quickly</module>
         <module>jet-cache-test</module>
         <module>jet-cache-quickly-test</module>

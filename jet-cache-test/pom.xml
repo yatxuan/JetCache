@@ -49,7 +49,7 @@
 
         <dependency>
             <groupId>com.yat</groupId>
-            <artifactId>common-jet-cache</artifactId>
+            <artifactId>jet-cache</artifactId>
         </dependency>
 
     </dependencies>

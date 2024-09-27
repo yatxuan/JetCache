@@ -9,7 +9,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>common-jet-cache</artifactId>
+    <artifactId>jet-cache</artifactId>
     <description>基于JetCache 缓存框架,改造的缓存框架</description>
 
     <properties>
