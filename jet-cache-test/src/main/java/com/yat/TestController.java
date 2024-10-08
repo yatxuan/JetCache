@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class TestController {
 
-    @Autowired
     private TestServer testServer;
 
     @GetMapping("/cached")
@@ -35,5 +34,10 @@ public class TestController {
     @GetMapping("/getCache")
     public String getCache() {
         return testServer.getCacheDemo();
+    }
+
+    @Autowired
+    public void setTestServer(TestServer testServer) {
+        this.testServer = testServer;
     }
 }

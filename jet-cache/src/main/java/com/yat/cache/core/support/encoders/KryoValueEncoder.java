@@ -74,9 +74,7 @@ public class KryoValueEncoder extends AbstractValueEncoder {
             kryoCache.getKryo().writeClassAndObject(output, value);
             return output.toBytes();
         } catch (Exception e) {
-            StringBuilder sb = new StringBuilder("Kryo Encode error. ");
-            sb.append("msg=").append(e.getMessage());
-            throw new CacheEncodeException(sb.toString(), e);
+            throw new CacheEncodeException("Kryo Encode error. msg=" + e.getMessage(), e);
         } finally {
             if (kryoCache != null) {
                 kryoCacheObjectPool.returnObject(kryoCache);

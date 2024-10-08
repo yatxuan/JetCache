@@ -106,4 +106,14 @@ public interface DefaultCacheConstant {
     static boolean isUndefined(int value) {
         return UNDEFINED_INT == value;
     }
+
+    /**
+     * 判断给定的整型值是否 不为 未定义值。
+     *
+     * @param value 待检查的整型值
+     * @return 如果值 不为 未定义整型值，则返回true
+     */
+    static boolean isNotUndefined(int value) {
+        return UNDEFINED_INT != value;
+    }
 }

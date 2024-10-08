@@ -68,7 +68,7 @@ public class LinkedHashMapJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> 
         }
 
         void cleanExpiredEntry() {
-             lock.lock();
+            lock.lock();
             try {
                 for (Iterator it = entrySet().iterator(); it.hasNext(); ) {
                     Map.Entry en = (Map.Entry) it.next();
@@ -82,7 +82,8 @@ public class LinkedHashMapJetCache<K, V> extends AbstractEmbeddedJetCache<K, V> 
                         if (value == null) {
                             logger.error("key {} is null", en.getKey());
                         } else {
-                            logger.error("value of key {} is not a CacheValueHolder. type={}", en.getKey(), value.getClass());
+                            logger.error("value of key {} is not a CacheValueHolder. type={}", en.getKey(),
+                                    value.getClass());
                         }
                     }
                 }

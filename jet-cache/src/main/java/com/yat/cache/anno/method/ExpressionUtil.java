@@ -19,11 +19,11 @@ import org.slf4j.LoggerFactory;
  */
 class ExpressionUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(ExpressionUtil.class);
     /**
      * 评估失败时返回的特殊对象
      */
-    static Object EVAL_FAILED = new Object();
-    private static final Logger logger = LoggerFactory.getLogger(ExpressionUtil.class);
+    static final Object EVAL_FAILED = new Object();
 
     /**
      * 评估缓存操作的前置条件是否满足。

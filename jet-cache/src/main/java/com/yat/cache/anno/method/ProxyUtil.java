@@ -22,10 +22,10 @@ public class ProxyUtil {
     /**
      * 根据注解为给定目标对象创建代理对象
      *
-     * @param target         目标对象，即需要为其创建代理的对象
-     * @param configProvider 配置提供者，用于获取缓存配置上下文
-     * @param jetCacheManager   缓存管理器，用于管理缓存实例和缓存逻辑
-     * @param <T>            目标对象的泛型类型
+     * @param target          目标对象，即需要为其创建代理的对象
+     * @param configProvider  配置提供者，用于获取缓存配置上下文
+     * @param jetCacheManager 缓存管理器，用于管理缓存实例和缓存逻辑
+     * @param <T>             目标对象的泛型类型
      * @return 目标对象的代理对象，能够处理缓存逻辑
      */
     public static <T> T getProxyByAnnotation(T target, ConfigProvider configProvider, JetCacheManager jetCacheManager) {

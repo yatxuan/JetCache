@@ -1,10 +1,10 @@
 package com.yat.cache.core;
 
+import cn.hutool.core.lang.Assert;
 import com.yat.cache.anno.api.CacheType;
 import com.yat.cache.core.embedded.EmbeddedCacheBuilder;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.external.ExternalCacheBuilder;
-import com.yat.cache.core.lang.Assert;
 import com.yat.cache.core.support.BroadcastManager;
 import com.yat.cache.core.template.CacheBuilderTemplate;
 import com.yat.cache.core.template.CacheMonitorInstaller;

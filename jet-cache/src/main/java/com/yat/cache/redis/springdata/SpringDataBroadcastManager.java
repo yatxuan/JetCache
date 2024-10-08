@@ -42,9 +42,10 @@ public class SpringDataBroadcastManager extends BroadcastManager {
      * 初始化广播管理器。
      *
      * @param jetCacheManager 缓存管理器，用于管理不同的缓存。
-     * @param config       配置信息，包含Redis连接工厂等必要设置。
+     * @param config          配置信息，包含Redis连接工厂等必要设置。
      */
-    public SpringDataBroadcastManager(JetCacheManager jetCacheManager, RedisSpringDataCacheConfig<Object, byte[]> config) {
+    public SpringDataBroadcastManager(JetCacheManager jetCacheManager,
+                                      RedisSpringDataCacheConfig<Object, byte[]> config) {
         super(jetCacheManager);
         this.config = config;
         checkConfig(config);

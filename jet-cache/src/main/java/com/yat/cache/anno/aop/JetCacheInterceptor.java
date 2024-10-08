@@ -1,5 +1,6 @@
 package com.yat.cache.anno.aop;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.yat.cache.anno.method.CacheHandler;
 import com.yat.cache.anno.method.CacheInvokeConfig;
 import com.yat.cache.anno.method.CacheInvokeContext;
@@ -72,7 +73,8 @@ public class JetCacheInterceptor implements MethodInterceptor, ApplicationContex
         if (configProvider == null) {
             configProvider = applicationContext.getBean(ConfigProvider.class);
         }
-        if (configProvider != null && globalCacheConfig == null) {
+
+        if (ObjectUtil.isNotNull(configProvider) && globalCacheConfig == null) {
             globalCacheConfig = configProvider.getGlobalCacheConfig();
         }
         // 如果全局方法缓存未启用，则直接执行方法
@@ -82,7 +84,7 @@ public class JetCacheInterceptor implements MethodInterceptor, ApplicationContex
         // 初始化缓存管理器
         if (jetCacheManager == null) {
             jetCacheManager = applicationContext.getBean(JetCacheManager.class);
-            if (jetCacheManager == null) {
+            if (ObjectUtil.isNull(jetCacheManager)) {
                 logger.error("There is no cache manager instance in spring context");
                 return invocation.proceed();
             }
@@ -99,15 +101,13 @@ public class JetCacheInterceptor implements MethodInterceptor, ApplicationContex
             cac = cacheConfigMap.getByMethodInfo(key);
         }
 
-        /*
-        if(logger.isTraceEnabled()){
+        if (logger.isTraceEnabled()) {
             logger.trace("JetCacheInterceptor invoke. foundJetCacheConfig={}, method={}.{}(), targetClass={}",
                     cac != null,
                     method.getDeclaringClass().getName(),
                     method.getName(),
                     invocation.getThis() == null ? null : invocation.getThis().getClass().getName());
         }
-        */
 
         // 如果没有找到缓存配置，则直接执行方法
         if (cac == null || cac == CacheInvokeConfig.getNoCacheInvokeConfigInstance()) {
@@ -115,7 +115,8 @@ public class JetCacheInterceptor implements MethodInterceptor, ApplicationContex
         }
 
         // 创建缓存调用上下文并设置相关参数
-        CacheInvokeContext context = configProvider.newContext(jetCacheManager).createCacheInvokeContext(cacheConfigMap);
+        CacheInvokeContext context = configProvider.newContext(jetCacheManager)
+                .createCacheInvokeContext(cacheConfigMap);
         context.setTargetObject(invocation.getThis());
         context.setInvoker(invocation::proceed);
         context.setMethod(method);

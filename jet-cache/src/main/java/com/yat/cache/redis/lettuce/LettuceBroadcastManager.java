@@ -63,7 +63,7 @@ public class LettuceBroadcastManager extends BroadcastManager {
      * 构造函数，初始化广播管理器。
      *
      * @param jetCacheManager 缓存管理器
-     * @param config       Redis缓存配置
+     * @param config          Redis缓存配置
      * @throws CacheConfigException 如果PubSub连接未设置，抛出此异常
      */
     public LettuceBroadcastManager(JetCacheManager jetCacheManager, RedisLettuceCacheConfig<Object, Object> config) {

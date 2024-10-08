@@ -21,11 +21,8 @@ class Cleaner {
     /**
      * 使用弱引用保存缓存实例的链表
      */
-    // static LinkedList<WeakReference<LinkedHashMapJetCache>> linkedHashMapCaches = new LinkedList<>();
-    //
-    // private static final ReentrantLock reentrantLock = new ReentrantLock();
-
-    static ConcurrentLinkedQueue<WeakReference<LinkedHashMapJetCache>> linkedHashMapCaches = new ConcurrentLinkedQueue<>();
+    static ConcurrentLinkedQueue<WeakReference<LinkedHashMapJetCache>> linkedHashMapCaches =
+            new ConcurrentLinkedQueue<>();
 
     /*
       静态初始化块，启动定时任务

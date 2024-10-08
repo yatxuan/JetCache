@@ -1,11 +1,11 @@
 package com.yat.cache.autoconfigure.init.external;
 
+import cn.hutool.core.lang.Assert;
 import com.yat.cache.autoconfigure.JetCacheCondition;
 import com.yat.cache.autoconfigure.properties.RemoteCacheProperties;
 import com.yat.cache.autoconfigure.properties.enums.RemoteCacheTypeEnum;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.external.ExternalCacheBuilder;
-import com.yat.cache.core.lang.Assert;
 import com.yat.cache.redis.springdata.RedisSpringDataCacheBuilder;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

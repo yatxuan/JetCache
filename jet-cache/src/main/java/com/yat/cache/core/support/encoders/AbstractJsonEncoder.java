@@ -50,10 +50,7 @@ public abstract class AbstractJsonEncoder extends AbstractValueEncoder {
             }
             return buffer;
         } catch (Throwable e) {
-            String message = new StringBuilder("Json Encode error. ")
-                    .append("msg=")
-                    .append(e.getMessage())
-                    .toString();
+            String message = "Json Encode error. msg=" + e.getMessage();
             throw new CacheEncodeException(message, e);
         }
     }

@@ -1,8 +1,8 @@
 package com.yat.cache.anno.support;
 
+import cn.hutool.core.lang.Assert;
 import com.yat.cache.autoconfigure.properties.enums.SerialPolicyTypeEnum;
 import com.yat.cache.core.exception.CacheConfigException;
-import com.yat.cache.core.lang.Assert;
 import com.yat.cache.core.support.encoders.GsonValueDecoder;
 import com.yat.cache.core.support.encoders.GsonValueEncoder;
 import com.yat.cache.core.support.encoders.JavaValueDecoder;

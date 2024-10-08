@@ -14,13 +14,12 @@ import org.springframework.stereotype.Service;
  * version 1.0
  */
 @Service
-public class TestServer  {
+public class TestServer {
 
-    @Autowired
     private UserService userService;
 
     public void createCacheDemo() {
-        JetCacheUtil.put( "K1", "V1");
+        JetCacheUtil.put("K1", "V1");
         System.out.println("get from orderCache:" + JetCacheUtil.get("K1"));
     }
 
@@ -30,5 +29,10 @@ public class TestServer  {
 
     public Dict cached() {
         return userService.loadUser(1);
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 }

@@ -1,5 +1,6 @@
 package com.yat.cache.autoconfigure.utils;
 
+import lombok.Getter;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.PropertySource;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class ConfigTree {
 
     private final ConfigurableEnvironment environment;
+    @Getter
     private final String prefix;
 
     public ConfigTree(ConfigurableEnvironment environment, String prefix) {
@@ -79,10 +81,6 @@ public class ConfigTree {
         } else {
             return defaultValue;
         }
-    }
-
-    public String getPrefix() {
-        return prefix;
     }
 
     public Set<String> directChildrenKeys() {

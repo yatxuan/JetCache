@@ -83,7 +83,6 @@ public abstract class AbstractCacheBuilder<T extends AbstractCacheBuilder<T>> im
      * 在构建缓存之前可以执行一些操作
      */
     protected void beforeBuild() {
-
     }
 
     /**

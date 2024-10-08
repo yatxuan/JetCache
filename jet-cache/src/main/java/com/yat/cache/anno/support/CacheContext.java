@@ -41,7 +41,8 @@ public class CacheContext {
      */
     private final JetCacheManager jetCacheManager;
 
-    public CacheContext(JetCacheManager jetCacheManager, ConfigProvider configProvider, GlobalCacheConfig globalCacheConfig) {
+    public CacheContext(JetCacheManager jetCacheManager, ConfigProvider configProvider,
+                        GlobalCacheConfig globalCacheConfig) {
         this.jetCacheManager = jetCacheManager;
         this.globalCacheConfig = globalCacheConfig;
         this.configProvider = configProvider;

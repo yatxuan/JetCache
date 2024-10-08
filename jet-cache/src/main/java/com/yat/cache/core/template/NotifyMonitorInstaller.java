@@ -41,7 +41,7 @@ public class NotifyMonitorInstaller implements CacheMonitorInstaller {
      *
      * @param jetCacheManager 缓存管理器
      * @param jetCache        缓存实例
-     * @param quickConfig  快速配置对象，包含缓存的配置信息
+     * @param quickConfig     快速配置对象，包含缓存的配置信息
      */
     @Override
     public void addMonitors(JetCacheManager jetCacheManager, JetCache jetCache, QuickConfig quickConfig) {

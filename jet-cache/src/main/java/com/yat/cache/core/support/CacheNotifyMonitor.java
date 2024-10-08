@@ -50,7 +50,7 @@ public class CacheNotifyMonitor implements CacheMonitor {
      * 构造一个新的 CacheNotifyMonitor 实例，使用默认缓存区域。
      *
      * @param jetCacheManager 缓存管理器。
-     * @param cacheName    缓存名称。
+     * @param cacheName       缓存名称。
      */
     public CacheNotifyMonitor(JetCacheManager jetCacheManager, String cacheName) {
         this(jetCacheManager, DefaultCacheConstant.DEFAULT_AREA, cacheName);
@@ -60,8 +60,8 @@ public class CacheNotifyMonitor implements CacheMonitor {
      * 构造一个新的 CacheNotifyMonitor 实例。
      *
      * @param jetCacheManager 缓存管理器。
-     * @param area         缓存区域名称。
-     * @param cacheName    缓存名称。
+     * @param area            缓存区域名称。
+     * @param cacheName       缓存名称。
      */
     public CacheNotifyMonitor(JetCacheManager jetCacheManager, String area, String cacheName) {
         this.broadcastManager = jetCacheManager.getBroadcastManager(area);

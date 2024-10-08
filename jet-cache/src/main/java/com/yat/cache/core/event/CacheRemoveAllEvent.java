@@ -32,10 +32,10 @@ public class CacheRemoveAllEvent extends CacheEvent {
     /**
      * 构造一个新的 CacheRemoveAllEvent 实例。
      *
-     * @param jetCache  发生事件的缓存实例。
-     * @param millis 事件发生的时间戳（毫秒）。
-     * @param keys   要从缓存中移除的键集合。
-     * @param result 移除操作的结果。
+     * @param jetCache 发生事件的缓存实例。
+     * @param millis   事件发生的时间戳（毫秒）。
+     * @param keys     要从缓存中移除的键集合。
+     * @param result   移除操作的结果。
      */
     public CacheRemoveAllEvent(JetCache jetCache, long millis, Set keys, CacheResult result) {
         super(jetCache);

@@ -50,7 +50,7 @@ public interface JetCacheManager {
      * 放置一个缓存实例，默认区域为 DEFAULT_AREA。
      *
      * @param cacheName 缓存的名称
-     * @param jetCache     缓存实例
+     * @param jetCache  缓存实例
      */
     default void putCache(String cacheName, JetCache jetCache) {
         putCache(DefaultCacheConstant.DEFAULT_AREA, cacheName, jetCache);
@@ -61,7 +61,7 @@ public interface JetCacheManager {
      *
      * @param area      缓存所在的区域
      * @param cacheName 缓存的名称
-     * @param jetCache     缓存实例
+     * @param jetCache  缓存实例
      */
     void putCache(String area, String cacheName, JetCache jetCache);
 

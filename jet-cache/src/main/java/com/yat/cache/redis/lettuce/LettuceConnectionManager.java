@@ -1,8 +1,8 @@
 package com.yat.cache.redis.lettuce;
 
+import cn.hutool.core.lang.Assert;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.exception.CacheException;
-import com.yat.cache.core.lang.Assert;
 import io.lettuce.core.AbstractRedisClient;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulConnection;
@@ -220,19 +220,6 @@ public class LettuceConnectionManager {
         if (lo == null) {
             return;
         }
-
-        /*
-        // 以下代码块为未启用的冗余代码，用于显示旧版本的处理逻辑
-        if (lo.commands != null && lo.commands instanceof RedisClusterCommands) {
-            ((RedisClusterCommands) lo.commands).close();
-        }
-        if (lo.asyncCommands != null && lo.asyncCommands instanceof RedisClusterAsyncCommands) {
-            ((RedisClusterAsyncCommands) lo.asyncCommands).close();
-        }
-        if (lo.reactiveCommands != null && lo.reactiveCommands instanceof RedisClusterReactiveCommands) {
-            ((RedisClusterReactiveCommands) lo.reactiveCommands).close();
-        }
-        */
 
         // 关闭与LettuceObjects对象关联的连接
         if (lo.connection != null) {

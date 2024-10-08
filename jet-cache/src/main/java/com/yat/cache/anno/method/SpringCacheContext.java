@@ -24,7 +24,7 @@ public class SpringCacheContext extends CacheContext {
     /**
      * 初始化SpringCacheContext
      *
-     * @param jetCacheManager       缓存管理器，负责缓存的创建、维护和销毁
+     * @param jetCacheManager    缓存管理器，负责缓存的创建、维护和销毁
      * @param configProvider     配置提供者，用于从配置属性文件中读取缓存配置
      * @param globalCacheConfig  全局缓存配置，用于存储全局缓存设置
      * @param applicationContext Spring应用上下文，提供Spring环境下的依赖注入功能

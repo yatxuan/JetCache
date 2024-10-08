@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationContext;
  */
 public class SpringCacheInvokeContext extends CacheInvokeContext {
 
-    protected ApplicationContext context;
+    protected final ApplicationContext context;
 
     /**
      * 初始化 SpringCacheInvokeContext 实例。

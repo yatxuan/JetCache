@@ -128,7 +128,7 @@ public class DefaultMetricsManager {
             long delay = firstDelay(resetTime, resetTimeUnit);
             future = JetCacheExecutor.defaultExecutor().scheduleAtFixedRate(
                     cmd, delay, resetTimeUnit.toMillis(resetTime), TimeUnit.MILLISECONDS);
-            logger.info("cache stat period at " + resetTime + " " + resetTimeUnit);
+            logger.info("cache stat period at {} {}", resetTime, resetTimeUnit);
         } finally {
             reentrantLock.unlock();
         }

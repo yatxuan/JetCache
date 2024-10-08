@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * ConfigSelector类用于根据AdviceMode选择合适的配置导入
- * 它扩展了AdviceModeImportSelector，并针对EnableMethodCache注解进行了配置
+ * 它扩展了AdviceModeImportSelector，并针对EnableJetMethodCache注解进行了配置
  * 该类的主要作用是决定使用代理模式还是切面模式，并返回相应的配置类
  *
  * @author Yat

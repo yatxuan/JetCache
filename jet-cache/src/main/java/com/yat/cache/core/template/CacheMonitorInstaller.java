@@ -18,7 +18,7 @@ public interface CacheMonitorInstaller {
      *
      * @param jetCacheManager 缓存管理器实例
      * @param jetCache        缓存实例
-     * @param quickConfig  快速配置对象
+     * @param quickConfig     快速配置对象
      */
     void addMonitors(JetCacheManager jetCacheManager, JetCache jetCache, QuickConfig quickConfig);
 }

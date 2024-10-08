@@ -22,7 +22,7 @@ public class CacheUtil {
      * 创建一个ProxyLoader用于加载缓存数据。该方法适用于传入的加载器已经是ProxyLoader的情况，
      * 或者需要创建一个新的ProxyLoader实例。
      *
-     * @param jetCache         缓存实例，用于存储和加载数据。
+     * @param jetCache      缓存实例，用于存储和加载数据。
      * @param loader        缓存加载器，用于加载数据。
      * @param eventConsumer 事件消费者，用于处理缓存加载事件。
      * @param <K>           缓存键的类型。
@@ -58,7 +58,7 @@ public class CacheUtil {
      * 创建一个ProxyLoader用于加载缓存数据。该方法适用于传入的加载器是一个Function的情况，
      * 或者需要根据Function创建一个新的ProxyLoader实例。
      *
-     * @param jetCache         缓存实例，用于存储和加载数据。
+     * @param jetCache      缓存实例，用于存储和加载数据。
      * @param loader        用于加载数据的函数。
      * @param eventConsumer 事件消费者，用于处理缓存加载事件。
      * @param <K>           缓存键的类型。

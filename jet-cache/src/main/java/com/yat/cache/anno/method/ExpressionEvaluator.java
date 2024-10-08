@@ -75,7 +75,7 @@ public class ExpressionEvaluator implements Function<Object, Object> {
                 rt[0] = EL.SPRING_EL;
             } else if ("mvel".equals(s)) {
                 rt[0] = EL.MVEL;
-            }/* else if ("buildin".equals(s)) {
+            }/* else if ("buildIn".equalsIgnoreCase(s)) {
                 rt[0] = EL.BUILD_IN;
             } */ else {
                 throw new CacheConfigException("Can't parse \"" + script + "\"");

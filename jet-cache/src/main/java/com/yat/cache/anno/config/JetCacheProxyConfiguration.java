@@ -30,25 +30,25 @@ public class JetCacheProxyConfiguration implements ImportAware, ApplicationConte
      */
     private ApplicationContext applicationContext;
     /**
-     * 用于存储@EnableMethodCache注解的属性
+     * 用于存储@EnableJetMethodCache注解的属性
      */
-    protected AnnotationAttributes enableMethodCache;
+    protected AnnotationAttributes enableJetMethodCache;
 
     /**
      * 设置导入元数据
-     * 从导入元数据中提取@EnableMethodCache注解的属性
+     * 从导入元数据中提取@EnableJetMethodCache注解的属性
      *
      * @param importMetadata 导入元数据
-     * @throws IllegalArgumentException 如果@EnableMethodCache注解不在导入类上则抛出异常
+     * @throws IllegalArgumentException 如果@EnableJetMethodCache注解不在导入类上则抛出异常
      */
     @Override
     public void setImportMetadata(AnnotationMetadata importMetadata) {
-        this.enableMethodCache = AnnotationAttributes.fromMap(
+        this.enableJetMethodCache = AnnotationAttributes.fromMap(
                 importMetadata.getAnnotationAttributes(EnableJetMethodCache.class.getName(), false)
         );
-        if (this.enableMethodCache == null) {
+        if (this.enableJetMethodCache == null) {
             throw new IllegalArgumentException(
-                    "@EnableMethodCache is not present on importing class " + importMetadata.getClassName()
+                    "@EnableJetMethodCache is not present on importing class " + importMetadata.getClassName()
             );
         }
     }
@@ -70,8 +70,8 @@ public class JetCacheProxyConfiguration implements ImportAware, ApplicationConte
     public CacheAdvisor jetcacheAdvisor(JetCacheInterceptor jetCacheInterceptor) {
         CacheAdvisor advisor = new CacheAdvisor();
         advisor.setAdvice(jetCacheInterceptor);
-        advisor.setBasePackages(this.enableMethodCache.getStringArray("basePackages"));
-        advisor.setOrder(this.enableMethodCache.<Integer>getNumber("order"));
+        advisor.setBasePackages(this.enableJetMethodCache.getStringArray("basePackages"));
+        advisor.setOrder(this.enableJetMethodCache.<Integer>getNumber("order"));
         return advisor;
     }
 

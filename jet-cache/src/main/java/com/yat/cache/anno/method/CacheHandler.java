@@ -206,9 +206,9 @@ public class CacheHandler implements InvocationHandler {
      * 加载值并统计时间
      * 该方法执行缓存调用，记录执行时间，并触发缓存加载事件
      *
-     * @param context 缓存调用上下文
-     * @param jetCache   缓存实例
-     * @param key     缓存键
+     * @param context  缓存调用上下文
+     * @param jetCache 缓存实例
+     * @param key      缓存键
      * @return 缓存调用的结果
      * @throws Throwable 如果调用过程中发生错误
      */
@@ -233,6 +233,19 @@ public class CacheHandler implements InvocationHandler {
     }
 
     /**
+     * 执行缓存失效操作
+     * 遍历缓存失效配置列表，逐个执行缓存失效操作
+     *
+     * @param context    缓存调用上下文
+     * @param annoConfig 缓存失效注解配置列表
+     */
+    private static void doInvalidate(CacheInvokeContext context, List<CacheInvalidateAnnoConfig> annoConfig) {
+        for (CacheInvalidateAnnoConfig config : annoConfig) {
+            doInvalidate(context, config);
+        }
+    }
+
+    /**
      * 将给定的键值对更新到缓存中。
      *
      * @param context          缓存调用上下文，用于获取缓存函数和评估条件、值、键等。
@@ -240,76 +253,112 @@ public class CacheHandler implements InvocationHandler {
      */
     private static void doUpdate(CacheInvokeContext context, CacheUpdateAnnoConfig updateAnnoConfig) {
         // 根据上下文和更新配置获取缓存实例
-        JetCache jetCache = context.getCacheFunction().apply(context, updateAnnoConfig);
-        // 如果缓存为null，则直接返回
-        if (jetCache == null) {
-            return;
-        }
-        // 评估更新缓存的条件
-        boolean condition = ExpressionUtil.evalCondition(context, updateAnnoConfig);
-        // 如果条件不满足，则直接返回
-        if (!condition) {
-            return;
-        }
-
-        // 评估缓存更新的值
-        Object value = ExpressionUtil.evalValue(context, updateAnnoConfig);
-        // 评估缓存更新的键
-        Object key = ExpressionUtil.evalKey(context, updateAnnoConfig);
-        // 如果键为null或值评估失败，则直接返回
-        if (key == null || value == ExpressionUtil.EVAL_FAILED) {
-            return;
-        }
-        // 如果是批量更新
-        if (updateAnnoConfig.isMulti()) {
-            // 如果值为null，则直接返回
-            if (value == null) {
+        try (JetCache jetCache = context.getCacheFunction().apply(context, updateAnnoConfig)) {
+            // 如果缓存为null，则直接返回
+            if (jetCache == null) {
                 return;
             }
-            // 将键和值转换为可迭代对象
-            Iterable<Object> keyIt = toIterable(key);
-            Iterable<Object> valueIt = toIterable(value);
-            // 如果键不是Iterable或数组类型，则记录错误并返回
-            if (keyIt == null) {
-                logger.error(
-                        "JetCache @CacheUpdate key is not instance of Iterable or array: {}",
-                        updateAnnoConfig.getDefineMethod()
-                );
-                return;
-            }
-            // 如果值不是Iterable或数组类型，则记录错误并返回
-            if (valueIt == null) {
-                logger.error(
-                        "JetCache @CacheUpdate value is not instance of Iterable or array: {}",
-                        updateAnnoConfig.getDefineMethod()
-                );
+            // 评估更新缓存的条件
+            boolean condition = ExpressionUtil.evalCondition(context, updateAnnoConfig);
+            // 如果条件不满足，则直接返回
+            if (!condition) {
                 return;
             }
 
-            // 将键和值的可迭代对象转换为列表
-            List<Object> keyList = new ArrayList<>();
-            List<Object> valueList = new ArrayList<>();
-            keyIt.forEach(keyList::add);
-            valueIt.forEach(valueList::add);
-            // 如果键和值的列表长度不一致，则记录错误并返回
-            if (keyList.size() != valueList.size()) {
-                logger.error(
-                        "JetCache @CacheUpdate key size not equals with value size: {}",
-                        updateAnnoConfig.getDefineMethod()
-                );
-            } else {
-                // 创建一个映射来存储键值对关系
-                Map<Object, Object> m = new HashMap<>();
-                // 遍历键值列表，将键值对添加到映射中
-                for (int i = 0; i < valueList.size(); i++) {
-                    m.put(keyList.get(i), valueList.get(i));
+            // 评估缓存更新的值
+            Object value = ExpressionUtil.evalValue(context, updateAnnoConfig);
+            // 评估缓存更新的键
+            Object key = ExpressionUtil.evalKey(context, updateAnnoConfig);
+            // 如果键为null或值评估失败，则直接返回
+            if (key == null || value == ExpressionUtil.EVAL_FAILED) {
+                return;
+            }
+            // 如果是批量更新
+            if (updateAnnoConfig.isMulti()) {
+                // 如果值为null，则直接返回
+                if (value == null) {
+                    return;
                 }
-                // 将所有键值对批量更新到缓存中
-                jetCache.putAll(m);
+                // 将键和值转换为可迭代对象
+                Iterable<Object> keyIt = toIterable(key);
+                Iterable<Object> valueIt = toIterable(value);
+                // 如果键不是Iterable或数组类型，则记录错误并返回
+                if (keyIt == null) {
+                    logger.error(
+                            "JetCache @CacheUpdate key is not instance of Iterable or array: {}",
+                            updateAnnoConfig.getDefineMethod()
+                    );
+                    return;
+                }
+                // 如果值不是Iterable或数组类型，则记录错误并返回
+                if (valueIt == null) {
+                    logger.error(
+                            "JetCache @CacheUpdate value is not instance of Iterable or array: {}",
+                            updateAnnoConfig.getDefineMethod()
+                    );
+                    return;
+                }
+
+                // 将键和值的可迭代对象转换为列表
+                List<Object> keyList = new ArrayList<>();
+                List<Object> valueList = new ArrayList<>();
+                keyIt.forEach(keyList::add);
+                valueIt.forEach(valueList::add);
+                // 如果键和值的列表长度不一致，则记录错误并返回
+                if (keyList.size() != valueList.size()) {
+                    logger.error(
+                            "JetCache @CacheUpdate key size not equals with value size: {}",
+                            updateAnnoConfig.getDefineMethod()
+                    );
+                } else {
+                    // 创建一个映射来存储键值对关系
+                    Map<Object, Object> m = new HashMap<>();
+                    // 遍历键值列表，将键值对添加到映射中
+                    for (int i = 0; i < valueList.size(); i++) {
+                        m.put(keyList.get(i), valueList.get(i));
+                    }
+                    // 将所有键值对批量更新到缓存中
+                    jetCache.putAll(m);
+                }
+            } else {
+                // 对于非批量更新，直接将键值对更新到缓存中
+                jetCache.put(key, value);
             }
-        } else {
-            // 对于非批量更新，直接将键值对更新到缓存中
-            jetCache.put(key, value);
+        }
+    }
+
+    /**
+     * 执行实际的缓存无效操作。
+     *
+     * @param context    缓存调用上下文
+     * @param annoConfig 无效配置
+     */
+    private static void doInvalidate(CacheInvokeContext context, CacheInvalidateAnnoConfig annoConfig) {
+        try (JetCache jetCache = context.getCacheFunction().apply(context, annoConfig)) {
+            if (jetCache == null) {
+                return;
+            }
+            boolean condition = ExpressionUtil.evalCondition(context, annoConfig);
+            if (!condition) {
+                return;
+            }
+            Object key = ExpressionUtil.evalKey(context, annoConfig);
+            if (key == null) {
+                return;
+            }
+            if (annoConfig.isMulti()) {
+                Iterable it = toIterable(key);
+                if (it == null) {
+                    logger.error("JetCache @CacheInvalidate key is not instance of Iterable or array: {}",
+                            annoConfig.getDefineMethod());
+                    return;
+                }
+                Set keys = new HashSet<>();
+                it.forEach(keys::add);
+                jetCache.removeAll(keys);
+            } else {
+                jetCache.remove(key);
+            }
         }
     }
 
@@ -336,53 +385,6 @@ public class CacheHandler implements InvocationHandler {
             return (Iterable) obj;
         } else {
             return null;
-        }
-    }
-
-    /**
-     * 执行缓存失效操作
-     * 遍历缓存失效配置列表，逐个执行缓存失效操作
-     *
-     * @param context    缓存调用上下文
-     * @param annoConfig 缓存失效注解配置列表
-     */
-    private static void doInvalidate(CacheInvokeContext context, List<CacheInvalidateAnnoConfig> annoConfig) {
-        for (CacheInvalidateAnnoConfig config : annoConfig) {
-            doInvalidate(context, config);
-        }
-    }
-
-    /**
-     * 执行实际的缓存无效操作。
-     *
-     * @param context    缓存调用上下文
-     * @param annoConfig 无效配置
-     */
-    private static void doInvalidate(CacheInvokeContext context, CacheInvalidateAnnoConfig annoConfig) {
-        JetCache jetCache = context.getCacheFunction().apply(context, annoConfig);
-        if (jetCache == null) {
-            return;
-        }
-        boolean condition = ExpressionUtil.evalCondition(context, annoConfig);
-        if (!condition) {
-            return;
-        }
-        Object key = ExpressionUtil.evalKey(context, annoConfig);
-        if (key == null) {
-            return;
-        }
-        if (annoConfig.isMulti()) {
-            Iterable it = toIterable(key);
-            if (it == null) {
-                logger.error("JetCache @CacheInvalidate key is not instance of Iterable or array: {}",
-                        annoConfig.getDefineMethod());
-                return;
-            }
-            Set keys = new HashSet<>();
-            it.forEach(keys::add);
-            jetCache.removeAll(keys);
-        } else {
-            jetCache.remove(key);
         }
     }
 

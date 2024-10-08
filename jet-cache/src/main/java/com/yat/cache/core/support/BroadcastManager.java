@@ -1,5 +1,6 @@
 package com.yat.cache.core.support;
 
+import cn.hutool.core.lang.Assert;
 import com.yat.cache.core.CacheResult;
 import com.yat.cache.core.CacheUtil;
 import com.yat.cache.core.JetCache;
@@ -8,7 +9,6 @@ import com.yat.cache.core.MultiLevelJetCache;
 import com.yat.cache.core.embedded.AbstractEmbeddedJetCache;
 import com.yat.cache.core.exception.CacheConfigException;
 import com.yat.cache.core.external.ExternalCacheConfig;
-import com.yat.cache.core.lang.Assert;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
