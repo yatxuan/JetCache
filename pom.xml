@@ -20,12 +20,19 @@
         <module>jet-cache-quickly</module>
         <module>jet-cache-test</module>
         <module>jet-cache-quickly-test</module>
+        <module>jet-cache-starter-redis</module>
     </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <lettuce.version>6.1.10.RELEASE</lettuce.version>
+
+        <kryo5.version>5.5.0</kryo5.version>
+        <kryo.version>4.0.3</kryo.version>
+        <mvel2.version>2.5.2.Final</mvel2.version>
     </properties>
 
 </project>

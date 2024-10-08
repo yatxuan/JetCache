@@ -3,7 +3,7 @@ spring:
     active: jetCache
   data:
     redis:
-      host: 127.0.0.1
+      host: 114.132.187.3
       port: 6379
-      password: "123456"
+      password: "gm_dev2022"
       database: 15

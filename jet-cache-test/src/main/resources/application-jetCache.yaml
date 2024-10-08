@@ -29,9 +29,9 @@ jet-cache:
         read-from: replica
         singleton:
           database: 15
-          host: 127.0.0.1
+          host: ${spring.data.redis.host}
           port: 6379
-          password: 123456
+          password: ${spring.data.redis.password}
 
 
 
